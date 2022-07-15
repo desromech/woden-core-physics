@@ -19,7 +19,7 @@ WDPhysicsWorldExamples class >> exampleFallingBox [
 			mass: 1.0;
 			position: (Vector3 y: 1.0);
 			yourself);
-		buildInteractiveVisualizationScene) inspect
+		buildInteractiveVisualizationScene) openInWindow
 ]
 
 { #category : #examples }
@@ -39,7 +39,7 @@ WDPhysicsWorldExamples class >> exampleFallingBoxAndFloor [
 			mass: 0.0;
 			position: (Vector3 y: -0.8);
 			yourself);
-		buildInteractiveVisualizationScene) inspect
+		buildInteractiveVisualizationScene) openInWindow
 ]
 
 { #category : #'see class side' }
