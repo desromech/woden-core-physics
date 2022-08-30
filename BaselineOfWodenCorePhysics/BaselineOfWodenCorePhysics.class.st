@@ -9,7 +9,7 @@ BaselineOfWodenCorePhysics >> baseline: spec [
     <baseline>
 	spec for: #'common' do: [
 		spec
-			baseline: #'WodenSceneGraph' with: [ spec repository: 'github://ronsaldo/woden-core-scene-graph' ];	
+			baseline: #'WodenSceneGraph' with: [ spec repository: 'github://desromech/woden-core-scene-graph' ];	
 			package: #'WodenPhysics-Core' with: [
 				spec requires: #( #'WodenSceneGraph').
 			];
