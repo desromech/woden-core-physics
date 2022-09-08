@@ -22,7 +22,7 @@ WDSphereCollisionShape >> constructVisualizationSceneNode [
 			mesh) asSceneNode 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'intersection testing' }
 WDSphereCollisionShape >> localSupportInDirection: aDirection [
 	^ aDirection normalized * radius
 ]

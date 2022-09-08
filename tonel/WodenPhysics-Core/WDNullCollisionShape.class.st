@@ -25,7 +25,7 @@ WDNullCollisionShape >> constructVisualizationSceneNode [
 	^ WDSceneNode new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'intersection testing' }
 WDNullCollisionShape >> localSupportInDirection: aDirection [
 	^ Vector3 zeros
 ]

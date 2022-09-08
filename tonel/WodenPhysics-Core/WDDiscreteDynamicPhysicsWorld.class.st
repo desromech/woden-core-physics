@@ -38,13 +38,13 @@ WDDiscreteDynamicPhysicsWorld >> detectAndResolveNarrowphaseCollisionOf: firstCo
 	
 	firstCollisionObject inverseMass ~= 0 ifTrue: [ 
 		firstCollisionObject
-			translateBy: mtv;
+			translateBy: mtv negated;
 			rejectLinearVelocityAlongAxis: contactManifold normal.
 	].
 
 	secondCollisionObject inverseMass ~= 0 ifTrue: [ 
 		secondCollisionObject
-			translateBy: mtv negated;
+			translateBy: mtv;
 			rejectLinearVelocityAlongAxis: contactManifold normal
 	].
 

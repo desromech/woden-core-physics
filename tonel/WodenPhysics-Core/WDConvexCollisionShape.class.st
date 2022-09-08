@@ -36,11 +36,12 @@ WDConvexCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform 
 	closestPointToOrigin := gjkSimplex closestPointToOrigin.
 	totalMargin := margin + otherShape margin.
 	shapeDistance := closestPointToOrigin length.
-	shapeDistance > totalMargin ifTrue: [ ^ nil ].
+
+	shapeDistance > totalMargin ifTrue: [ ^ nil ].	
 
 	shapeDistance >= ShallowPenetrationThreshold ifTrue: [
 		^ WDContactManifold new
-			normal: closestPointToOrigin normalized negated;
+			normal: closestPointToOrigin normalized;
 			penetrationDistance: totalMargin - shapeDistance;
 			yourself
 	] ifFalse: [
@@ -61,12 +62,12 @@ WDConvexCollisionShape >> localSupportFunction [
 	^ [ :d | self localSupportInDirection: d ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'intersection testing' }
 WDConvexCollisionShape >> localSupportInDirection: aDirection [
 	self subclassResponsibility
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'intersection testing' }
 WDConvexCollisionShape >> localSupportInDirectionWithMargin: aDirection [
 	^ (self localSupportInDirection: aDirection) + margin
 ]

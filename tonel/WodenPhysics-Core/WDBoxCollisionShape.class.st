@@ -40,7 +40,7 @@ WDBoxCollisionShape >> initialize [
 	halfExtent := Vector3 ones
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'intersection testing' }
 WDBoxCollisionShape >> localSupportInDirection: aDirection [
 	^ halfExtent * aDirection nonZeroSign
 ]
