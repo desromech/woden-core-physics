@@ -32,7 +32,8 @@ WDPhysicsWorld >> buildInteractiveVisualizationScene [
 	| scene collisionObjectsWithSceneNodes |
 	scene := WDScene new.
 	scene add: (WDDirectionalLightSource new
-		intensity: (Vector3 x: 1.0 y: 1.0 z: 0.8) normalized * 0.7;
+		color: (Vector3 x: 1.0 y: 1.0 z: 0.8) normalized;
+		intensity: 0.7;
 		yourself).
 	collisionObjectsWithSceneNodes := collisionObjects collect: [ :collisionObject |
 		| sceneNode |
