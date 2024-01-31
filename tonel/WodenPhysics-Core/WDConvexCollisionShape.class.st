@@ -43,6 +43,8 @@ WDConvexCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform 
 		^ WDContactManifold new
 			normal: closestPointToOrigin normalized;
 			penetrationDistance: totalMargin - shapeDistance;
+			firstPoint: gjkSimplex closestPointToOriginInFirst;
+			secondPoint: gjkSimplex closestPointToOriginInSecond;
 			yourself
 	] ifFalse: [
 		| distanceAndNormal |
@@ -53,6 +55,8 @@ WDConvexCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform 
 		^ WDContactManifold new
 			normal: distanceAndNormal second;
 			penetrationDistance: distanceAndNormal first + totalMargin;
+			firstPoint: distanceAndNormal third;
+			secondPoint: distanceAndNormal fourth;
 			yourself
 	]
 ]

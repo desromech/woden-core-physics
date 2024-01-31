@@ -34,17 +34,17 @@ WDDiscreteDynamicPhysicsWorld >> detectAndResolveNarrowphaseCollisionOf: firstCo
 
 	"TODO: Compute the actual impulse."
 	mtv := contactManifold minimumTranslationVector.
-	"Transcript show: firstCollisionObject position; show: ' <-> '; show: secondCollisionObject position; show: ' : '; show: contactManifold; cr."
+	Transcript show: firstCollisionObject position; show: ' <-> '; show: secondCollisionObject position; show: ' : '; show: contactManifold; cr.
 	
 	firstCollisionObject inverseMass ~= 0 ifTrue: [ 
 		firstCollisionObject
-			translateBy: mtv negated;
+			translateBy: mtv;
 			rejectLinearVelocityAlongAxis: contactManifold normal.
 	].
 
 	secondCollisionObject inverseMass ~= 0 ifTrue: [ 
 		secondCollisionObject
-			translateBy: mtv;
+			translateBy: mtv negated;
 			rejectLinearVelocityAlongAxis: contactManifold normal
 	].
 
@@ -65,7 +65,7 @@ WDDiscreteDynamicPhysicsWorld >> gravity: anObject [
 { #category : #initialization }
 WDDiscreteDynamicPhysicsWorld >> initialize [
 	super initialize.
-	gravity = Vector3 zeros.
+	gravity := Vector3 zeros.
 ]
 
 { #category : #update }
