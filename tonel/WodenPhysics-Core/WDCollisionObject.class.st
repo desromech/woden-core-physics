@@ -9,7 +9,10 @@ Class {
 		'shape',
 		'transform',
 		'linearVelocity',
-		'angularVelocity'
+		'angularVelocity',
+		'restitutionCoefficient',
+		'dynamicFrictionCoefficient',
+		'staticFrictionCoefficient'
 	],
 	#category : #'WodenPhysics-Core-RigidBody'
 }
@@ -33,7 +36,12 @@ WDCollisionObject >> angularVelocity: anObject [
 
 { #category : #'as yet unclassified' }
 WDCollisionObject >> applyImpulse: impulse inPosition: worldPosition [
-	self applyImpulse: impulse
+	self applyLinearImpulse: impulse
+]
+
+{ #category : #'as yet unclassified' }
+WDCollisionObject >> applyLinearImpulse: linearImpulse [
+	"By default do nothing."
 ]
 
 { #category : #accessing }
@@ -48,6 +56,18 @@ WDCollisionObject >> constructVisualizationSceneNode [
 		yourself
 ]
 
+{ #category : #accessing }
+WDCollisionObject >> dynamicFrictionCoefficient [
+
+	^ dynamicFrictionCoefficient
+]
+
+{ #category : #accessing }
+WDCollisionObject >> dynamicFrictionCoefficient: anObject [
+
+	dynamicFrictionCoefficient := anObject
+]
+
 { #category : #initialization }
 WDCollisionObject >> initialize [
 	super initialize.
@@ -56,6 +76,11 @@ WDCollisionObject >> initialize [
 	transform := RigidTransform3D identity.
 	linearVelocity := Vector3 zeros.
 	angularVelocity := Vector3 zeros.
+	
+	restitutionCoefficient := 0.5.
+	dynamicFrictionCoefficient := 0.5.
+	staticFrictionCoefficient := 0.625.
+
 ]
 
 { #category : #update }
@@ -122,6 +147,18 @@ WDCollisionObject >> rejectLinearVelocityAlongAxis: axis [
 ]
 
 { #category : #accessing }
+WDCollisionObject >> restitutionCoefficient [
+
+	^ restitutionCoefficient
+]
+
+{ #category : #accessing }
+WDCollisionObject >> restitutionCoefficient: anObject [
+
+	restitutionCoefficient := anObject
+]
+
+{ #category : #accessing }
 WDCollisionObject >> shape [
 
 	^ shape
@@ -131,6 +168,18 @@ WDCollisionObject >> shape [
 WDCollisionObject >> shape: anObject [
 
 	shape := anObject
+]
+
+{ #category : #accessing }
+WDCollisionObject >> staticFrictionCoefficient [
+
+	^ staticFrictionCoefficient
+]
+
+{ #category : #accessing }
+WDCollisionObject >> staticFrictionCoefficient: anObject [
+
+	staticFrictionCoefficient := anObject
 ]
 
 { #category : #accessing }

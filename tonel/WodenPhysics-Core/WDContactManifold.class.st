@@ -8,10 +8,24 @@ Class {
 		'normal',
 		'penetrationDistance',
 		'firstPoint',
-		'secondPoint'
+		'secondPoint',
+		'firstCollisionObject',
+		'secondCollisionObject'
 	],
 	#category : #'WodenPhysics-Core-Collisions'
 }
+
+{ #category : #accessing }
+WDContactManifold >> firstCollisionObject [
+
+	^ firstCollisionObject
+]
+
+{ #category : #accessing }
+WDContactManifold >> firstCollisionObject: anObject [
+
+	firstCollisionObject := anObject
+]
 
 { #category : #accessing }
 WDContactManifold >> firstPoint [
@@ -66,6 +80,18 @@ WDContactManifold >> penetrationDistance: anObject [
 { #category : #printing }
 WDContactManifold >> printOn: aStream [
 	aStream nextPutAll: 'normal: '; print: normal; nextPutAll: ' pd: '; print: penetrationDistance
+]
+
+{ #category : #accessing }
+WDContactManifold >> secondCollisionObject [
+
+	^ secondCollisionObject
+]
+
+{ #category : #accessing }
+WDContactManifold >> secondCollisionObject: anObject [
+
+	secondCollisionObject := anObject
 ]
 
 { #category : #accessing }

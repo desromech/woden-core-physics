@@ -52,19 +52,6 @@ WDPhysicsWorld >> buildInteractiveVisualizationScene [
 ]
 
 { #category : #'as yet unclassified' }
-WDPhysicsWorld >> computeBroadphaseCandidatePairs [
-	| pairSet broadphasePairs |
-	pairSet := Set new.	
-	broadphasePairs := OrderedCollection new.
-	collisionObjects do: [ :each |
-		each needsCollisionDetection ifTrue: [ 
-			self findBroadphasePairsFor: each into: broadphasePairs pairSet: pairSet
-		]
-	].
-	^ broadphasePairs
-]
-
-{ #category : #'as yet unclassified' }
 WDPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairSet: pairsSet [
 	| boundingBoxToFind |
 	boundingBoxToFind := collidingObject boundingBoxWithMargin.

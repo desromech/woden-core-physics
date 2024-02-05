@@ -12,7 +12,7 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-WDRigidBody >> applyImpulse: impulse [
+WDRigidBody >> applyLinearImpulse: impulse [
 	linearVelocity := linearVelocity + (impulse*inverseMass)
 ]
 
