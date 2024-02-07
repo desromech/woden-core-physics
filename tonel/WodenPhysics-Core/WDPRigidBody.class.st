@@ -2,8 +2,8 @@
 I am a rigid body that lives in a physics world.
 "
 Class {
-	#name : #WDRigidBody,
-	#superclass : #WDCollisionObject,
+	#name : #WDPRigidBody,
+	#superclass : #WDPCollisionObject,
 	#instVars : [
 		'mass',
 		'inverseMass'
@@ -12,18 +12,18 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-WDRigidBody >> applyLinearImpulse: impulse [
+WDPRigidBody >> applyLinearImpulse: impulse [
 	linearVelocity := linearVelocity + (impulse*inverseMass)
 ]
 
 { #category : #initialization }
-WDRigidBody >> initialize [
+WDPRigidBody >> initialize [
 	super initialize.
 	mass := inverseMass := 0.0.
 ]
 
 { #category : #update }
-WDRigidBody >> integrateMovementWithDeltaTime: deltaTime [
+WDPRigidBody >> integrateMovementWithDeltaTime: deltaTime [
 	| linearAcceleration |
 	mass isZero ifTrue: [ ^ self ].
 	
@@ -35,24 +35,24 @@ WDRigidBody >> integrateMovementWithDeltaTime: deltaTime [
 ]
 
 { #category : #accessing }
-WDRigidBody >> inverseMass [
+WDPRigidBody >> inverseMass [
 
 	^ inverseMass
 ]
 
 { #category : #accessing }
-WDRigidBody >> mass [
+WDPRigidBody >> mass [
 
 	^ mass
 ]
 
 { #category : #accessing }
-WDRigidBody >> mass: aNumber [
+WDPRigidBody >> mass: aNumber [
 	mass := aNumber.
 	inverseMass := aNumber = 0 ifTrue: [ 0 ] ifFalse: [ aNumber reciprocal ].
 ]
 
 { #category : #testing }
-WDRigidBody >> needsCollisionDetection [
+WDPRigidBody >> needsCollisionDetection [
 	^ mass ~= 0
 ]

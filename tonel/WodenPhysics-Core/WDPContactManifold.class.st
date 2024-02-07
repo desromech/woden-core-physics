@@ -2,7 +2,7 @@
 I encapsulate a contact manifold.
 "
 Class {
-	#name : #WDContactManifold,
+	#name : #WDPContactManifold,
 	#superclass : #Object,
 	#instVars : [
 		'normal',
@@ -16,31 +16,31 @@ Class {
 }
 
 { #category : #accessing }
-WDContactManifold >> firstCollisionObject [
+WDPContactManifold >> firstCollisionObject [
 
 	^ firstCollisionObject
 ]
 
 { #category : #accessing }
-WDContactManifold >> firstCollisionObject: anObject [
+WDPContactManifold >> firstCollisionObject: anObject [
 
 	firstCollisionObject := anObject
 ]
 
 { #category : #accessing }
-WDContactManifold >> firstPoint [
+WDPContactManifold >> firstPoint [
 
 	^ firstPoint
 ]
 
 { #category : #accessing }
-WDContactManifold >> firstPoint: anObject [
+WDPContactManifold >> firstPoint: anObject [
 
 	firstPoint := anObject
 ]
 
 { #category : #properties }
-WDContactManifold >> flipped [
+WDPContactManifold >> flipped [
 	^ self copy
 		normal: normal negated;
 		firstPoint: secondPoint;
@@ -49,59 +49,59 @@ WDContactManifold >> flipped [
 ]
 
 { #category : #accessing }
-WDContactManifold >> minimumTranslationVector [
+WDPContactManifold >> minimumTranslationVector [
 	^ normal * penetrationDistance
 ]
 
 { #category : #accessing }
-WDContactManifold >> normal [
+WDPContactManifold >> normal [
 
 	^ normal
 ]
 
 { #category : #accessing }
-WDContactManifold >> normal: anObject [
+WDPContactManifold >> normal: anObject [
 
 	normal := anObject
 ]
 
 { #category : #accessing }
-WDContactManifold >> penetrationDistance [
+WDPContactManifold >> penetrationDistance [
 
 	^ penetrationDistance
 ]
 
 { #category : #accessing }
-WDContactManifold >> penetrationDistance: anObject [
+WDPContactManifold >> penetrationDistance: anObject [
 
 	penetrationDistance := anObject
 ]
 
 { #category : #printing }
-WDContactManifold >> printOn: aStream [
+WDPContactManifold >> printOn: aStream [
 	aStream nextPutAll: 'normal: '; print: normal; nextPutAll: ' pd: '; print: penetrationDistance
 ]
 
 { #category : #accessing }
-WDContactManifold >> secondCollisionObject [
+WDPContactManifold >> secondCollisionObject [
 
 	^ secondCollisionObject
 ]
 
 { #category : #accessing }
-WDContactManifold >> secondCollisionObject: anObject [
+WDPContactManifold >> secondCollisionObject: anObject [
 
 	secondCollisionObject := anObject
 ]
 
 { #category : #accessing }
-WDContactManifold >> secondPoint [
+WDPContactManifold >> secondPoint [
 
 	^ secondPoint
 ]
 
 { #category : #accessing }
-WDContactManifold >> secondPoint: anObject [
+WDPContactManifold >> secondPoint: anObject [
 
 	secondPoint := anObject
 ]

@@ -2,7 +2,7 @@
 I am a generic collision object.
 "
 Class {
-	#name : #WDCollisionObject,
+	#name : #WDPCollisionObject,
 	#superclass : #Object,
 	#instVars : [
 		'owner',
@@ -12,66 +12,67 @@ Class {
 		'angularVelocity',
 		'restitutionCoefficient',
 		'dynamicFrictionCoefficient',
-		'staticFrictionCoefficient'
+		'staticFrictionCoefficient',
+		'model'
 	],
 	#category : #'WodenPhysics-Core-RigidBody'
 }
 
 { #category : #adding }
-WDCollisionObject >> addOntoPhysicsWorld: aPhysicsWorld [
+WDPCollisionObject >> addOntoPhysicsWorld: aPhysicsWorld [
 	aPhysicsWorld addCollisionObject: self
 ]
 
 { #category : #accessing }
-WDCollisionObject >> angularVelocity [
+WDPCollisionObject >> angularVelocity [
 
 	^ angularVelocity
 ]
 
 { #category : #accessing }
-WDCollisionObject >> angularVelocity: anObject [
+WDPCollisionObject >> angularVelocity: anObject [
 
 	angularVelocity := anObject
 ]
 
-{ #category : #'as yet unclassified' }
-WDCollisionObject >> applyImpulse: impulse inPosition: worldPosition [
+{ #category : #update }
+WDPCollisionObject >> applyImpulse: impulse inPosition: worldPosition [
 	self applyLinearImpulse: impulse
 ]
 
-{ #category : #'as yet unclassified' }
-WDCollisionObject >> applyLinearImpulse: linearImpulse [
+{ #category : #update }
+WDPCollisionObject >> applyLinearImpulse: linearImpulse [
 	"By default do nothing."
 ]
 
 { #category : #accessing }
-WDCollisionObject >> boundingBoxWithMargin [
+WDPCollisionObject >> boundingBoxWithMargin [
 	^ self localBoundingBoxWithMargin transformedWith: transform
 ]
 
 { #category : #adding }
-WDCollisionObject >> constructVisualizationSceneNode [
+WDPCollisionObject >> constructVisualizationSceneNode [
 	^ shape constructVisualizationSceneNode
 		transform: transform;
 		yourself
 ]
 
 { #category : #accessing }
-WDCollisionObject >> dynamicFrictionCoefficient [
+WDPCollisionObject >> dynamicFrictionCoefficient [
 
 	^ dynamicFrictionCoefficient
 ]
 
 { #category : #accessing }
-WDCollisionObject >> dynamicFrictionCoefficient: anObject [
+WDPCollisionObject >> dynamicFrictionCoefficient: anObject [
 
 	dynamicFrictionCoefficient := anObject
 ]
 
 { #category : #initialization }
-WDCollisionObject >> initialize [
+WDPCollisionObject >> initialize [
 	super initialize.
-	shape := WDNullCollisionShape uniqueInstance.
+	shape := WDPNullCollisionShape uniqueInstance.
 
 	transform := RigidTransform3D identity.
 	linearVelocity := Vector3 zeros.
@@ -84,117 +85,150 @@ WDCollisionObject >> initialize [
 ]
 
 { #category : #update }
-WDCollisionObject >> integrateMovementWithDeltaTime: deltaTime [
+WDPCollisionObject >> integrateMovementWithDeltaTime: deltaTime [
 ]
 
 { #category : #accessing }
-WDCollisionObject >> linearVelocity [
+WDPCollisionObject >> inverseMass [
+	^ 0.0
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> linearVelocity [
 
 	^ linearVelocity
 ]
 
 { #category : #accessing }
-WDCollisionObject >> linearVelocity: anObject [
+WDPCollisionObject >> linearVelocity: anObject [
 
 	linearVelocity := anObject
 ]
 
+{ #category : #model }
+WDPCollisionObject >> loadStateFromModel [
+	model ifNotNil: [ 
+		model loadCollisionStateInto: self.
+	].
+
+]
+
 { #category : #accessing }
-WDCollisionObject >> localBoundingBoxWithMargin [
+WDPCollisionObject >> localBoundingBoxWithMargin [
 	^ shape localBoundingBoxWithMargin
 ]
 
+{ #category : #accessing }
+WDPCollisionObject >> mass [
+	^ 0.0
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> model [
+
+	^ model
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> model: anObject [
+
+	model := anObject
+]
+
 { #category : #testing }
-WDCollisionObject >> needsCollisionDetection [
+WDPCollisionObject >> needsCollisionDetection [
 	^ false
 ]
 
 { #category : #accessing }
-WDCollisionObject >> orientation [
+WDPCollisionObject >> orientation [
 	^ transform rotation
 ]
 
 { #category : #accessing }
-WDCollisionObject >> orientation: anOrientation [
+WDPCollisionObject >> orientation: anOrientation [
 	transform rotation: anOrientation
 ]
 
 { #category : #accessing }
-WDCollisionObject >> owner [
+WDPCollisionObject >> owner [
 
 	^ owner
 ]
 
 { #category : #accessing }
-WDCollisionObject >> owner: anObject [
+WDPCollisionObject >> owner: anObject [
 
 	owner := anObject
 ]
 
 { #category : #accessing }
-WDCollisionObject >> position [
+WDPCollisionObject >> position [
 	^ transform translation
 ]
 
 { #category : #accessing }
-WDCollisionObject >> position: aPosition [
+WDPCollisionObject >> position: aPosition [
 	transform translation: aPosition
 ]
 
-{ #category : #'as yet unclassified' }
-WDCollisionObject >> rejectLinearVelocityAlongAxis: axis [
-	linearVelocity := linearVelocity - (axis * (linearVelocity dot: axis))
-]
-
 { #category : #accessing }
-WDCollisionObject >> restitutionCoefficient [
+WDPCollisionObject >> restitutionCoefficient [
 
 	^ restitutionCoefficient
 ]
 
 { #category : #accessing }
-WDCollisionObject >> restitutionCoefficient: anObject [
+WDPCollisionObject >> restitutionCoefficient: anObject [
 
 	restitutionCoefficient := anObject
 ]
 
+{ #category : #model }
+WDPCollisionObject >> saveStateFromModel [
+	model ifNotNil: [ 
+		model saveCollisionStateFrom: self.
+	].
+
+]
+
 { #category : #accessing }
-WDCollisionObject >> shape [
+WDPCollisionObject >> shape [
 
 	^ shape
 ]
 
 { #category : #accessing }
-WDCollisionObject >> shape: anObject [
+WDPCollisionObject >> shape: anObject [
 
 	shape := anObject
 ]
 
 { #category : #accessing }
-WDCollisionObject >> staticFrictionCoefficient [
+WDPCollisionObject >> staticFrictionCoefficient [
 
 	^ staticFrictionCoefficient
 ]
 
 { #category : #accessing }
-WDCollisionObject >> staticFrictionCoefficient: anObject [
+WDPCollisionObject >> staticFrictionCoefficient: anObject [
 
 	staticFrictionCoefficient := anObject
 ]
 
 { #category : #accessing }
-WDCollisionObject >> transform [
+WDPCollisionObject >> transform [
 
 	^ transform
 ]
 
 { #category : #accessing }
-WDCollisionObject >> transform: anObject [
+WDPCollisionObject >> transform: anObject [
 
 	transform := anObject
 ]
 
 { #category : #transforming }
-WDCollisionObject >> translateBy: translation [
+WDPCollisionObject >> translateBy: translation [
 	self position: self position + translation
 ]

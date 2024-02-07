@@ -2,8 +2,8 @@
 I am a sphere collision shape.
 "
 Class {
-	#name : #WDSphereCollisionShape,
-	#superclass : #WDConvexCollisionShape,
+	#name : #WDPSphereCollisionShape,
+	#superclass : #WDPConvexCollisionShape,
 	#instVars : [
 		'radius'
 	],
@@ -11,30 +11,37 @@ Class {
 }
 
 { #category : #accessing }
-WDSphereCollisionShape class >> radius: radius [
+WDPSphereCollisionShape class >> radius: radius [
 	^ self new radius: radius; yourself
 ]
 
 { #category : #adding }
-WDSphereCollisionShape >> constructVisualizationSceneNode [
+WDPSphereCollisionShape >> constructVisualizationSceneNode [
 	^ (WDMeshBuilder new
 			addUVSphereWithRadius: radius segments: 16 slices: 16;
 			mesh) asSceneNode 
 ]
 
+{ #category : #initialization }
+WDPSphereCollisionShape >> initialize [
+	super initialize.
+	radius := 1.0.
+	
+]
+
 { #category : #'intersection testing' }
-WDSphereCollisionShape >> localSupportInDirection: aDirection [
+WDPSphereCollisionShape >> localSupportInDirection: aDirection [
 	^ aDirection normalized * radius
 ]
 
 { #category : #accessing }
-WDSphereCollisionShape >> radius [
+WDPSphereCollisionShape >> radius [
 
 	^ radius
 ]
 
 { #category : #accessing }
-WDSphereCollisionShape >> radius: aNumber [
+WDPSphereCollisionShape >> radius: aNumber [
 	radius := aNumber.
 	self localBoundingBox: (AABox halfExtent: radius)
 ]

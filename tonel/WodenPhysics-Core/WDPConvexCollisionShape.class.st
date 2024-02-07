@@ -2,8 +2,8 @@
 I represent a convex collision shape.
 "
 Class {
-	#name : #WDConvexCollisionShape,
-	#superclass : #WDCollisionShape,
+	#name : #WDPConvexCollisionShape,
+	#superclass : #WDPCollisionShape,
 	#classVars : [
 		'ShallowPenetrationThreshold'
 	],
@@ -11,22 +11,22 @@ Class {
 }
 
 { #category : #initialization }
-WDConvexCollisionShape class >> initialize [
+WDPConvexCollisionShape class >> initialize [
 	ShallowPenetrationThreshold := 1e-5.
 ]
 
 { #category : #testing }
-WDConvexCollisionShape class >> isAbstract [
-	^ self == WDConvexCollisionShape
+WDPConvexCollisionShape class >> isAbstract [
+	^ self == WDPConvexCollisionShape
 ]
 
 { #category : #accessing }
-WDConvexCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform with: otherShape at: otherTransform [
+WDPConvexCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform with: otherShape at: otherTransform [
 	^ otherShape detectAndComputeCollisionContactManifoldAt: otherTransform withConvexShape: self at: transform
 ]
 
 { #category : #accessing }
-WDConvexCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform withConvexShape: otherShape at: otherTransform [
+WDPConvexCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform withConvexShape: otherShape at: otherTransform [
 	| firstSupportFunction secondSupportFunction
 		gjkSimplex closestPointToOrigin totalMargin shapeDistance |
 	firstSupportFunction := GeometricFunctions transformSupportFunction: self localSupportFunction with: transform.
@@ -40,7 +40,7 @@ WDConvexCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform 
 	shapeDistance > totalMargin ifTrue: [ ^ nil ].	
 
 	shapeDistance >= ShallowPenetrationThreshold ifTrue: [
-		^ WDContactManifold new
+		^ WDPContactManifold new
 			normal: closestPointToOrigin normalized;
 			penetrationDistance: totalMargin - shapeDistance;
 			firstPoint: gjkSimplex closestPointToOriginInFirst;
@@ -52,7 +52,7 @@ WDConvexCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform 
 		distanceAndNormal := GeometricFunctions samplePenetrationDistanceAndNormalForSupport: firstSupportFunction with: secondSupportFunction.
 		distanceAndNormal ifNil: [ ^ nil ].
 		
-		^ WDContactManifold new
+		^ WDPContactManifold new
 			normal: distanceAndNormal second;
 			penetrationDistance: distanceAndNormal first + totalMargin;
 			firstPoint: distanceAndNormal third;
@@ -62,16 +62,16 @@ WDConvexCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform 
 ]
 
 { #category : #'intersection testing' }
-WDConvexCollisionShape >> localSupportFunction [
+WDPConvexCollisionShape >> localSupportFunction [
 	^ [ :d | self localSupportInDirection: d ]
 ]
 
 { #category : #'intersection testing' }
-WDConvexCollisionShape >> localSupportInDirection: aDirection [
+WDPConvexCollisionShape >> localSupportInDirection: aDirection [
 	self subclassResponsibility
 ]
 
 { #category : #'intersection testing' }
-WDConvexCollisionShape >> localSupportInDirectionWithMargin: aDirection [
+WDPConvexCollisionShape >> localSupportInDirectionWithMargin: aDirection [
 	^ (self localSupportInDirection: aDirection) + margin
 ]

@@ -2,8 +2,8 @@
 I am a physics world that performs simulations by using discrete collision detection.
 "
 Class {
-	#name : #WDDiscreteDynamicPhysicsWorld,
-	#superclass : #WDPhysicsWorld,
+	#name : #WDPDiscreteDynamicPhysicsWorld,
+	#superclass : #WDPPhysicsWorld,
 	#instVars : [
 		'gravity'
 	],
@@ -11,7 +11,7 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-WDDiscreteDynamicPhysicsWorld >> computeBroadphaseCandidatePairs [
+WDPDiscreteDynamicPhysicsWorld >> computeBroadphaseCandidatePairs [
 	| pairSet broadphasePairs |
 	pairSet := Set new.	
 	broadphasePairs := OrderedCollection new.
@@ -24,7 +24,7 @@ WDDiscreteDynamicPhysicsWorld >> computeBroadphaseCandidatePairs [
 ]
 
 { #category : #'as yet unclassified' }
-WDDiscreteDynamicPhysicsWorld >> computeNarrowPhaseConstantFromBroadphaseCandidatePairs: broadphaseCandidatePairs [
+WDPDiscreteDynamicPhysicsWorld >> computeNarrowPhaseConstantFromBroadphaseCandidatePairs: broadphaseCandidatePairs [
 	| narrowPhaseContacts |
 	narrowPhaseContacts := OrderedCollection new.
 	broadphaseCandidatePairs do: [ :each |
@@ -38,7 +38,7 @@ WDDiscreteDynamicPhysicsWorld >> computeNarrowPhaseConstantFromBroadphaseCandida
 ]
 
 { #category : #update }
-WDDiscreteDynamicPhysicsWorld >> detectAndResolveCollisionsWithDeltaTime: deltaTime [
+WDPDiscreteDynamicPhysicsWorld >> detectAndResolveCollisionsWithDeltaTime: deltaTime [
 	| broadphaseCandidatePairs narrowPhaseContacts |
 	broadphaseCandidatePairs := self computeBroadphaseCandidatePairs.
 	narrowPhaseContacts := self computeNarrowPhaseConstantFromBroadphaseCandidatePairs: broadphaseCandidatePairs.
@@ -56,7 +56,7 @@ WDDiscreteDynamicPhysicsWorld >> detectAndResolveCollisionsWithDeltaTime: deltaT
 ]
 
 { #category : #'as yet unclassified' }
-WDDiscreteDynamicPhysicsWorld >> detectNarrowphaseCollisionOf: firstCollisionObject with: secondCollisionObject [
+WDPDiscreteDynamicPhysicsWorld >> detectNarrowphaseCollisionOf: firstCollisionObject with: secondCollisionObject [
 	| firstShape firstTransform secondShape secondTransform contactManifold |
 	firstShape := firstCollisionObject shape.
 	firstTransform := firstCollisionObject transform.
@@ -73,30 +73,30 @@ WDDiscreteDynamicPhysicsWorld >> detectNarrowphaseCollisionOf: firstCollisionObj
 ]
 
 { #category : #accessing }
-WDDiscreteDynamicPhysicsWorld >> gravity [
+WDPDiscreteDynamicPhysicsWorld >> gravity [
 
 	^ gravity
 ]
 
 { #category : #accessing }
-WDDiscreteDynamicPhysicsWorld >> gravity: anObject [
+WDPDiscreteDynamicPhysicsWorld >> gravity: anObject [
 
 	gravity := anObject
 ]
 
 { #category : #initialization }
-WDDiscreteDynamicPhysicsWorld >> initialize [
+WDPDiscreteDynamicPhysicsWorld >> initialize [
 	super initialize.
 	gravity := Vector3 zeros.
 ]
 
 { #category : #update }
-WDDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
+WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
 	collisionObjects do: [ :each | each integrateMovementWithDeltaTime: deltaTime ]
 ]
 
 { #category : #'as yet unclassified' }
-WDDiscreteDynamicPhysicsWorld >> resolveCollisionResponse: contactManifold [
+WDPDiscreteDynamicPhysicsWorld >> resolveCollisionResponse: contactManifold [
 	| firstCollisionObject secondCollisionObject inverseMassSum relativeVelocity restitutionCoefficient relativeVelocityAlongNormal impulse contactNormal penetrationDelta |
 	firstCollisionObject := contactManifold firstCollisionObject.
 	secondCollisionObject := contactManifold secondCollisionObject.
@@ -122,11 +122,11 @@ WDDiscreteDynamicPhysicsWorld >> resolveCollisionResponse: contactManifold [
 ]
 
 { #category : #'as yet unclassified' }
-WDDiscreteDynamicPhysicsWorld >> resolveContactConstraints: contactManifold [
+WDPDiscreteDynamicPhysicsWorld >> resolveContactConstraints: contactManifold [
 ]
 
 { #category : #update }
-WDDiscreteDynamicPhysicsWorld >> updateWithDeltaTime: deltaTime [
+WDPDiscreteDynamicPhysicsWorld >> updateWithDeltaTime: deltaTime [
 	self
 		integrateMovementWithDeltaTime: deltaTime;
 		detectAndResolveCollisionsWithDeltaTime: deltaTime

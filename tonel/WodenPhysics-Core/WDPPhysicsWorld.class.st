@@ -2,7 +2,7 @@
 I am a physics world.
 "
 Class {
-	#name : #WDPhysicsWorld,
+	#name : #WDPPhysicsWorld,
 	#superclass : #Object,
 	#instVars : [
 		'collisionObjects'
@@ -11,24 +11,24 @@ Class {
 }
 
 { #category : #testing }
-WDPhysicsWorld class >> isAbstract [
-	^ self == WDPhysicsWorld
+WDPPhysicsWorld class >> isAbstract [
+	^ self == WDPPhysicsWorld
 ]
 
 { #category : #adding }
-WDPhysicsWorld >> add: aPhysicsWorldObject [
+WDPPhysicsWorld >> add: aPhysicsWorldObject [
 	aPhysicsWorldObject addOntoPhysicsWorld: self
 ]
 
 { #category : #adding }
-WDPhysicsWorld >> addCollisionObject: aCollisionObject [
+WDPPhysicsWorld >> addCollisionObject: aCollisionObject [
 	self assert: aCollisionObject owner isNil.
 	aCollisionObject owner: self.
 	collisionObjects add: aCollisionObject
 ]
 
 { #category : #visualization }
-WDPhysicsWorld >> buildInteractiveVisualizationScene [
+WDPPhysicsWorld >> buildInteractiveVisualizationScene [
 	| scene collisionObjectsWithSceneNodes |
 	scene := WDScene new.
 	scene add: (WDDirectionalLightSource new
@@ -52,7 +52,7 @@ WDPhysicsWorld >> buildInteractiveVisualizationScene [
 ]
 
 { #category : #'as yet unclassified' }
-WDPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairSet: pairsSet [
+WDPPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairSet: pairsSet [
 	| boundingBoxToFind |
 	boundingBoxToFind := collidingObject boundingBoxWithMargin.
 	collisionObjects do: [ :each |
@@ -69,11 +69,21 @@ WDPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairSe
 ]
 
 { #category : #initialization }
-WDPhysicsWorld >> initialize [
+WDPPhysicsWorld >> initialize [
 	super initialize.
 	collisionObjects := OrderedCollection new.
 ]
 
+{ #category : #'as yet unclassified' }
+WDPPhysicsWorld >> loadCollisionStateFromModels [
+	collisionObjects do: [ :each | each loadStateFromModel ]
+]
+
+{ #category : #'as yet unclassified' }
+WDPPhysicsWorld >> saveCollisionStateIntoModels [
+	collisionObjects do: [ :each | each saveStateFromModel ]
+]
+
 { #category : #update }
-WDPhysicsWorld >> updateWithDeltaTime: deltaTime [
+WDPPhysicsWorld >> updateWithDeltaTime: deltaTime [
 ]

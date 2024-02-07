@@ -12,10 +12,10 @@ WDPhysicsWorldExamples class >> exampleFallingBox [
 	"
 	self exampleFallingBox
 	"
-	(WDDiscreteDynamicPhysicsWorld new
+	(WDPDiscreteDynamicPhysicsWorld new
 		gravity: (Vector3 y: -9.8);
-		add: (WDRigidBody new
-			shape: (WDBoxCollisionShape halfExtent: 0.5);
+		add: (WDPRigidBody new
+			shape: (WDPBoxCollisionShape halfExtent: 0.5);
 			mass: 1.0;
 			position: (Vector3 y: 1.0);
 			yourself);
@@ -27,15 +27,15 @@ WDPhysicsWorldExamples class >> exampleFallingBoxAndFloor [
 	"
 	self exampleFallingBoxAndFloor
 	"
-	(WDDiscreteDynamicPhysicsWorld new
+	(WDPDiscreteDynamicPhysicsWorld new
 		gravity: (Vector3 y: -9.8);
-		add: (WDRigidBody new
-			shape: (WDBoxCollisionShape halfExtent: 0.5);
+		add: (WDPRigidBody new
+			shape: (WDPBoxCollisionShape halfExtent: 0.5);
 			mass: 1.0;
 			position: (Vector3 y: 1.0);
 			yourself);
-		add: (WDRigidBody new
-			shape: (WDBoxCollisionShape halfExtent: (Vector3 x: 2 y: 0.1 z: 2));
+		add: (WDPRigidBody new
+			shape: (WDPBoxCollisionShape halfExtent: (Vector3 x: 2 y: 0.1 z: 2));
 			mass: 0.0;
 			position: (Vector3 y: -0.8);
 			yourself);
@@ -47,15 +47,15 @@ WDPhysicsWorldExamples class >> exampleFallingBoxAndFloor2 [
 	"
 	self exampleFallingBoxAndFloor2
 	"
-	(WDDiscreteDynamicPhysicsWorld new
+	(WDPDiscreteDynamicPhysicsWorld new
 		gravity: (Vector3 y: -9.8);
-		add: (WDRigidBody new
-			shape: (WDBoxCollisionShape halfExtent: 0.5);
+		add: (WDPRigidBody new
+			shape: (WDPBoxCollisionShape halfExtent: 0.5);
 			mass: 1.0;
 			position: (Vector3 x: -5 y: 1 z: -20);
 			yourself);
-		add: (WDRigidBody new
-			shape: (WDBoxCollisionShape halfExtent: (Vector3 x: 5 y: 0.1 z: 20));
+		add: (WDPRigidBody new
+			shape: (WDPBoxCollisionShape halfExtent: (Vector3 x: 5 y: 0.1 z: 20));
 			mass: 0.0;
 			position: (Vector3 y: -0.8);
 			yourself);
@@ -67,15 +67,15 @@ WDPhysicsWorldExamples class >> exampleFallingCapsuleAndFloor [
 	"
 	self exampleFallingBoxAndFloor
 	"
-	(WDDiscreteDynamicPhysicsWorld new
+	(WDPDiscreteDynamicPhysicsWorld new
 		gravity: (Vector3 y: -9.8);
-		add: (WDRigidBody new
-			shape: (WDCapsuleYCollisionShape height: 0.5 radius: 0.5);
+		add: (WDPRigidBody new
+			shape: (WDPCapsuleYCollisionShape height: 0.5 radius: 0.5);
 			mass: 1.0;
 			position: (Vector3 y: 1.0);
 			yourself);
-		add: (WDRigidBody new
-			shape: (WDBoxCollisionShape halfExtent: (Vector3 x: 2 y: 0.1 z: 2));
+		add: (WDPRigidBody new
+			shape: (WDPBoxCollisionShape halfExtent: (Vector3 x: 2 y: 0.1 z: 2));
 			mass: 0.0;
 			position: (Vector3 y: -0.8);
 			yourself);
@@ -87,15 +87,15 @@ WDPhysicsWorldExamples class >> exampleFallingCapsuleAndFloor2 [
 	"
 	self exampleFallingBoxAndFloor2
 	"
-	(WDDiscreteDynamicPhysicsWorld new
+	(WDPDiscreteDynamicPhysicsWorld new
 		gravity: (Vector3 y: -9.8);
-		add: (WDRigidBody new
-			shape: (WDCapsuleYCollisionShape height: 0.5 radius: 0.5);
+		add: (WDPRigidBody new
+			shape: (WDPCapsuleYCollisionShape height: 0.5 radius: 0.5);
 			mass: 1.0;
 			position: (Vector3 x: -5 y: 1 z: -20);
 			yourself);
-		add: (WDRigidBody new
-			shape: (WDBoxCollisionShape halfExtent: (Vector3 x: 5 y: 0.1 z: 20));
+		add: (WDPRigidBody new
+			shape: (WDPBoxCollisionShape halfExtent: (Vector3 x: 5 y: 0.1 z: 20));
 			mass: 0.0;
 			position: (Vector3 y: -0.8);
 			yourself);

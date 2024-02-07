@@ -2,8 +2,8 @@
 I am a null collision shape.
 "
 Class {
-	#name : #WDNullCollisionShape,
-	#superclass : #WDConvexCollisionShape,
+	#name : #WDPNullCollisionShape,
+	#superclass : #WDPConvexCollisionShape,
 	#classInstVars : [
 		'uniqueInstance'
 	],
@@ -11,21 +11,21 @@ Class {
 }
 
 { #category : #'instance creation' }
-WDNullCollisionShape class >> new [
+WDPNullCollisionShape class >> new [
 	self error: 'WDNullCollisionShape is a stateless singleton'
 ]
 
 { #category : #accessing }
-WDNullCollisionShape class >> uniqueInstance [
+WDPNullCollisionShape class >> uniqueInstance [
 	^ uniqueInstance ifNil: [ uniqueInstance := self basicNew initialize ]
 ]
 
 { #category : #adding }
-WDNullCollisionShape >> constructVisualizationSceneNode [
+WDPNullCollisionShape >> constructVisualizationSceneNode [
 	^ WDSceneNode new
 ]
 
 { #category : #'intersection testing' }
-WDNullCollisionShape >> localSupportInDirection: aDirection [
+WDPNullCollisionShape >> localSupportInDirection: aDirection [
 	^ Vector3 zeros
 ]

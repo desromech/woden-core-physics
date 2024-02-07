@@ -2,8 +2,8 @@
 I am an axis-aligned (in local space) box collision shape.
 "
 Class {
-	#name : #WDBoxCollisionShape,
-	#superclass : #WDConvexCollisionShape,
+	#name : #WDPBoxCollisionShape,
+	#superclass : #WDPConvexCollisionShape,
 	#instVars : [
 		'halfExtent'
 	],
@@ -11,36 +11,36 @@ Class {
 }
 
 { #category : #accessing }
-WDBoxCollisionShape class >> halfExtent: halfExtent [
+WDPBoxCollisionShape class >> halfExtent: halfExtent [
 	^ self new halfExtent: halfExtent; yourself
 ]
 
 { #category : #adding }
-WDBoxCollisionShape >> constructVisualizationSceneNode [
+WDPBoxCollisionShape >> constructVisualizationSceneNode [
 	^ (WDMeshBuilder new
 			addCubeWithHalfExtent: halfExtent;
 			mesh) asSceneNode 
 ]
 
 { #category : #accessing }
-WDBoxCollisionShape >> halfExtent [
+WDPBoxCollisionShape >> halfExtent [
 
 	^ halfExtent
 ]
 
 { #category : #accessing }
-WDBoxCollisionShape >> halfExtent: newHalfExtent [
+WDPBoxCollisionShape >> halfExtent: newHalfExtent [
 	halfExtent := newHalfExtent asVector3.
 	self localBoundingBox: (AABox halfExtent: halfExtent).
 ]
 
 { #category : #initialization }
-WDBoxCollisionShape >> initialize [
+WDPBoxCollisionShape >> initialize [
 	super initialize.
 	halfExtent := Vector3 ones
 ]
 
 { #category : #'intersection testing' }
-WDBoxCollisionShape >> localSupportInDirection: aDirection [
+WDPBoxCollisionShape >> localSupportInDirection: aDirection [
 	^ halfExtent * aDirection nonZeroSign
 ]

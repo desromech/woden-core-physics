@@ -2,7 +2,7 @@
 I represent a specific collision shape.
 "
 Class {
-	#name : #WDCollisionShape,
+	#name : #WDPCollisionShape,
 	#superclass : #Object,
 	#instVars : [
 		'margin',
@@ -13,27 +13,27 @@ Class {
 }
 
 { #category : #testing }
-WDCollisionShape class >> isAbstract [
-	^ self == WDCollisionShape
+WDPCollisionShape class >> isAbstract [
+	^ self == WDPCollisionShape
 ]
 
 { #category : #adding }
-WDCollisionShape >> constructVisualizationSceneNode [
+WDPCollisionShape >> constructVisualizationSceneNode [
 	^ self subclassResponsibility
 ]
 
 { #category : #accessing }
-WDCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform with: otherShape at: otherTransform [
+WDPCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform with: otherShape at: otherTransform [
 	self subclassResponsibility
 ]
 
 { #category : #accessing }
-WDCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform withConvexShape: otherShape at: otherTransform [
+WDPCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform withConvexShape: otherShape at: otherTransform [
 	self subclassResponsibility
 ]
 
 { #category : #initialization }
-WDCollisionShape >> initialize [
+WDPCollisionShape >> initialize [
 	super initialize.
 	margin := 0.01.
 	localBoundingBox := AABox new.
@@ -41,30 +41,30 @@ WDCollisionShape >> initialize [
 ]
 
 { #category : #accessing }
-WDCollisionShape >> localBoundingBox [
+WDPCollisionShape >> localBoundingBox [
 
 	^ localBoundingBox
 ]
 
 { #category : #accessing }
-WDCollisionShape >> localBoundingBox: anAABox [
+WDPCollisionShape >> localBoundingBox: anAABox [
 	localBoundingBox := anAABox.
 	localBoundingBoxWithMargin := nil.
 ]
 
 { #category : #accessing }
-WDCollisionShape >> localBoundingBoxWithMargin [
+WDPCollisionShape >> localBoundingBoxWithMargin [
 	^ localBoundingBoxWithMargin ifNil: [ localBoundingBoxWithMargin := self localBoundingBox withExpandedHalfExtent: margin ]
 ]
 
 { #category : #accessing }
-WDCollisionShape >> margin [
+WDPCollisionShape >> margin [
 
 	^ margin
 ]
 
 { #category : #accessing }
-WDCollisionShape >> margin: aNumber [
+WDPCollisionShape >> margin: aNumber [
 	margin := aNumber.
 	localBoundingBoxWithMargin := nil.
 ]

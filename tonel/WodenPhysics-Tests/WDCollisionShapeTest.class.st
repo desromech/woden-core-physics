@@ -10,7 +10,7 @@ Class {
 { #category : #tests }
 WDCollisionShapeTest >> testBox [
 	| box |
-	box := WDBoxCollisionShape halfExtent: (Vector3 x: 1 y: 2 z: 3).
+	box := WDPBoxCollisionShape halfExtent: (Vector3 x: 1 y: 2 z: 3).
 	self assert: box halfExtent equals: (Vector3 x: 1 y: 2 z: 3).
 	self assert: box localBoundingBox min x equals: -1.
 	self assert: box localBoundingBox min y equals: -2.
@@ -23,7 +23,7 @@ WDCollisionShapeTest >> testBox [
 { #category : #tests }
 WDCollisionShapeTest >> testSphere [
 	| sphere |
-	sphere := WDSphereCollisionShape radius: 1.
+	sphere := WDPSphereCollisionShape radius: 1.
 	self assert: sphere radius equals: 1.
 	self assert: sphere localBoundingBox min x equals: -1.
 	self assert: sphere localBoundingBox min y equals: -1.
