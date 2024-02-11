@@ -6,6 +6,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'owner',
+		'collisionTreeNode',
 		'shape',
 		'transform',
 		'linearVelocity',
@@ -74,6 +75,18 @@ WDPCollisionObject >> collisionResponseGroupMask [
 WDPCollisionObject >> collisionResponseGroupMask: anObject [
 
 	collisionResponseGroupMask := anObject
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> collisionTreeNode [
+
+	^ collisionTreeNode
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> collisionTreeNode: anObject [
+
+	collisionTreeNode := anObject
 ]
 
 { #category : #adding }
@@ -176,7 +189,8 @@ WDPCollisionObject >> orientation [
 
 { #category : #accessing }
 WDPCollisionObject >> orientation: anOrientation [
-	transform rotation: anOrientation
+	transform rotation: anOrientation.
+	self transformChanged
 ]
 
 { #category : #accessing }
@@ -198,7 +212,8 @@ WDPCollisionObject >> position [
 
 { #category : #accessing }
 WDPCollisionObject >> position: aPosition [
-	transform translation: aPosition
+	transform translation: aPosition.
+	self transformChanged
 ]
 
 { #category : #accessing }
@@ -253,8 +268,15 @@ WDPCollisionObject >> transform [
 
 { #category : #accessing }
 WDPCollisionObject >> transform: anObject [
+	transform := anObject.
+	self transformChanged
+]
 
-	transform := anObject
+{ #category : #accessing }
+WDPCollisionObject >> transformChanged [
+	owner ifNotNil: [ 
+		owner collisionObjectTransformChanged: self
+	]
 ]
 
 { #category : #transforming }

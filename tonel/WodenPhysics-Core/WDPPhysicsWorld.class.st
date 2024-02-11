@@ -5,7 +5,8 @@ Class {
 	#name : #WDPPhysicsWorld,
 	#superclass : #Object,
 	#instVars : [
-		'collisionObjects'
+		'collisionObjects',
+		'collisionObjectTree'
 	],
 	#category : #'WodenPhysics-Core-World'
 }
@@ -23,8 +24,12 @@ WDPPhysicsWorld >> add: aPhysicsWorldObject [
 { #category : #adding }
 WDPPhysicsWorld >> addCollisionObject: aCollisionObject [
 	self assert: aCollisionObject owner isNil.
+	self assert: aCollisionObject collisionTreeNode isNil.
+	
+	collisionObjects add: aCollisionObject.
+	aCollisionObject collisionTreeNode: (collisionObjectTree insertValue: aCollisionObject withBoundingBox: aCollisionObject boundingBoxWithMargin).
 	aCollisionObject owner: self.
-	collisionObjects add: aCollisionObject
+	
 ]
 
 { #category : #visualization }
@@ -51,17 +56,24 @@ WDPPhysicsWorld >> buildInteractiveVisualizationScene [
 	^ scene
 ]
 
+{ #category : #update }
+WDPPhysicsWorld >> collisionObjectTransformChanged: aCollisionObject [
+	self assert: aCollisionObject collisionTreeNode isNotNil.
+	collisionObjectTree updateLeafNode: aCollisionObject collisionTreeNode boundingBox: aCollisionObject boundingBoxWithMargin
+]
+
 { #category : #'as yet unclassified' }
 WDPPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairSet: pairsSet [
 	| boundingBoxToFind |
 	boundingBoxToFind := collidingObject boundingBoxWithMargin.
-	collisionObjects do: [ :each |
-		(each ~~ collidingObject and: [
-			(self hasToConsideInBroadphase: collidingObject with: each) and: [
-			boundingBoxToFind hasIntersectionWithBox: each boundingBoxWithMargin ]]) ifTrue: [ 
+	collisionObjectTree leavesIntersectingBox: boundingBoxToFind do: [ :eachLeafNode |
+		| eachCollisionObject |
+		eachCollisionObject := eachLeafNode value.
+		(eachCollisionObject ~~ collidingObject and: [
+			(self hasToConsiderInBroadphase: collidingObject with: eachCollisionObject)]) ifTrue: [ 
 			| firstPair secondPair |
-			firstPair := { each . collidingObject }.
-			secondPair := { collidingObject . each }.
+			firstPair := { eachCollisionObject . collidingObject }.
+			secondPair := { collidingObject . eachCollisionObject }.
 			((pairsSet includes: firstPair) or: (pairsSet includes: secondPair)) ifFalse: [ 
 				pairsList add: firstPair.
 				pairsSet add: firstPair
@@ -71,7 +83,7 @@ WDPPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairS
 ]
 
 { #category : #'as yet unclassified' }
-WDPPhysicsWorld >> hasToConsideInBroadphase: firstObject with: secondObject [
+WDPPhysicsWorld >> hasToConsiderInBroadphase: firstObject with: secondObject [
 	^ (firstObject collisionResponseGroupMask anyMask: secondObject collisionGroup) or: 
 		(secondObject collisionResponseGroupMask anyMask: firstObject collisionGroup)
 ]
@@ -80,6 +92,7 @@ WDPPhysicsWorld >> hasToConsideInBroadphase: firstObject with: secondObject [
 WDPPhysicsWorld >> initialize [
 	super initialize.
 	collisionObjects := OrderedCollection new.
+	collisionObjectTree := WMDbvt new.
 ]
 
 { #category : #'as yet unclassified' }
