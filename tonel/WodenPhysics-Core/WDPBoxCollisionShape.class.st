@@ -7,7 +7,7 @@ Class {
 	#instVars : [
 		'halfExtent'
 	],
-	#category : #'WodenPhysics-Core-Collisions'
+	#category : #'WodenPhysics-Core-Shapes'
 }
 
 { #category : #accessing }

@@ -8,10 +8,10 @@ Class {
 		'mass',
 		'inverseMass'
 	],
-	#category : #'WodenPhysics-Core-RigidBody'
+	#category : #'WodenPhysics-Core-CollisionObjects'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #update }
 WDPRigidBody >> applyLinearImpulse: impulse [
 	linearVelocity := linearVelocity + (impulse*inverseMass)
 ]

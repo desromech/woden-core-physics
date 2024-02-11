@@ -97,9 +97,13 @@ WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
 
 { #category : #'as yet unclassified' }
 WDPDiscreteDynamicPhysicsWorld >> resolveCollisionResponse: contactManifold [
-	| firstCollisionObject secondCollisionObject inverseMassSum relativeVelocity restitutionCoefficient relativeVelocityAlongNormal impulse contactNormal penetrationDelta |
+	| firstCollisionObject secondCollisionObject inverseMassSum relativeVelocity restitutionCoefficient relativeVelocityAlongNormal impulse contactNormal penetrationDelta firstObjectHasResponse secondObjectHasResponse |
 	firstCollisionObject := contactManifold firstCollisionObject.
 	secondCollisionObject := contactManifold secondCollisionObject.
+	firstObjectHasResponse := firstCollisionObject collisionResponseGroupMask anyMask: secondCollisionObject collisionGroup.
+	secondObjectHasResponse := secondCollisionObject collisionResponseGroupMask anyMask: firstCollisionObject collisionGroup.
+	(firstObjectHasResponse or: [secondObjectHasResponse]) ifFalse: [ ^ self ].
+	
 	inverseMassSum := firstCollisionObject inverseMass + secondCollisionObject inverseMass.
 	inverseMassSum <= 0 ifTrue: [ ^ self ].
 
@@ -112,12 +116,20 @@ WDPDiscreteDynamicPhysicsWorld >> resolveCollisionResponse: contactManifold [
 	restitutionCoefficient := firstCollisionObject restitutionCoefficient * secondCollisionObject restitutionCoefficient.
 	impulse := (restitutionCoefficient + 1.0) * relativeVelocityAlongNormal / inverseMassSum.
 	
-	firstCollisionObject applyLinearImpulse: contactNormal * impulse.
-	secondCollisionObject applyLinearImpulse: contactNormal * impulse negated.
+	firstObjectHasResponse ifTrue: [
+		firstCollisionObject applyLinearImpulse: contactNormal * impulse
+	].
+	secondObjectHasResponse ifTrue: [
+		secondCollisionObject applyLinearImpulse: contactNormal * impulse negated
+	].
 	
 	penetrationDelta := contactManifold minimumTranslationVector / inverseMassSum.
-	firstCollisionObject translateBy: penetrationDelta * firstCollisionObject inverseMass.
-	secondCollisionObject translateBy: penetrationDelta * secondCollisionObject inverseMass negated.
+	firstObjectHasResponse ifTrue: [ 
+		firstCollisionObject translateBy: penetrationDelta * firstCollisionObject inverseMass
+	].
+	secondObjectHasResponse ifTrue: [
+		secondCollisionObject translateBy: penetrationDelta * secondCollisionObject inverseMass negated
+	].
 
 ]
 

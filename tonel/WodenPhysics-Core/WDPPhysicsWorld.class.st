@@ -56,7 +56,9 @@ WDPPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairS
 	| boundingBoxToFind |
 	boundingBoxToFind := collidingObject boundingBoxWithMargin.
 	collisionObjects do: [ :each |
-		(each ~~ collidingObject and: [ boundingBoxToFind hasIntersectionWithBox: each boundingBoxWithMargin ]) ifTrue: [ 
+		(each ~~ collidingObject and: [
+			(self hasToConsideInBroadphase: collidingObject with: each) and: [
+			boundingBoxToFind hasIntersectionWithBox: each boundingBoxWithMargin ]]) ifTrue: [ 
 			| firstPair secondPair |
 			firstPair := { each . collidingObject }.
 			secondPair := { collidingObject . each }.
@@ -66,6 +68,12 @@ WDPPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairS
 			]
 		].
 	]
+]
+
+{ #category : #'as yet unclassified' }
+WDPPhysicsWorld >> hasToConsideInBroadphase: firstObject with: secondObject [
+	^ (firstObject collisionResponseGroupMask anyMask: secondObject collisionGroup) or: 
+		(secondObject collisionResponseGroupMask anyMask: firstObject collisionGroup)
 ]
 
 { #category : #initialization }

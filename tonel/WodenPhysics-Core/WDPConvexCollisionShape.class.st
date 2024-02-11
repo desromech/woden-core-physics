@@ -7,7 +7,7 @@ Class {
 	#classVars : [
 		'ShallowPenetrationThreshold'
 	],
-	#category : #'WodenPhysics-Core-Collisions'
+	#category : #'WodenPhysics-Core-Shapes'
 }
 
 { #category : #initialization }

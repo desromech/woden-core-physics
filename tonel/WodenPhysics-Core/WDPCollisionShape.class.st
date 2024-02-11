@@ -9,7 +9,7 @@ Class {
 		'localBoundingBox',
 		'localBoundingBoxWithMargin'
 	],
-	#category : #'WodenPhysics-Core-Collisions'
+	#category : #'WodenPhysics-Core-Shapes'
 }
 
 { #category : #testing }

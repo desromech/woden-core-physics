@@ -1,7 +1,7 @@
 Class {
 	#name : #WDPCapsuleZCollisionShape,
 	#superclass : #WDPAbstractCapsuleCollisionShape,
-	#category : #'WodenPhysics-Core-Collisions'
+	#category : #'WodenPhysics-Core-Shapes'
 }
 
 { #category : #accessing }

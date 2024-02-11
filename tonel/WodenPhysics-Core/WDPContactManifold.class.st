@@ -12,7 +12,7 @@ Class {
 		'firstCollisionObject',
 		'secondCollisionObject'
 	],
-	#category : #'WodenPhysics-Core-Collisions'
+	#category : #'WodenPhysics-Core-Constraints'
 }
 
 { #category : #accessing }

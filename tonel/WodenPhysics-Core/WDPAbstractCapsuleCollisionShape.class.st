@@ -6,7 +6,7 @@ Class {
 		'radius',
 		'halfHeight'
 	],
-	#category : #'WodenPhysics-Core-Collisions'
+	#category : #'WodenPhysics-Core-Shapes'
 }
 
 { #category : #construction }

@@ -7,7 +7,7 @@ Class {
 	#instVars : [
 		'radius'
 	],
-	#category : #'WodenPhysics-Core-Collisions'
+	#category : #'WodenPhysics-Core-Shapes'
 }
 
 { #category : #accessing }

@@ -13,9 +13,11 @@ Class {
 		'restitutionCoefficient',
 		'dynamicFrictionCoefficient',
 		'staticFrictionCoefficient',
-		'model'
+		'model',
+		'collisionGroup',
+		'collisionResponseGroupMask'
 	],
-	#category : #'WodenPhysics-Core-RigidBody'
+	#category : #'WodenPhysics-Core-CollisionObjects'
 }
 
 { #category : #adding }
@@ -50,6 +52,30 @@ WDPCollisionObject >> boundingBoxWithMargin [
 	^ self localBoundingBoxWithMargin transformedWith: transform
 ]
 
+{ #category : #accessing }
+WDPCollisionObject >> collisionGroup [
+
+	^ collisionGroup
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> collisionGroup: anObject [
+
+	collisionGroup := anObject
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> collisionResponseGroupMask [
+
+	^ collisionResponseGroupMask
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> collisionResponseGroupMask: anObject [
+
+	collisionResponseGroupMask := anObject
+]
+
 { #category : #adding }
 WDPCollisionObject >> constructVisualizationSceneNode [
 	^ shape constructVisualizationSceneNode
@@ -81,6 +107,9 @@ WDPCollisionObject >> initialize [
 	restitutionCoefficient := 0.5.
 	dynamicFrictionCoefficient := 0.5.
 	staticFrictionCoefficient := 0.625.
+	
+	collisionGroup := WDPCollisionMasks defaultCollisionGroup .
+	collisionResponseGroupMask := WDPCollisionMasks defaultCollisionResponseGroup.
 
 ]
 
