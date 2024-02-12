@@ -217,6 +217,14 @@ WDPCollisionObject >> position: aPosition [
 ]
 
 { #category : #accessing }
+WDPCollisionObject >> position: aPosition orientation: anOrientation [
+	transform
+		rotation: anOrientation;
+		translation: aPosition.
+	self transformChanged
+]
+
+{ #category : #accessing }
 WDPCollisionObject >> restitutionCoefficient [
 
 	^ restitutionCoefficient
@@ -267,8 +275,8 @@ WDPCollisionObject >> transform [
 ]
 
 { #category : #accessing }
-WDPCollisionObject >> transform: anObject [
-	transform := anObject.
+WDPCollisionObject >> transform: aTransform [
+	transform := aTransform asTRSTransform3D copy.
 	self transformChanged
 ]
 

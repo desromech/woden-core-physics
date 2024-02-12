@@ -6,10 +6,34 @@ Class {
 	#superclass : #WDPCollisionObject,
 	#instVars : [
 		'mass',
-		'inverseMass'
+		'inverseMass',
+		'linearDamping',
+		'angularDamping'
 	],
 	#category : #'WodenPhysics-Core-CollisionObjects'
 }
+
+{ #category : #'as yet unclassified' }
+WDPRigidBody class >> defaultAngularDamping [
+	^ 0.01
+]
+
+{ #category : #'as yet unclassified' }
+WDPRigidBody class >> defaultLinearDamping [
+	^ 0.01
+]
+
+{ #category : #accessing }
+WDPRigidBody >> angularDamping [
+
+	^ angularDamping
+]
+
+{ #category : #accessing }
+WDPRigidBody >> angularDamping: anObject [
+
+	angularDamping := anObject
+]
 
 { #category : #update }
 WDPRigidBody >> applyLinearImpulse: impulse [
@@ -20,17 +44,25 @@ WDPRigidBody >> applyLinearImpulse: impulse [
 WDPRigidBody >> initialize [
 	super initialize.
 	mass := inverseMass := 0.0.
+	linearDamping := self class defaultLinearDamping.
+	angularDamping := self class defaultAngularDamping.
 ]
 
 { #category : #update }
 WDPRigidBody >> integrateMovementWithDeltaTime: deltaTime [
-	| linearAcceleration |
+	| linearAcceleration integratedPosition integratedOrientation angularAcceleration |
 	mass isZero ifTrue: [ ^ self ].
 	
-	linearAcceleration := owner gravity.
-	self position:
-		self position + (linearVelocity *deltaTime) + (linearAcceleration *(deltaTime*deltaTime*0.5)).
+	linearAcceleration := owner gravity + (linearVelocity * linearDamping negated ).
 	linearVelocity := linearVelocity + (linearAcceleration*deltaTime).
+	integratedPosition := self position + (linearVelocity *deltaTime).
+
+	angularAcceleration := angularVelocity * angularDamping negated.
+	angularVelocity := angularVelocity + (angularAcceleration*deltaTime).
+
+	integratedOrientation := self orientation + ((Quaternion xyz: angularVelocity * 0.5 *deltaTime) * self orientation).
+	integratedOrientation := integratedOrientation normalized.
+	self position: integratedPosition orientation: integratedOrientation.
 
 ]
 
@@ -38,6 +70,18 @@ WDPRigidBody >> integrateMovementWithDeltaTime: deltaTime [
 WDPRigidBody >> inverseMass [
 
 	^ inverseMass
+]
+
+{ #category : #accessing }
+WDPRigidBody >> linearDamping [
+
+	^ linearDamping
+]
+
+{ #category : #accessing }
+WDPRigidBody >> linearDamping: anObject [
+
+	linearDamping := anObject
 ]
 
 { #category : #accessing }
