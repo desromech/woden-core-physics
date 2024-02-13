@@ -6,7 +6,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'collisionObjects',
-		'collisionObjectTree'
+		'collisionObjectTree',
+		'collisionObjectIdCount'
 	],
 	#category : #'WodenPhysics-Core-World'
 }
@@ -28,7 +29,8 @@ WDPPhysicsWorld >> addCollisionObject: aCollisionObject [
 	
 	collisionObjects add: aCollisionObject.
 	aCollisionObject collisionTreeNode: (collisionObjectTree insertValue: aCollisionObject withBoundingBox: aCollisionObject boundingBoxWithMargin).
-	aCollisionObject owner: self.
+	aCollisionObject owner: self; id: collisionObjectIdCount.
+	collisionObjectIdCount := collisionObjectIdCount + 1.
 	
 ]
 
@@ -63,6 +65,11 @@ WDPPhysicsWorld >> collisionObjectTransformChanged: aCollisionObject [
 ]
 
 { #category : #'as yet unclassified' }
+WDPPhysicsWorld >> composeCollisionId: firstId with: secondId [
+	^ firstId | (secondId << 32)
+]
+
+{ #category : #'as yet unclassified' }
 WDPPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairSet: pairsSet [
 	| boundingBoxToFind |
 	boundingBoxToFind := collidingObject boundingBoxWithMargin.
@@ -71,12 +78,20 @@ WDPPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairS
 		eachCollisionObject := eachLeafNode value.
 		(eachCollisionObject ~~ collidingObject and: [
 			(self hasToConsiderInBroadphase: collidingObject with: eachCollisionObject)]) ifTrue: [ 
-			| firstPair secondPair |
-			firstPair := { eachCollisionObject . collidingObject }.
-			secondPair := { collidingObject . eachCollisionObject }.
-			((pairsSet includes: firstPair) or: (pairsSet includes: secondPair)) ifFalse: [ 
-				pairsList add: firstPair.
-				pairsSet add: firstPair
+			| firstObject secondObject pairId |
+			self assert: collidingObject id ~= eachCollisionObject id.
+			collidingObject id < eachCollisionObject id ifTrue: [ 
+				firstObject := collidingObject.
+				secondObject := eachCollisionObject
+			] ifFalse: [ 
+				firstObject := eachCollisionObject.
+				secondObject := collidingObject
+			].
+			
+			pairId := self composeCollisionId: firstObject id with: secondObject id.
+			(pairsSet includes: pairId) ifFalse: [
+				pairsList add: {firstObject . secondObject}.
+				pairsSet add: pairId
 			]
 		].
 	]
@@ -93,6 +108,7 @@ WDPPhysicsWorld >> initialize [
 	super initialize.
 	collisionObjects := OrderedCollection new.
 	collisionObjectTree := WMDbvt new.
+	collisionObjectIdCount := 0.
 ]
 
 { #category : #'as yet unclassified' }

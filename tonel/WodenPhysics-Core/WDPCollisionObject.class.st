@@ -6,6 +6,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'owner',
+		'id',
 		'collisionTreeNode',
 		'shape',
 		'transform',
@@ -118,9 +119,22 @@ WDPCollisionObject >> dynamicFrictionCoefficient: anObject [
 	dynamicFrictionCoefficient := anObject
 ]
 
+{ #category : #accessing }
+WDPCollisionObject >> id [
+
+	^ id
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> id: anObject [
+
+	id := anObject
+]
+
 { #category : #initialization }
 WDPCollisionObject >> initialize [
 	super initialize.
+	id := -1.
 	shape := WDPNullCollisionShape uniqueInstance.
 
 	transform := RigidTransform3D identity.
