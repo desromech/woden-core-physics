@@ -15,6 +15,14 @@ WDPSphereCollisionShape class >> radius: radius [
 	^ self new radius: radius; yourself
 ]
 
+{ #category : #'mass distribution' }
+WDPSphereCollisionShape >> computeInertiaTensorWithMass: mass [
+	| i |
+	i := mass * radius * radius * 2 * 5. 
+	
+	^ Matrix3x3 scale: i
+]
+
 { #category : #adding }
 WDPSphereCollisionShape >> constructVisualizationSceneNode [
 	^ (WDMeshBuilder new

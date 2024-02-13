@@ -17,6 +17,11 @@ WDPCollisionShape class >> isAbstract [
 	^ self == WDPCollisionShape
 ]
 
+{ #category : #'mass distribution' }
+WDPCollisionShape >> computeInertiaTensorWithMass: mass [
+	^ Matrix3x3 zeros
+]
+
 { #category : #adding }
 WDPCollisionShape >> constructVisualizationSceneNode [
 	^ self subclassResponsibility

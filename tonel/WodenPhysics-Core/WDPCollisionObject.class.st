@@ -39,6 +39,16 @@ WDPCollisionObject >> angularVelocity: anObject [
 ]
 
 { #category : #update }
+WDPCollisionObject >> applyForce: force [
+	"By default do nothing."
+]
+
+{ #category : #update }
+WDPCollisionObject >> applyForce: force inPosition: worldPosition [
+	self applyForce: force
+]
+
+{ #category : #update }
 WDPCollisionObject >> applyImpulse: impulse inPosition: worldPosition [
 	self applyLinearImpulse: impulse
 ]
