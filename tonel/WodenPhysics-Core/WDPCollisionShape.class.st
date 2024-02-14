@@ -33,7 +33,12 @@ WDPCollisionShape >> detectAndComputeCollisionContactPointsAt: transform with: o
 ]
 
 { #category : #accessing }
-WDPCollisionShape >> detectAndComputeCollisionContactPointsAt: transform withConvexShape: otherShape at: otherTransform [
+WDPCollisionShape >> detectAndComputeCollisionContactPointsAt: transform with: otherShape at: otherTransform separatingAxisHint: separatingAxisHint [
+	self subclassResponsibility
+]
+
+{ #category : #accessing }
+WDPCollisionShape >> detectAndComputeCollisionContactPointsAt: transform withConvexShape: otherShape at: otherTransform separatingAxisHint: separatingAxisHint [
 	self subclassResponsibility
 ]
 

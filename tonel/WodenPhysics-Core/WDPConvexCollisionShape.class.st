@@ -21,17 +21,17 @@ WDPConvexCollisionShape class >> isAbstract [
 ]
 
 { #category : #accessing }
-WDPConvexCollisionShape >> detectAndComputeCollisionContactPointsAt: transform with: otherShape at: otherTransform [
-	^ (otherShape detectAndComputeCollisionContactPointsAt: otherTransform withConvexShape: self at: transform) collect: [ :each | each flipped ]
+WDPConvexCollisionShape >> detectAndComputeCollisionContactPointsAt: transform with: otherShape at: otherTransform separatingAxisHint: separatingAxisHint [
+	^ (otherShape detectAndComputeCollisionContactPointsAt: otherTransform withConvexShape: self at: transform separatingAxisHint: (separatingAxisHint ifNotNil: [separatingAxisHint negated])) collect: [ :each | each flipped ]
 ]
 
 { #category : #accessing }
-WDPConvexCollisionShape >> detectAndComputeCollisionContactPointsAt: transform withConvexShape: otherShape at: otherTransform [
+WDPConvexCollisionShape >> detectAndComputeCollisionContactPointsAt: transform withConvexShape: otherShape at: otherTransform separatingAxisHint: separatingAxisHint [
 	| firstSupportFunction secondSupportFunction
 		gjkSimplex closestPointToOrigin totalMargin shapeDistance |
 	firstSupportFunction := GeometricFunctions transformSupportFunction: self localSupportFunction with: transform.
 	secondSupportFunction := GeometricFunctions transformSupportFunction: otherShape localSupportFunction with: otherTransform.
-	gjkSimplex := GeometricFunctions gjkSimplexFor: firstSupportFunction with: secondSupportFunction.
+	gjkSimplex := GeometricFunctions gjkSimplexFor: firstSupportFunction with: secondSupportFunction separatingAxisHint: separatingAxisHint.
 	
 	closestPointToOrigin := gjkSimplex closestPointToOrigin.
 	totalMargin := margin + otherShape margin.
@@ -51,7 +51,7 @@ WDPConvexCollisionShape >> detectAndComputeCollisionContactPointsAt: transform w
 		}
 	] ifFalse: [
 		| distanceAndNormal |
-		distanceAndNormal := GeometricFunctions samplePenetrationDistanceAndNormalForSupport: firstSupportFunction with: secondSupportFunction.
+		distanceAndNormal := GeometricFunctions samplePenetrationDistanceAndNormalForSupport: firstSupportFunction with: secondSupportFunction separatingAxisHint: separatingAxisHint.
 		distanceAndNormal ifNil: [ ^ #() ].
 		
 		^ {WDPContactPoint new

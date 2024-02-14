@@ -10,7 +10,7 @@ Class {
 	#category : #'WodenPhysics-Core-World'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #broadphase }
 WDPDiscreteDynamicPhysicsWorld >> computeBroadphaseCandidatePairs [
 	| pairSet broadphasePairs |
 	pairSet := Set new.	
@@ -23,7 +23,7 @@ WDPDiscreteDynamicPhysicsWorld >> computeBroadphaseCandidatePairs [
 	^ broadphasePairs
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #narrowphase }
 WDPDiscreteDynamicPhysicsWorld >> computeNarrowPhaseConstantFromBroadphaseCandidatePairs: broadphaseCandidatePairs [
 	contactManifoldCache beginEpoch.
 	broadphaseCandidatePairs do: [ :each |
@@ -52,15 +52,22 @@ WDPDiscreteDynamicPhysicsWorld >> detectAndResolveCollisionsWithDeltaTime: delta
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #narrowphase }
 WDPDiscreteDynamicPhysicsWorld >> detectNarrowphaseCollisionOf: firstCollisionObject with: secondCollisionObject [
-	| firstShape firstTransform secondShape secondTransform contactPoints |
+	| firstShape firstTransform secondShape secondTransform contactPoints separatingAxisHint |
 	firstShape := firstCollisionObject shape.
 	firstTransform := firstCollisionObject transform.
 	secondShape := secondCollisionObject shape.
 	secondTransform := secondCollisionObject transform.
+	separatingAxisHint := contactManifoldCache lastSeparatingAxisFor: firstCollisionObject with: secondCollisionObject.
+	separatingAxisHint ifNil: [ 
+		separatingAxisHint := (secondTransform translation - firstTransform translation) normalized.
+		(separatingAxisHint closeTo: Vector3 zeros) ifTrue: [ 
+			separatingAxisHint := nil
+		]
+	].
 	
-	contactPoints := firstShape detectAndComputeCollisionContactPointsAt: firstTransform with: secondShape at: secondTransform.
+	contactPoints := firstShape detectAndComputeCollisionContactPointsAt: firstTransform with: secondShape at: secondTransform separatingAxisHint: separatingAxisHint.
 	contactManifoldCache insertContacts: contactPoints for: firstCollisionObject with: secondCollisionObject.
 ]
 
@@ -87,7 +94,7 @@ WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
 	collisionObjects do: [ :each | each integrateMovementWithDeltaTime: deltaTime ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollisionResponse: contact [
 	| firstCollisionObject secondCollisionObject inverseMassSum restitutionCoefficient contactNormal relativeVelocity relativeVelocityAlongNormal impulse |
 	contact penetrationDistance <= 0 ifTrue: [ ^ self ].
@@ -117,7 +124,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollis
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactConstraint: contact [
 	| firstCollisionObject secondCollisionObject inverseMassSum penetrationDistance penetrationDelta |
 	penetrationDistance := contact penetrationDistance.
@@ -139,7 +146,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactConstr
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldCollisionResponse: contactManifold [
 	(contactManifold firstObjectHasResponse or: [contactManifold secondObjectHasResponse]) ifFalse: [
 		^ self
@@ -151,7 +158,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldCollisionResponse: conta
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldConstraints: contactManifold [
 	(contactManifold firstObjectHasResponse or: [contactManifold secondObjectHasResponse]) ifFalse: [
 		^ self

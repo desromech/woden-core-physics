@@ -72,6 +72,13 @@ WDPContactManifold >> initialize [
 ]
 
 { #category : #accessing }
+WDPContactManifold >> lastSeparatingAxis [
+	^ contacts isEmpty
+		ifTrue: [ nil ]
+		ifFalse: [ firstCollisionObject transform transformNormalVector: contacts last localNormal ]
+]
+
+{ #category : #accessing }
 WDPContactManifold >> pairId [
 
 	^ pairId

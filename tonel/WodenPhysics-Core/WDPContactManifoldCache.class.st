@@ -83,6 +83,13 @@ WDPContactManifoldCache >> insertContacts: contactPoints for: firstCollisionObje
 
 ]
 
+{ #category : #adding }
+WDPContactManifoldCache >> lastSeparatingAxisFor: firstCollisionObject with: secondCollisionObject [
+	^ manifoldDictionary at: (self composeCollisionId: firstCollisionObject id with: secondCollisionObject id)
+		ifPresent: [:manifold | manifold lastSeparatingAxis ]
+		ifAbsent: [ nil ]
+]
+
 { #category : #accessing }
 WDPContactManifoldCache >> manifolds [
 	^ manifolds
