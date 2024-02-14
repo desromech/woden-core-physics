@@ -6,6 +6,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'pairId',
+		'epoch',
 		'firstCollisionObject',
 		'secondCollisionObject',
 		'contacts'
@@ -13,16 +14,38 @@ Class {
 	#category : #'WodenPhysics-Core-Constraints'
 }
 
-{ #category : #accessing }
-WDPContactManifold >> contacts [
+{ #category : #adding }
+WDPContactManifold >> addContact: newContact [
+	contacts do: [ :eachExistingContact |
+		(eachExistingContact isSimilarTo: newContact) ifTrue: [ 
+			eachExistingContact epoch: (eachExistingContact epoch max: newContact epoch).
+			^ self
+		].
+	].
 
-	^ contacts
+	contacts add: newContact
+]
+
+{ #category : #adding }
+WDPContactManifold >> addContacts: newContacts [
+	newContacts do: [ :each | self addContact: each ].
 ]
 
 { #category : #accessing }
-WDPContactManifold >> contacts: anObject [
+WDPContactManifold >> epoch [
 
-	contacts := anObject
+	^ epoch
+]
+
+{ #category : #accessing }
+WDPContactManifold >> epoch: anObject [
+
+	epoch := anObject
+]
+
+{ #category : #update }
+WDPContactManifold >> expireContactsUntil: oldestEpoch [
+	contacts removeAllSuchThat: [:each | each epoch < oldestEpoch ]
 ]
 
 { #category : #accessing }
@@ -40,6 +63,12 @@ WDPContactManifold >> firstCollisionObject: anObject [
 { #category : #testing }
 WDPContactManifold >> firstObjectHasResponse [
 	^ firstCollisionObject collisionResponseGroupMask anyMask: secondCollisionObject collisionGroup
+]
+
+{ #category : #initialization }
+WDPContactManifold >> initialize [
+	super initialize.
+	contacts := OrderedCollection new.
 ]
 
 { #category : #accessing }

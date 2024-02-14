@@ -5,6 +5,7 @@ Class {
 	#name : #WDPContactPoint,
 	#superclass : #Object,
 	#instVars : [
+		'epoch',
 		'normal',
 		'requiredSeparation',
 		'point',
@@ -29,7 +30,7 @@ WDPContactPoint >> computeLocalVersionWithFirstTransform: firstTransform secondT
 { #category : #updating }
 WDPContactPoint >> computeWorldContactPointAndDistances [
 	contactPoint := firstPoint + (secondPoint - firstPoint).
-	penetrationDistance := (firstPoint - secondPoint dot: normal) + requiredSeparation max: 0.0.
+	penetrationDistance := requiredSeparation - (firstPoint - secondPoint dot: normal).
 ]
 
 { #category : #updating }
@@ -50,6 +51,18 @@ WDPContactPoint >> contactPoint [
 WDPContactPoint >> contactPoint: anObject [
 
 	contactPoint := anObject
+]
+
+{ #category : #accessing }
+WDPContactPoint >> epoch [
+
+	^ epoch
+]
+
+{ #category : #accessing }
+WDPContactPoint >> epoch: anObject [
+
+	epoch := anObject
 ]
 
 { #category : #accessing }
@@ -74,6 +87,14 @@ WDPContactPoint >> flipped [
 		localFirstPoint: localSecondPoint;
 		localSecondPoint: localFirstPoint;
 		yourself
+]
+
+{ #category : #testing }
+WDPContactPoint >> isSimilarTo: otherContact [
+	^ (localFirstPoint closeTo: otherContact localFirstPoint) and: [ 
+		(localSecondPoint closeTo: otherContact localSecondPoint) and: [ 
+		(normal closeTo: otherContact normal) and: [ 
+		requiredSeparation closeTo: otherContact requiredSeparation ]]]
 ]
 
 { #category : #accessing }

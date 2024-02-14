@@ -25,16 +25,13 @@ WDPDiscreteDynamicPhysicsWorld >> computeBroadphaseCandidatePairs [
 
 { #category : #'as yet unclassified' }
 WDPDiscreteDynamicPhysicsWorld >> computeNarrowPhaseConstantFromBroadphaseCandidatePairs: broadphaseCandidatePairs [
-	| narrowPhaseContacts |
-	narrowPhaseContacts := OrderedCollection new.
+	contactManifoldCache beginEpoch.
 	broadphaseCandidatePairs do: [ :each |
-		| contact | 
-		contact := self detectNarrowphaseCollisionOf: each first with: each second.
-		contact ifNotNil: [
-			narrowPhaseContacts add: contact
-		]
+		self detectNarrowphaseCollisionOf: each first with: each second.
 	].
-	^ narrowPhaseContacts
+
+	contactManifoldCache endEpoch.
+	^ contactManifoldCache manifolds
 ]
 
 { #category : #update }
@@ -64,13 +61,7 @@ WDPDiscreteDynamicPhysicsWorld >> detectNarrowphaseCollisionOf: firstCollisionOb
 	secondTransform := secondCollisionObject transform.
 	
 	contactPoints := firstShape detectAndComputeCollisionContactPointsAt: firstTransform with: secondShape at: secondTransform.
-	contactPoints ifEmpty: [ ^ nil ].
-	
-	^ WDPContactManifold new
-		firstCollisionObject: firstCollisionObject;
-		secondCollisionObject: secondCollisionObject;
-		contacts: contactPoints;
-		yourself
+	contactManifoldCache insertContacts: contactPoints for: firstCollisionObject with: secondCollisionObject.
 ]
 
 { #category : #accessing }
@@ -99,6 +90,8 @@ WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
 { #category : #'as yet unclassified' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollisionResponse: contact [
 	| firstCollisionObject secondCollisionObject inverseMassSum restitutionCoefficient contactNormal relativeVelocity relativeVelocityAlongNormal impulse |
+	contact penetrationDistance <= 0 ifTrue: [ ^ self ].
+
 	firstCollisionObject := manifold firstCollisionObject.
 	secondCollisionObject := manifold secondCollisionObject.
 	
@@ -127,14 +120,14 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollis
 { #category : #'as yet unclassified' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactConstraint: contact [
 	| firstCollisionObject secondCollisionObject inverseMassSum penetrationDistance penetrationDelta |
+	penetrationDistance := contact penetrationDistance.
+	penetrationDistance <= 0 ifTrue: [ ^ self ].
+
 	firstCollisionObject := manifold firstCollisionObject.
 	secondCollisionObject := manifold secondCollisionObject.
 	
 	inverseMassSum := firstCollisionObject inverseMass + secondCollisionObject inverseMass.
 	inverseMassSum <= 0 ifTrue: [ ^ self ].
-	
-	penetrationDistance := contact penetrationDistance.
-	penetrationDistance <= 0 ifTrue: [ ^ self ].
 	
 	penetrationDelta := contact normal * (penetrationDistance / inverseMassSum).
 	manifold firstObjectHasResponse ifTrue: [ 

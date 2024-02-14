@@ -7,7 +7,8 @@ Class {
 	#instVars : [
 		'collisionObjects',
 		'collisionObjectTree',
-		'collisionObjectIdCount'
+		'collisionObjectIdCount',
+		'contactManifoldCache'
 	],
 	#category : #'WodenPhysics-Core-World'
 }
@@ -109,6 +110,7 @@ WDPPhysicsWorld >> initialize [
 	collisionObjects := OrderedCollection new.
 	collisionObjectTree := WMDbvt new.
 	collisionObjectIdCount := 0.
+	contactManifoldCache := WDPContactManifoldCache new.
 ]
 
 { #category : #'as yet unclassified' }

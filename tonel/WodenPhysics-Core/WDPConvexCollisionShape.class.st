@@ -43,9 +43,8 @@ WDPConvexCollisionShape >> detectAndComputeCollisionContactPointsAt: transform w
 		^ {WDPContactPoint new
 				normal: closestPointToOrigin normalized;
 				requiredSeparation: totalMargin;
-				"FIXME: This seems hackish. Flip the points here to get the proper penetration distance."
-				firstPoint: gjkSimplex closestPointToOriginInSecond;
-				secondPoint: gjkSimplex closestPointToOriginInFirst;
+				firstPoint: gjkSimplex closestPointToOriginInFirst;
+				secondPoint: gjkSimplex closestPointToOriginInSecond;
 				computeLocalVersionWithFirstTransform: transform secondTransform: otherTransform;
 				computeWorldContactPointAndDistances;
 				yourself
@@ -58,8 +57,8 @@ WDPConvexCollisionShape >> detectAndComputeCollisionContactPointsAt: transform w
 		^ {WDPContactPoint new
 				normal: distanceAndNormal second;
 				requiredSeparation: totalMargin;
-				firstPoint: distanceAndNormal third;
-				secondPoint: distanceAndNormal fourth;
+				firstPoint: distanceAndNormal fourth;
+				secondPoint: distanceAndNormal third;
 				computeLocalVersionWithFirstTransform: transform secondTransform: otherTransform;
 				computeWorldContactPointAndDistances;
 				yourself
