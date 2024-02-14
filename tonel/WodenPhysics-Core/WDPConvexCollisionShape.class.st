@@ -21,12 +21,12 @@ WDPConvexCollisionShape class >> isAbstract [
 ]
 
 { #category : #accessing }
-WDPConvexCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform with: otherShape at: otherTransform [
-	^ otherShape detectAndComputeCollisionContactManifoldAt: otherTransform withConvexShape: self at: transform
+WDPConvexCollisionShape >> detectAndComputeCollisionContactPointsAt: transform with: otherShape at: otherTransform [
+	^ (otherShape detectAndComputeCollisionContactPointsAt: otherTransform withConvexShape: self at: transform) collect: [ :each | each flipped ]
 ]
 
 { #category : #accessing }
-WDPConvexCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform withConvexShape: otherShape at: otherTransform [
+WDPConvexCollisionShape >> detectAndComputeCollisionContactPointsAt: transform withConvexShape: otherShape at: otherTransform [
 	| firstSupportFunction secondSupportFunction
 		gjkSimplex closestPointToOrigin totalMargin shapeDistance |
 	firstSupportFunction := GeometricFunctions transformSupportFunction: self localSupportFunction with: transform.
@@ -37,27 +37,33 @@ WDPConvexCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform
 	totalMargin := margin + otherShape margin.
 	shapeDistance := closestPointToOrigin length.
 
-	shapeDistance > totalMargin ifTrue: [ ^ nil ].	
+	shapeDistance > totalMargin ifTrue: [ ^ #() ].	
 
 	shapeDistance >= ShallowPenetrationThreshold ifTrue: [
-		^ WDPContactManifold new
-			normal: closestPointToOrigin normalized;
-			penetrationDistance: totalMargin - shapeDistance;
-			firstPoint: gjkSimplex closestPointToOriginInFirst;
-			secondPoint: gjkSimplex closestPointToOriginInSecond;
-			yourself
+		^ {WDPContactPoint new
+				normal: closestPointToOrigin normalized;
+				requiredSeparation: totalMargin;
+				"FIXME: This seems hackish. Flip the points here to get the proper penetration distance."
+				firstPoint: gjkSimplex closestPointToOriginInSecond;
+				secondPoint: gjkSimplex closestPointToOriginInFirst;
+				computeLocalVersionWithFirstTransform: transform secondTransform: otherTransform;
+				computeWorldContactPointAndDistances;
+				yourself
+		}
 	] ifFalse: [
 		| distanceAndNormal |
-		Transcript show: 'Deep penetration'; cr.
 		distanceAndNormal := GeometricFunctions samplePenetrationDistanceAndNormalForSupport: firstSupportFunction with: secondSupportFunction.
-		distanceAndNormal ifNil: [ ^ nil ].
+		distanceAndNormal ifNil: [ ^ #() ].
 		
-		^ WDPContactManifold new
-			normal: distanceAndNormal second;
-			penetrationDistance: distanceAndNormal first + totalMargin;
-			firstPoint: distanceAndNormal third;
-			secondPoint: distanceAndNormal fourth;
-			yourself
+		^ {WDPContactPoint new
+				normal: distanceAndNormal second;
+				requiredSeparation: totalMargin;
+				firstPoint: distanceAndNormal third;
+				secondPoint: distanceAndNormal fourth;
+				computeLocalVersionWithFirstTransform: transform secondTransform: otherTransform;
+				computeWorldContactPointAndDistances;
+				yourself
+		}
 	]
 ]
 

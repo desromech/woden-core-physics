@@ -5,15 +5,25 @@ Class {
 	#name : #WDPContactManifold,
 	#superclass : #Object,
 	#instVars : [
-		'normal',
-		'penetrationDistance',
-		'firstPoint',
-		'secondPoint',
+		'pairId',
 		'firstCollisionObject',
-		'secondCollisionObject'
+		'secondCollisionObject',
+		'contacts'
 	],
 	#category : #'WodenPhysics-Core-Constraints'
 }
+
+{ #category : #accessing }
+WDPContactManifold >> contacts [
+
+	^ contacts
+]
+
+{ #category : #accessing }
+WDPContactManifold >> contacts: anObject [
+
+	contacts := anObject
+]
 
 { #category : #accessing }
 WDPContactManifold >> firstCollisionObject [
@@ -27,59 +37,21 @@ WDPContactManifold >> firstCollisionObject: anObject [
 	firstCollisionObject := anObject
 ]
 
-{ #category : #accessing }
-WDPContactManifold >> firstPoint [
-
-	^ firstPoint
+{ #category : #testing }
+WDPContactManifold >> firstObjectHasResponse [
+	^ firstCollisionObject collisionResponseGroupMask anyMask: secondCollisionObject collisionGroup
 ]
 
 { #category : #accessing }
-WDPContactManifold >> firstPoint: anObject [
+WDPContactManifold >> pairId [
 
-	firstPoint := anObject
-]
-
-{ #category : #properties }
-WDPContactManifold >> flipped [
-	^ self copy
-		normal: normal negated;
-		firstPoint: secondPoint;
-		secondPoint: firstPoint;
-		yourself
+	^ pairId
 ]
 
 { #category : #accessing }
-WDPContactManifold >> minimumTranslationVector [
-	^ normal * penetrationDistance
-]
+WDPContactManifold >> pairId: anObject [
 
-{ #category : #accessing }
-WDPContactManifold >> normal [
-
-	^ normal
-]
-
-{ #category : #accessing }
-WDPContactManifold >> normal: anObject [
-
-	normal := anObject
-]
-
-{ #category : #accessing }
-WDPContactManifold >> penetrationDistance [
-
-	^ penetrationDistance
-]
-
-{ #category : #accessing }
-WDPContactManifold >> penetrationDistance: anObject [
-
-	penetrationDistance := anObject
-]
-
-{ #category : #printing }
-WDPContactManifold >> printOn: aStream [
-	aStream nextPutAll: 'normal: '; print: normal; nextPutAll: ' pd: '; print: penetrationDistance
+	pairId := anObject
 ]
 
 { #category : #accessing }
@@ -94,14 +66,30 @@ WDPContactManifold >> secondCollisionObject: anObject [
 	secondCollisionObject := anObject
 ]
 
-{ #category : #accessing }
-WDPContactManifold >> secondPoint [
-
-	^ secondPoint
+{ #category : #testing }
+WDPContactManifold >> secondObjectHasResponse [
+	^ secondCollisionObject collisionResponseGroupMask anyMask: firstCollisionObject collisionGroup
 ]
 
-{ #category : #accessing }
-WDPContactManifold >> secondPoint: anObject [
+{ #category : #update }
+WDPContactManifold >> updateContacts [
+	| firstTransform secondTransform |
+	firstTransform := firstCollisionObject transform.
+	secondTransform := secondCollisionObject transform.
+	contacts do: [ :each |
+		each computeWorldVersionWithFirstTransform: firstTransform secondTransform:   secondTransform
+	].
 
-	secondPoint := anObject
+]
+
+{ #category : #update }
+WDPContactManifold >> updatingContactsDo: aBlock [
+	| firstTransform secondTransform |
+	firstTransform := firstCollisionObject transform.
+	secondTransform := secondCollisionObject transform.
+	contacts do: [ :each |
+		each computeWorldVersionWithFirstTransform: firstTransform secondTransform: secondTransform.
+		aBlock value: each
+	].
+
 ]

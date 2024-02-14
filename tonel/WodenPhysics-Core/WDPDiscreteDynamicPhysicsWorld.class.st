@@ -45,30 +45,31 @@ WDPDiscreteDynamicPhysicsWorld >> detectAndResolveCollisionsWithDeltaTime: delta
 
 	"Resolve the collision responses."
 	narrowPhaseContacts do: [ :contact |
-		self resolveCollisionResponse: contact
+		self resolveContactManifoldCollisionResponse: contact
 	].
 	
 	"Resolve the contact constraints."
 	narrowPhaseContacts do: [ :contact |
-		self resolveContactConstraints: contact
+		self resolveContactManifoldConstraints: contact
 	].
 
 ]
 
 { #category : #'as yet unclassified' }
 WDPDiscreteDynamicPhysicsWorld >> detectNarrowphaseCollisionOf: firstCollisionObject with: secondCollisionObject [
-	| firstShape firstTransform secondShape secondTransform contactManifold |
+	| firstShape firstTransform secondShape secondTransform contactPoints |
 	firstShape := firstCollisionObject shape.
 	firstTransform := firstCollisionObject transform.
 	secondShape := secondCollisionObject shape.
 	secondTransform := secondCollisionObject transform.
 	
-	contactManifold := firstShape detectAndComputeCollisionContactManifoldAt: firstTransform with: secondShape at: secondTransform.
-	contactManifold ifNil: [ ^ nil ].
+	contactPoints := firstShape detectAndComputeCollisionContactPointsAt: firstTransform with: secondShape at: secondTransform.
+	contactPoints ifEmpty: [ ^ nil ].
 	
-	^ contactManifold
+	^ WDPContactManifold new
 		firstCollisionObject: firstCollisionObject;
 		secondCollisionObject: secondCollisionObject;
+		contacts: contactPoints;
 		yourself
 ]
 
@@ -96,45 +97,76 @@ WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
 ]
 
 { #category : #'as yet unclassified' }
-WDPDiscreteDynamicPhysicsWorld >> resolveCollisionResponse: contactManifold [
-	| firstCollisionObject secondCollisionObject inverseMassSum relativeVelocity restitutionCoefficient relativeVelocityAlongNormal impulse contactNormal penetrationDelta firstObjectHasResponse secondObjectHasResponse |
-	firstCollisionObject := contactManifold firstCollisionObject.
-	secondCollisionObject := contactManifold secondCollisionObject.
-	firstObjectHasResponse := firstCollisionObject collisionResponseGroupMask anyMask: secondCollisionObject collisionGroup.
-	secondObjectHasResponse := secondCollisionObject collisionResponseGroupMask anyMask: firstCollisionObject collisionGroup.
-	(firstObjectHasResponse or: [secondObjectHasResponse]) ifFalse: [ ^ self ].
+WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollisionResponse: contact [
+	| firstCollisionObject secondCollisionObject inverseMassSum restitutionCoefficient contactNormal relativeVelocity relativeVelocityAlongNormal impulse |
+	firstCollisionObject := manifold firstCollisionObject.
+	secondCollisionObject := manifold secondCollisionObject.
 	
 	inverseMassSum := firstCollisionObject inverseMass + secondCollisionObject inverseMass.
 	inverseMassSum <= 0 ifTrue: [ ^ self ].
-
-	contactNormal := contactManifold normal.
+	
+	restitutionCoefficient := firstCollisionObject restitutionCoefficient * secondCollisionObject restitutionCoefficient.
+	
+	contactNormal := contact normal.
 	
 	relativeVelocity := secondCollisionObject linearVelocity - firstCollisionObject linearVelocity.
 	relativeVelocityAlongNormal := relativeVelocity dot: contactNormal.
 	relativeVelocityAlongNormal <= 0.0 ifTrue: [ ^ self ].
 	
-	restitutionCoefficient := firstCollisionObject restitutionCoefficient * secondCollisionObject restitutionCoefficient.
 	impulse := (restitutionCoefficient + 1.0) * relativeVelocityAlongNormal / inverseMassSum.
 	
-	firstObjectHasResponse ifTrue: [
+	manifold firstObjectHasResponse ifTrue: [
 		firstCollisionObject applyLinearImpulse: contactNormal * impulse
 	].
-	secondObjectHasResponse ifTrue: [
+	manifold secondObjectHasResponse ifTrue: [
 		secondCollisionObject applyLinearImpulse: contactNormal * impulse negated
 	].
+
+]
+
+{ #category : #'as yet unclassified' }
+WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactConstraint: contact [
+	| firstCollisionObject secondCollisionObject inverseMassSum penetrationDistance penetrationDelta |
+	firstCollisionObject := manifold firstCollisionObject.
+	secondCollisionObject := manifold secondCollisionObject.
 	
-	penetrationDelta := contactManifold minimumTranslationVector / inverseMassSum.
-	firstObjectHasResponse ifTrue: [ 
+	inverseMassSum := firstCollisionObject inverseMass + secondCollisionObject inverseMass.
+	inverseMassSum <= 0 ifTrue: [ ^ self ].
+	
+	penetrationDistance := contact penetrationDistance.
+	penetrationDistance <= 0 ifTrue: [ ^ self ].
+	
+	penetrationDelta := contact normal * (penetrationDistance / inverseMassSum).
+	manifold firstObjectHasResponse ifTrue: [ 
 		firstCollisionObject translateBy: penetrationDelta * firstCollisionObject inverseMass
 	].
-	secondObjectHasResponse ifTrue: [
+	manifold secondObjectHasResponse ifTrue: [
 		secondCollisionObject translateBy: penetrationDelta * secondCollisionObject inverseMass negated
 	].
 
 ]
 
 { #category : #'as yet unclassified' }
-WDPDiscreteDynamicPhysicsWorld >> resolveContactConstraints: contactManifold [
+WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldCollisionResponse: contactManifold [
+	(contactManifold firstObjectHasResponse or: [contactManifold secondObjectHasResponse]) ifFalse: [
+		^ self
+	].
+
+	contactManifold updatingContactsDo: [ :eachContact |
+		self resolveContactManifold: contactManifold contactCollisionResponse: eachContact
+	].
+
+]
+
+{ #category : #'as yet unclassified' }
+WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldConstraints: contactManifold [
+	(contactManifold firstObjectHasResponse or: [contactManifold secondObjectHasResponse]) ifFalse: [
+		^ self
+	].
+
+	contactManifold updatingContactsDo: [ :eachContact |
+		self resolveContactManifold: contactManifold contactConstraint: eachContact
+	].
 ]
 
 { #category : #update }

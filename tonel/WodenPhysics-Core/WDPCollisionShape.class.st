@@ -28,12 +28,12 @@ WDPCollisionShape >> constructVisualizationSceneNode [
 ]
 
 { #category : #accessing }
-WDPCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform with: otherShape at: otherTransform [
+WDPCollisionShape >> detectAndComputeCollisionContactPointsAt: transform with: otherShape at: otherTransform [
 	self subclassResponsibility
 ]
 
 { #category : #accessing }
-WDPCollisionShape >> detectAndComputeCollisionContactManifoldAt: transform withConvexShape: otherShape at: otherTransform [
+WDPCollisionShape >> detectAndComputeCollisionContactPointsAt: transform withConvexShape: otherShape at: otherTransform [
 	self subclassResponsibility
 ]
 
