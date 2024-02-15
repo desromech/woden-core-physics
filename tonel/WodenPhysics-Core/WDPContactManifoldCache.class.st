@@ -12,16 +12,15 @@ Class {
 	#category : #'WodenPhysics-Core-Constraints'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #defaults }
 WDPContactManifoldCache class >> defaultOldestKeptEpoch [
-	^ 4
+	^ 3
 ]
 
 { #category : #updating }
 WDPContactManifoldCache >> beginEpoch [
 	epoch := epoch + 1.
-	manifolds removeAll.
-	manifoldDictionary removeAll.
+
 ]
 
 { #category : #private }

@@ -91,6 +91,8 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollis
 	firstCollisionObject := manifold firstCollisionObject.
 	secondCollisionObject := manifold secondCollisionObject.
 	
+	contact penetrationDistance <= 0.0 ifTrue: [ ^ self ].
+	
 	contactNormal := contact normal.
 
 	relativeFirstPoint := contact firstPoint - firstCollisionObject position.
@@ -142,7 +144,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollis
 ]
 
 { #category : #'constraint solving' }
-WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactConstraint: contact [
+WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactConstraint: contact relaxationFactor: relaxationFactor [
 	| firstCollisionObject secondCollisionObject inverseMassSum penetrationDistance penetrationDelta |
 	penetrationDistance := contact penetrationDistance.
 	penetrationDistance <= 0 ifTrue: [ ^ self ].
@@ -153,7 +155,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactConstr
 	inverseMassSum := firstCollisionObject inverseMass + secondCollisionObject inverseMass.
 	inverseMassSum <= 0 ifTrue: [ ^ self ].
 	
-	penetrationDelta := contact normal * (penetrationDistance / inverseMassSum).
+	penetrationDelta := contact normal * (penetrationDistance * relaxationFactor / inverseMassSum).
 	manifold firstObjectHasResponse ifTrue: [ 
 		firstCollisionObject translateBy: penetrationDelta * firstCollisionObject inverseMass
 	].
@@ -165,6 +167,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactConstr
 
 { #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldCollisionResponse: contactManifold [
+	contactManifold isEmpty ifTrue: [ ^ self ].
 	(contactManifold firstObjectHasResponse or: [contactManifold secondObjectHasResponse]) ifFalse: [
 		^ self
 	].
@@ -176,31 +179,33 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldCollisionResponse: conta
 ]
 
 { #category : #'constraint solving' }
-WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldConstraints: contactManifold [
+WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldConstraints: contactManifold relaxationFactor: relaxationFactor [
+	contactManifold isEmpty ifTrue: [ ^ self ].
 	(contactManifold firstObjectHasResponse or: [contactManifold secondObjectHasResponse]) ifFalse: [
 		^ self
 	].
 
 	contactManifold updatingContactsDo: [ :eachContact |
-		self resolveContactManifold: contactManifold contactConstraint: eachContact
+		self resolveContactManifold: contactManifold contactConstraint: eachContact relaxationFactor: relaxationFactor
 	].
 ]
 
 { #category : #update }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldsCollisionsAndConstraints: contactManifolds [
-	| numIterations |
-	numIterations := 1.
+	| numIterations relaxationFactor |
+	numIterations := 2.
 	1 to: numIterations do: [ :iteration |
 		"Resolve the collision responses."
-		contactManifolds do: [ :contact |
-			self resolveContactManifoldCollisionResponse: contact
+		contactManifolds do: [ :manifold |
+			self resolveContactManifoldCollisionResponse: manifold
 		].
 	].
 	
 	"Resolve the contact constraints."
+	relaxationFactor := 1.0.
 	1 to: numIterations do: [ :iteration |
-		contactManifolds do: [ :contact |
-			self resolveContactManifoldConstraints: contact
+		contactManifolds do: [ :manifold |
+			self resolveContactManifoldConstraints: manifold relaxationFactor: relaxationFactor.
 		].
 	].
 

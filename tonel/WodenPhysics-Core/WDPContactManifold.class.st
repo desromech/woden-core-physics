@@ -71,11 +71,16 @@ WDPContactManifold >> initialize [
 	contacts := OrderedCollection new.
 ]
 
+{ #category : #testing }
+WDPContactManifold >> isEmpty [
+	^ contacts isEmpty
+]
+
 { #category : #accessing }
 WDPContactManifold >> lastSeparatingAxis [
 	^ contacts isEmpty
 		ifTrue: [ nil ]
-		ifFalse: [ firstCollisionObject transform transformNormalVector: contacts last localNormal ]
+		ifFalse: [ firstCollisionObject transform transformNormalVector: contacts last localFirstNormal ]
 ]
 
 { #category : #accessing }
@@ -105,6 +110,11 @@ WDPContactManifold >> secondCollisionObject: anObject [
 { #category : #testing }
 WDPContactManifold >> secondObjectHasResponse [
 	^ secondCollisionObject collisionResponseGroupMask anyMask: firstCollisionObject collisionGroup
+]
+
+{ #category : #testing }
+WDPContactManifold >> size [
+	^ contacts size
 ]
 
 { #category : #update }

@@ -12,13 +12,14 @@ Class {
 		'secondPoint',
 		'localFirstPoint',
 		'localSecondPoint',
-		'localNormal',
+		'localFirstNormal',
+		'localSecondNormal',
 		'penetrationDistance'
 	],
 	#category : #'WodenPhysics-Core-Constraints'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'contact resolution' }
 WDPContactPoint >> computeContactSpaceMatrix [
 	| x y z |
 	x := normal.
@@ -37,7 +38,8 @@ WDPContactPoint >> computeContactSpaceMatrix [
 WDPContactPoint >> computeLocalVersionWithFirstTransform: firstTransform secondTransform: secondTransform [
 	localFirstPoint := firstTransform inverseTransformPosition: firstPoint.
 	localSecondPoint := secondTransform inverseTransformPosition: secondPoint.
-	localNormal := firstTransform inverseTransformNormalVector: normal.
+	localFirstNormal := firstTransform inverseTransformNormalVector: normal.
+	localSecondNormal := secondTransform inverseTransformNormalVector: normal.
 ]
 
 { #category : #updating }
@@ -50,7 +52,7 @@ WDPContactPoint >> computeWorldContactPointAndDistances [
 WDPContactPoint >> computeWorldVersionWithFirstTransform: firstTransform secondTransform: secondTransform [
 	firstPoint := firstTransform transformPosition: localFirstPoint.
 	secondPoint := secondTransform transformPosition: localSecondPoint.
-	normal := firstTransform transformNormalVector: localNormal.
+	normal := firstTransform transformNormalVector: localFirstNormal.
 	self computeWorldContactPointAndDistances.
 ]
 
@@ -84,7 +86,8 @@ WDPContactPoint >> flipped [
 		normal: normal negated;
 		firstPoint: secondPoint;
 		secondPoint: firstPoint;
-		localNormal: localNormal negated;
+		localFirstNormal: localSecondNormal negated;
+		localSecondNormal: localFirstNormal negated;
 		localFirstPoint: localSecondPoint;
 		localSecondPoint: localFirstPoint;
 		yourself
@@ -96,6 +99,18 @@ WDPContactPoint >> isSimilarTo: otherContact [
 		(localSecondPoint closeTo: otherContact localSecondPoint) and: [ 
 		(normal closeTo: otherContact normal) and: [ 
 		requiredSeparation closeTo: otherContact requiredSeparation ]]]
+]
+
+{ #category : #accessing }
+WDPContactPoint >> localFirstNormal [
+
+	^ localFirstNormal
+]
+
+{ #category : #accessing }
+WDPContactPoint >> localFirstNormal: anObject [
+
+	localFirstNormal := anObject
 ]
 
 { #category : #accessing }
@@ -111,15 +126,15 @@ WDPContactPoint >> localFirstPoint: anObject [
 ]
 
 { #category : #accessing }
-WDPContactPoint >> localNormal [
+WDPContactPoint >> localSecondNormal [
 
-	^ localNormal
+	^ localSecondNormal
 ]
 
 { #category : #accessing }
-WDPContactPoint >> localNormal: anObject [
+WDPContactPoint >> localSecondNormal: anObject [
 
-	localNormal := anObject
+	localSecondNormal := anObject
 ]
 
 { #category : #accessing }

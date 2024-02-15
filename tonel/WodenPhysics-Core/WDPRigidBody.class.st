@@ -27,7 +27,7 @@ WDPRigidBody class >> defaultAngularDamping [
 
 { #category : #defaults }
 WDPRigidBody class >> defaultLinearDamping [
-	^ 0.1
+	^ 0.2
 ]
 
 { #category : #accessing }
@@ -120,7 +120,7 @@ WDPRigidBody >> integrateMovementWithDeltaTime: deltaTime [
 	linearVelocity := linearVelocity + (linearAcceleration*deltaTime).
 	integratedPosition := self position + (linearVelocity *deltaTime).
 
-	angularAcceleration := angularVelocity * angularDamping negated + (worldInverseInertiaTensor * netTorque).
+	angularAcceleration := (angularVelocity * angularDamping negated) + (worldInverseInertiaTensor * netTorque).
 	angularVelocity := angularVelocity + (angularAcceleration*deltaTime).
 
 	integratedOrientation := self orientation + ((Quaternion xyz: angularVelocity * 0.5 *deltaTime) * self orientation).
