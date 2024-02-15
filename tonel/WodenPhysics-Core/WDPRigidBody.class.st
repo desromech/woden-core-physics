@@ -20,14 +20,14 @@ Class {
 	#category : #'WodenPhysics-Core-CollisionObjects'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #defaults }
 WDPRigidBody class >> defaultAngularDamping [
-	^ 0.01
+	^ 0.2
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #defaults }
 WDPRigidBody class >> defaultLinearDamping [
-	^ 0.01
+	^ 0.1
 ]
 
 { #category : #accessing }
@@ -43,8 +43,24 @@ WDPRigidBody >> angularDamping: anObject [
 ]
 
 { #category : #update }
+WDPRigidBody >> applyAngularImpulse: impulse [
+	angularVelocity := angularVelocity + (worldInverseInertiaTensor * impulse)
+]
+
+{ #category : #update }
 WDPRigidBody >> applyForce: force [
 	netForce := netForce + force.
+]
+
+{ #category : #update }
+WDPRigidBody >> applyImpulse: impulse inPosition: worldPosition [
+	self applyImpulse: impulse inRelativePosition: worldPosition - self position
+]
+
+{ #category : #update }
+WDPRigidBody >> applyImpulse: impulse inRelativePosition: relativePosition [
+	self applyLinearImpulse: impulse.
+	self applyAngularImpulse: (relativePosition cross: impulse).
 ]
 
 { #category : #update }
@@ -86,6 +102,7 @@ WDPRigidBody >> inertiaTensor: aMatrix3x3 [
 WDPRigidBody >> initialize [
 	super initialize.
 	mass := inverseMass := 0.0.
+	inertiaTensor := inverseInertiaTensor := Matrix3x3 zeros.
 	linearDamping := self class defaultLinearDamping.
 	angularDamping := self class defaultAngularDamping.
 	netForce := Vector3 zeros.

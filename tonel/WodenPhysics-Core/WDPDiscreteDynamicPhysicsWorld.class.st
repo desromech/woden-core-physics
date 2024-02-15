@@ -86,28 +86,57 @@ WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
 
 { #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollisionResponse: contact [
-	| firstCollisionObject secondCollisionObject inverseMassSum restitutionCoefficient contactNormal relativeVelocity relativeVelocityAlongNormal impulse |
+	"See Milling. 'Game Physics Engine Development'. Chapter 14 for details on these equations and the associated algorithms."
+	| firstCollisionObject secondCollisionObject restitutionCoefficient contactNormal  contactLocalToWorldMatrix3x3 relativeFirstPoint relativeSecondPoint firstContactVelocity secondContactVelocity relativeSeparationVelocity relativeContactSeparationVelocity deltaVelocity contactLocalImpulse contactImpulse contactLocalVelocityChange firstVelocityChangePerImpulseWorld secondVelocityChangePerImpulseWorld velocityChangePerImpulse |
 	firstCollisionObject := manifold firstCollisionObject.
 	secondCollisionObject := manifold secondCollisionObject.
 	
-	inverseMassSum := firstCollisionObject inverseMass + secondCollisionObject inverseMass.
-	inverseMassSum <= 0 ifTrue: [ ^ self ].
+	contactNormal := contact normal.
+
+	relativeFirstPoint := contact firstPoint - firstCollisionObject position.
+	relativeSecondPoint := contact secondPoint - secondCollisionObject position.
+
+	contactLocalToWorldMatrix3x3 := contact computeContactSpaceMatrix.
+
+	"Torque per unit impulse."
+	firstVelocityChangePerImpulseWorld := relativeFirstPoint cross: contactNormal.
+	"Rotation per unit impulse."
+	firstVelocityChangePerImpulseWorld := firstCollisionObject worldInverseInertiaTensor * firstVelocityChangePerImpulseWorld.
+	"Velocity per unit impulse."
+	firstVelocityChangePerImpulseWorld := firstVelocityChangePerImpulseWorld cross: relativeFirstPoint.
+
+	"Torque per unit impulse."
+	secondVelocityChangePerImpulseWorld := relativeSecondPoint cross: contactNormal.
+	"Rotation per unit impulse."
+	secondVelocityChangePerImpulseWorld := secondCollisionObject worldInverseInertiaTensor * secondVelocityChangePerImpulseWorld.
+	"Velocity per unit impulse."
+	secondVelocityChangePerImpulseWorld := secondVelocityChangePerImpulseWorld cross: relativeSecondPoint.
+	
+	velocityChangePerImpulse :=
+		firstCollisionObject inverseMass + (firstVelocityChangePerImpulseWorld dot: contactNormal) +
+		secondCollisionObject inverseMass + (secondVelocityChangePerImpulseWorld dot: contactNormal).
+	velocityChangePerImpulse <= 0 ifTrue: [ ^ self ].
+
+	firstContactVelocity := firstCollisionObject linearVelocity + (firstCollisionObject angularVelocity cross: relativeFirstPoint).
+	secondContactVelocity := secondCollisionObject linearVelocity + (secondCollisionObject angularVelocity cross: relativeSecondPoint).
+	
+	relativeSeparationVelocity := firstContactVelocity - secondContactVelocity.
+	relativeContactSeparationVelocity := relativeSeparationVelocity * contactLocalToWorldMatrix3x3.
+	relativeContactSeparationVelocity x > 0.0 ifTrue: [ ^ self ].
 	
 	restitutionCoefficient := firstCollisionObject restitutionCoefficient * secondCollisionObject restitutionCoefficient.
+
+	deltaVelocity := (restitutionCoefficient + 1.0) * relativeContactSeparationVelocity x negated.
 	
-	contactNormal := contact normal.
-	
-	relativeVelocity := secondCollisionObject linearVelocity - firstCollisionObject linearVelocity.
-	relativeVelocityAlongNormal := relativeVelocity dot: contactNormal.
-	relativeVelocityAlongNormal <= 0.0 ifTrue: [ ^ self ].
-	
-	impulse := (restitutionCoefficient + 1.0) * relativeVelocityAlongNormal / inverseMassSum.
+	contactLocalVelocityChange := Vector3 x: deltaVelocity.
+	contactLocalImpulse := contactLocalVelocityChange / velocityChangePerImpulse.
+	contactImpulse := contactLocalToWorldMatrix3x3 * contactLocalImpulse.
 	
 	manifold firstObjectHasResponse ifTrue: [
-		firstCollisionObject applyLinearImpulse: contactNormal * impulse
+		firstCollisionObject applyImpulse: contactImpulse inRelativePosition: relativeFirstPoint
 	].
 	manifold secondObjectHasResponse ifTrue: [
-		secondCollisionObject applyLinearImpulse: contactNormal * impulse negated
+		secondCollisionObject applyImpulse: contactImpulse negated inRelativePosition: relativeSecondPoint
 	].
 
 ]

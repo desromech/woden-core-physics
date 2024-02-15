@@ -23,9 +23,9 @@ WDPBoxCollisionShape >> computeInertiaTensorWithMass: mass [
 	mo12 := mass / 12.
 	
 	^ Matrix3x3 new
-		m11: (extentSquared y + extentSquared z) * mo12;
-		m22: (extentSquared x + extentSquared z) * mo12;
-		m33: (extentSquared x + extentSquared y) * mo12;
+		m11: mo12 * (extentSquared y + extentSquared z);
+		m22: mo12 * (extentSquared x + extentSquared z);
+		m33: mo12 * (extentSquared x + extentSquared y);
 		yourself
 ]
 

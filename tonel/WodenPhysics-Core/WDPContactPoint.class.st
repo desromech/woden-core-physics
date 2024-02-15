@@ -13,11 +13,25 @@ Class {
 		'localFirstPoint',
 		'localSecondPoint',
 		'localNormal',
-		'contactPoint',
 		'penetrationDistance'
 	],
 	#category : #'WodenPhysics-Core-Constraints'
 }
+
+{ #category : #'as yet unclassified' }
+WDPContactPoint >> computeContactSpaceMatrix [
+	| x y z |
+	x := normal.
+	y := normal x abs > normal y abs
+		ifTrue: [ Vector3 y: 1]
+		ifFalse: [ Vector3 x: 1 ].
+
+	z := (x cross: y) normalized.
+	y := (z cross: x) normalized.
+	
+	^ Matrix3x3 columns: { x . y . z }
+
+]
 
 { #category : #updating }
 WDPContactPoint >> computeLocalVersionWithFirstTransform: firstTransform secondTransform: secondTransform [
@@ -28,7 +42,6 @@ WDPContactPoint >> computeLocalVersionWithFirstTransform: firstTransform secondT
 
 { #category : #updating }
 WDPContactPoint >> computeWorldContactPointAndDistances [
-	contactPoint := firstPoint + (secondPoint - firstPoint).
 	penetrationDistance := requiredSeparation + (secondPoint - firstPoint dot: normal).
 	
 ]
@@ -39,18 +52,6 @@ WDPContactPoint >> computeWorldVersionWithFirstTransform: firstTransform secondT
 	secondPoint := secondTransform transformPosition: localSecondPoint.
 	normal := firstTransform transformNormalVector: localNormal.
 	self computeWorldContactPointAndDistances.
-]
-
-{ #category : #accessing }
-WDPContactPoint >> contactPoint [
-
-	^ contactPoint
-]
-
-{ #category : #accessing }
-WDPContactPoint >> contactPoint: anObject [
-
-	contactPoint := anObject
 ]
 
 { #category : #accessing }

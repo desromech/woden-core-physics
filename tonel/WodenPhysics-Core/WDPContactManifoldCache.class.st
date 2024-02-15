@@ -20,7 +20,6 @@ WDPContactManifoldCache class >> defaultOldestKeptEpoch [
 { #category : #updating }
 WDPContactManifoldCache >> beginEpoch [
 	epoch := epoch + 1.
-	
 ]
 
 { #category : #private }

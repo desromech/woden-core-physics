@@ -40,6 +40,11 @@ WDPCollisionObject >> angularVelocity: anObject [
 ]
 
 { #category : #update }
+WDPCollisionObject >> applyAngularImpulse: angularImpulse [
+	"By default do nothing."
+]
+
+{ #category : #update }
 WDPCollisionObject >> applyForce: force [
 	"By default do nothing."
 ]
@@ -51,6 +56,11 @@ WDPCollisionObject >> applyForce: force inPosition: worldPosition [
 
 { #category : #update }
 WDPCollisionObject >> applyImpulse: impulse inPosition: worldPosition [
+	self applyLinearImpulse: impulse
+]
+
+{ #category : #update }
+WDPCollisionObject >> applyImpulse: impulse inRelativePosition: worldPosition [
 	self applyLinearImpulse: impulse
 ]
 
@@ -131,6 +141,11 @@ WDPCollisionObject >> id: anObject [
 	id := anObject
 ]
 
+{ #category : #accessing }
+WDPCollisionObject >> inertiaTensor [
+	^ Matrix3x3 zeros
+]
+
 { #category : #initialization }
 WDPCollisionObject >> initialize [
 	super initialize.
@@ -152,6 +167,11 @@ WDPCollisionObject >> initialize [
 
 { #category : #update }
 WDPCollisionObject >> integrateMovementWithDeltaTime: deltaTime [
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> inverseInertiaTensor [
+	^ Matrix3x3 zeros
 ]
 
 { #category : #accessing }
@@ -314,4 +334,14 @@ WDPCollisionObject >> transformChanged [
 { #category : #transforming }
 WDPCollisionObject >> translateBy: translation [
 	self position: self position + translation
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> worldInertiaTensor [
+	^ Matrix3x3 zeros
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> worldInverseInertiaTensor [
+	^ Matrix3x3 zeros
 ]
