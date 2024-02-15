@@ -8,7 +8,6 @@ Class {
 		'epoch',
 		'normal',
 		'requiredSeparation',
-		'point',
 		'firstPoint',
 		'secondPoint',
 		'localFirstPoint',
@@ -30,7 +29,8 @@ WDPContactPoint >> computeLocalVersionWithFirstTransform: firstTransform secondT
 { #category : #updating }
 WDPContactPoint >> computeWorldContactPointAndDistances [
 	contactPoint := firstPoint + (secondPoint - firstPoint).
-	penetrationDistance := requiredSeparation - (firstPoint - secondPoint dot: normal).
+	penetrationDistance := requiredSeparation + (secondPoint - firstPoint dot: normal).
+	
 ]
 
 { #category : #updating }
@@ -155,18 +155,6 @@ WDPContactPoint >> penetrationDistance [
 WDPContactPoint >> penetrationDistance: anObject [
 
 	penetrationDistance := anObject
-]
-
-{ #category : #accessing }
-WDPContactPoint >> point [
-
-	^ point
-]
-
-{ #category : #accessing }
-WDPContactPoint >> point: anObject [
-
-	point := anObject
 ]
 
 { #category : #printing }

@@ -57,8 +57,8 @@ WDPConvexCollisionShape >> detectAndComputeCollisionContactPointsAt: transform w
 		^ {WDPContactPoint new
 				normal: distanceAndNormal second;
 				requiredSeparation: totalMargin;
-				firstPoint: distanceAndNormal fourth;
-				secondPoint: distanceAndNormal third;
+				firstPoint: distanceAndNormal third;
+				secondPoint: distanceAndNormal fourth;
 				computeLocalVersionWithFirstTransform: transform secondTransform: otherTransform;
 				computeWorldContactPointAndDistances;
 				yourself

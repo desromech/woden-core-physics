@@ -36,20 +36,10 @@ WDPDiscreteDynamicPhysicsWorld >> computeNarrowPhaseConstantFromBroadphaseCandid
 
 { #category : #update }
 WDPDiscreteDynamicPhysicsWorld >> detectAndResolveCollisionsWithDeltaTime: deltaTime [
-	| broadphaseCandidatePairs narrowPhaseContacts |
+	| broadphaseCandidatePairs contactManifolds |
 	broadphaseCandidatePairs := self computeBroadphaseCandidatePairs.
-	narrowPhaseContacts := self computeNarrowPhaseConstantFromBroadphaseCandidatePairs: broadphaseCandidatePairs.
-
-	"Resolve the collision responses."
-	narrowPhaseContacts do: [ :contact |
-		self resolveContactManifoldCollisionResponse: contact
-	].
-	
-	"Resolve the contact constraints."
-	narrowPhaseContacts do: [ :contact |
-		self resolveContactManifoldConstraints: contact
-	].
-
+	contactManifolds := self computeNarrowPhaseConstantFromBroadphaseCandidatePairs: broadphaseCandidatePairs.
+	self resolveContactManifoldsCollisionsAndConstraints: contactManifolds
 ]
 
 { #category : #narrowphase }
@@ -167,6 +157,26 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldConstraints: contactMani
 	contactManifold updatingContactsDo: [ :eachContact |
 		self resolveContactManifold: contactManifold contactConstraint: eachContact
 	].
+]
+
+{ #category : #update }
+WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldsCollisionsAndConstraints: contactManifolds [
+	| numIterations |
+	numIterations := 2.
+	1 to: numIterations do: [ :iteration |
+		"Resolve the collision responses."
+		contactManifolds do: [ :contact |
+			self resolveContactManifoldCollisionResponse: contact
+		].
+	].
+	
+	"Resolve the contact constraints."
+	1 to: numIterations do: [ :iteration |
+		contactManifolds do: [ :contact |
+			self resolveContactManifoldConstraints: contact
+		].
+	].
+
 ]
 
 { #category : #update }
