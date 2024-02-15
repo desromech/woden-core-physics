@@ -189,7 +189,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldConstraints: contactMani
 { #category : #update }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldsCollisionsAndConstraints: contactManifolds [
 	| numIterations |
-	numIterations := 2.
+	numIterations := 1.
 	1 to: numIterations do: [ :iteration |
 		"Resolve the collision responses."
 		contactManifolds do: [ :contact |
