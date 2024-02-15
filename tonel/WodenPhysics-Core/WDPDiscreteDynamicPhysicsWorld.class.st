@@ -87,8 +87,6 @@ WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
 { #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollisionResponse: contact [
 	| firstCollisionObject secondCollisionObject inverseMassSum restitutionCoefficient contactNormal relativeVelocity relativeVelocityAlongNormal impulse |
-	contact penetrationDistance <= 0 ifTrue: [ ^ self ].
-
 	firstCollisionObject := manifold firstCollisionObject.
 	secondCollisionObject := manifold secondCollisionObject.
 	
