@@ -167,8 +167,8 @@ WDPCollisionObject >> initialize [
 	angularVelocity := Vector3 zeros.
 	
 	restitutionCoefficient := 0.5.
-	dynamicFrictionCoefficient := 0.5.
-	staticFrictionCoefficient := 0.625.
+	dynamicFrictionCoefficient := 0.1.
+	staticFrictionCoefficient := 0.1.
 	
 	collisionGroup := WDPCollisionMasks defaultCollisionGroup .
 	collisionResponseGroupMask := WDPCollisionMasks defaultCollisionResponseGroup.
