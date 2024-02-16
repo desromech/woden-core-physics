@@ -38,8 +38,8 @@ WDPContactPoint >> computeContactSpaceMatrix [
 WDPContactPoint >> computeLocalVersionWithFirstTransform: firstTransform secondTransform: secondTransform [
 	localFirstPoint := firstTransform inverseTransformPosition: firstPoint.
 	localSecondPoint := secondTransform inverseTransformPosition: secondPoint.
-	localFirstNormal := firstTransform inverseTransformNormalVector: normal.
-	localSecondNormal := secondTransform inverseTransformNormalVector: normal.
+	localFirstNormal := firstTransform inverseTransformNormalVector: (secondTransform inverseTransformNormalVector: normal).
+	localSecondNormal := secondTransform inverseTransformNormalVector: (firstTransform inverseTransformNormalVector: normal negated).
 ]
 
 { #category : #updating }
@@ -52,7 +52,7 @@ WDPContactPoint >> computeWorldContactPointAndDistances [
 WDPContactPoint >> computeWorldVersionWithFirstTransform: firstTransform secondTransform: secondTransform [
 	firstPoint := firstTransform transformPosition: localFirstPoint.
 	secondPoint := secondTransform transformPosition: localSecondPoint.
-	normal := firstTransform transformNormalVector: localFirstNormal.
+	normal := firstTransform transformNormalVector: (secondTransform transformNormalVector: localFirstNormal).
 	self computeWorldContactPointAndDistances.
 ]
 
@@ -86,8 +86,8 @@ WDPContactPoint >> flipped [
 		normal: normal negated;
 		firstPoint: secondPoint;
 		secondPoint: firstPoint;
-		localFirstNormal: localSecondNormal negated;
-		localSecondNormal: localFirstNormal negated;
+		localFirstNormal: localSecondNormal;
+		localSecondNormal: localFirstNormal;
 		localFirstPoint: localSecondPoint;
 		localSecondPoint: localFirstPoint;
 		yourself
