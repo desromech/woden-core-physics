@@ -148,7 +148,7 @@ WDPRigidBody >> initialize [
 
 { #category : #update }
 WDPRigidBody >> integrateMovementWithDeltaTime: deltaTime [
-	| integratedVelocity integratedAngularVelocity integratedPosition integratedOrientation orientationDelta |
+	| integratedVelocity integratedAngularVelocity integratedPosition integratedOrientation |
 	mass isZero ifTrue: [
 		angularAcceleration := linearAcceleration := Vector3 zeros.
 		angularVelocityIntegrationDelta := linearVelocityIntegrationDelta := Vector3 zeros.
@@ -172,8 +172,8 @@ WDPRigidBody >> integrateMovementWithDeltaTime: deltaTime [
 	integratedPosition := self position + (linearVelocity *deltaTime).
 
 	"Integrate orientation"
-	orientationDelta := (Quaternion xyz: angularVelocity * (0.5 *deltaTime)) * self orientation.
-	integratedOrientation := (self orientation + orientationDelta) normalized.
+	integratedOrientation := (Quaternion xyz: angularVelocity * (0.5 *deltaTime)) exp * self orientation.
+	integratedOrientation := integratedOrientation normalized.
 	self position: integratedPosition orientation: integratedOrientation.
 
 	self clearNetForcesAndTorque.
