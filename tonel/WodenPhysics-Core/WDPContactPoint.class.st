@@ -18,8 +18,16 @@ Class {
 		'localSecondNormal',
 		'penetrationDistance'
 	],
+	#classVars : [
+		'PointEpsilon'
+	],
 	#category : #'WodenPhysics-Core-Constraints'
 }
+
+{ #category : #'class initialization' }
+WDPContactPoint class >> initialize [
+	PointEpsilon := 0.001.
+]
 
 { #category : #accessing }
 WDPContactPoint >> closingSpeed [
@@ -129,8 +137,8 @@ WDPContactPoint >> inverseMass [
 
 { #category : #testing }
 WDPContactPoint >> isSimilarTo: otherContact [
-	^ (localFirstPoint closeTo: otherContact localFirstPoint) and: [ 
-		(localSecondPoint closeTo: otherContact localSecondPoint)
+	^ (localFirstPoint closeTo: otherContact localFirstPoint precision: PointEpsilon) and: [ 
+		(localSecondPoint closeTo: otherContact localSecondPoint precision: PointEpsilon)
 	]
 ]
 

@@ -12,8 +12,16 @@ Class {
 		'contacts',
 		'localLastSeparatingAxis'
 	],
+	#classVars : [
+		'MaxSeparationTolerance'
+	],
 	#category : #'WodenPhysics-Core-Constraints'
 }
+
+{ #category : #'class initialization' }
+WDPContactManifold class >> initialize [
+	MaxSeparationTolerance := 0.01.
+]
 
 { #category : #adding }
 WDPContactManifold >> addContact: newContact [
@@ -61,8 +69,13 @@ WDPContactManifold >> epoch: anObject [
 ]
 
 { #category : #update }
-WDPContactManifold >> expireContactsUntil: oldestEpoch [
-	contacts removeAllSuchThat: [:each | each epoch < oldestEpoch ]
+WDPContactManifold >> expireContactsUntil: oldestEpoch for: newEpoch [
+	contacts do: [ :each |
+		each update.
+	].
+	contacts removeAllSuchThat: [:each |
+		(each penetrationDistance negated > MaxSeparationTolerance) or: [each epoch < oldestEpoch]
+	]
 ]
 
 { #category : #accessing }
@@ -100,7 +113,7 @@ WDPContactManifold >> isEmpty [
 
 { #category : #accessing }
 WDPContactManifold >> lastSeparatingAxis [
-	^ localLastSeparatingAxis ifNotNil: [ firstCollisionObject transform transformNormalVector: (secondCollisionObject transform transformNormalVector: contacts last localFirstNormal) ]
+	^ localLastSeparatingAxis ifNotNil: [ firstCollisionObject transform transformNormalVector: (secondCollisionObject transform transformNormalVector: localLastSeparatingAxis) ]
 ]
 
 { #category : #accessing }
