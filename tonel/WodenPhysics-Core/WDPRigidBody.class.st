@@ -294,6 +294,11 @@ WDPRigidBody >> transformChanged [
 
 ]
 
+{ #category : #'as yet unclassified' }
+WDPRigidBody >> velocityAtRelativePoint: relativePoint [
+	^ linearVelocity + (angularVelocity cross: relativePoint)
+]
+
 { #category : #accessing }
 WDPRigidBody >> worldInertiaTensor [
 

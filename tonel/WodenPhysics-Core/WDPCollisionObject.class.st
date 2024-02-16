@@ -356,6 +356,11 @@ WDPCollisionObject >> translateBy: translation [
 	self position: self position + translation
 ]
 
+{ #category : #'as yet unclassified' }
+WDPCollisionObject >> velocityAtRelativePoint: relativePoint [
+	^ Vector3 zeros
+]
+
 { #category : #accessing }
 WDPCollisionObject >> worldInertiaTensor [
 	^ Matrix3x3 zeros

@@ -87,7 +87,7 @@ WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
 { #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollisionResponse: contact [
 	"See Milling. 'Game Physics Engine Development'. Chapter 14 for details on these equations and the associated algorithms."
-	| firstCollisionObject secondCollisionObject restitutionCoefficient contactNormal  contactLocalToWorldMatrix3x3 relativeFirstPoint relativeSecondPoint firstContactVelocity secondContactVelocity relativeSeparationVelocity relativeContactSeparationVelocity deltaVelocity contactLocalImpulse contactImpulse contactLocalVelocityChange velocityChangePerImpulse firstTangentialVelocityChangePerImpulse secondTangentialVelocityChangePerImpulse contactPoint |
+	| firstCollisionObject secondCollisionObject restitutionCoefficient contactNormal  contactLocalToWorldMatrix3x3 relativeFirstPoint relativeSecondPoint firstContactVelocity secondContactVelocity relativeSeparationVelocity relativeContactSeparationVelocity deltaVelocity contactLocalImpulse contactImpulse contactLocalVelocityChange velocityChangePerImpulse firstTangentialVelocityChangePerImpulse secondTangentialVelocityChangePerImpulse contactPoint relativeVelocityFromIntegrationDelta relativeContactVelocityFromIntegrationDelta |
 	firstCollisionObject := manifold firstCollisionObject.
 	secondCollisionObject := manifold secondCollisionObject.
 	
@@ -109,16 +109,25 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollis
 		secondCollisionObject inverseMass + secondTangentialVelocityChangePerImpulse.
 	velocityChangePerImpulse <= 0 ifTrue: [ ^ self ].
 
-	firstContactVelocity := firstCollisionObject linearVelocity + (firstCollisionObject angularVelocity cross: relativeFirstPoint).
-	secondContactVelocity := secondCollisionObject linearVelocity + (secondCollisionObject angularVelocity cross: relativeSecondPoint).
+	firstContactVelocity := (firstCollisionObject velocityAtRelativePoint: relativeFirstPoint).
+	secondContactVelocity := (secondCollisionObject velocityAtRelativePoint: relativeSecondPoint).
 	
 	relativeSeparationVelocity := firstContactVelocity - secondContactVelocity.
+	
 	relativeContactSeparationVelocity := relativeSeparationVelocity * contactLocalToWorldMatrix3x3.
 	relativeContactSeparationVelocity x > 0.0 ifTrue: [ ^ self ].
+
+	relativeVelocityFromIntegrationDelta := firstCollisionObject linearVelocityIntegrationDelta - secondCollisionObject linearVelocityIntegrationDelta.
+	relativeContactVelocityFromIntegrationDelta := relativeVelocityFromIntegrationDelta dot: contactNormal.
 	
 	restitutionCoefficient := firstCollisionObject restitutionCoefficient * secondCollisionObject restitutionCoefficient.
+	
+	"Resting contact: reduce contact velocity by acceleration only speed increase, and set the restitution coeffiecient to 0"
+	relativeContactSeparationVelocity x abs < restingContactVelocityLimit ifTrue: [ 
+		restitutionCoefficient := 0.0
+	].
 
-	deltaVelocity := (restitutionCoefficient + 1.0) * relativeContactSeparationVelocity x negated.
+	deltaVelocity := relativeContactSeparationVelocity x negated - (restitutionCoefficient * (relativeContactSeparationVelocity x - relativeContactVelocityFromIntegrationDelta)).
 	
 	contactLocalVelocityChange := Vector3 x: deltaVelocity.
 	contactLocalImpulse := contactLocalVelocityChange / velocityChangePerImpulse.

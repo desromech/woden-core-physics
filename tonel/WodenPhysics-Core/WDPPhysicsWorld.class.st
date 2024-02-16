@@ -8,7 +8,8 @@ Class {
 		'collisionObjects',
 		'collisionObjectTree',
 		'collisionObjectIdCount',
-		'contactManifoldCache'
+		'contactManifoldCache',
+		'restingContactVelocityLimit'
 	],
 	#category : #'WodenPhysics-Core-World'
 }
@@ -146,11 +147,24 @@ WDPPhysicsWorld >> initialize [
 	collisionObjectTree := WMDbvt new.
 	collisionObjectIdCount := 0.
 	contactManifoldCache := WDPContactManifoldCache new.
+	restingContactVelocityLimit := 0.1
 ]
 
 { #category : #'as yet unclassified' }
 WDPPhysicsWorld >> loadCollisionStateFromModels [
 	collisionObjects do: [ :each | each loadStateFromModel ]
+]
+
+{ #category : #accessing }
+WDPPhysicsWorld >> restingContactVelocityLimit [
+
+	^ restingContactVelocityLimit
+]
+
+{ #category : #accessing }
+WDPPhysicsWorld >> restingContactVelocityLimit: anObject [
+
+	restingContactVelocityLimit := anObject
 ]
 
 { #category : #'as yet unclassified' }
