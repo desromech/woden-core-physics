@@ -9,13 +9,18 @@ Class {
 		'epoch',
 		'firstCollisionObject',
 		'secondCollisionObject',
-		'contacts'
+		'contacts',
+		'localLastSeparatingAxis'
 	],
 	#category : #'WodenPhysics-Core-Constraints'
 }
 
 { #category : #adding }
 WDPContactManifold >> addContact: newContact [
+	localLastSeparatingAxis := newContact localFirstNormal.
+	newContact firstCollisionObject: firstCollisionObject.
+	newContact secondCollisionObject: secondCollisionObject.
+	
 	contacts doWithIndex: [ :eachExistingContact :index |
 		(eachExistingContact isSimilarTo: newContact) ifTrue: [ 
 			contacts at: index put: newContact.
@@ -31,10 +36,16 @@ WDPContactManifold >> addContacts: newContacts [
 	newContacts do: [ :each | self addContact: each ].
 ]
 
-{ #category : #update }
-WDPContactManifold >> contactsDo: aBlock [
-	contacts do: aBlock
+{ #category : #accessing }
+WDPContactManifold >> contacts [
 
+	^ contacts
+]
+
+{ #category : #accessing }
+WDPContactManifold >> contacts: anObject [
+
+	contacts := anObject
 ]
 
 { #category : #accessing }
@@ -84,9 +95,7 @@ WDPContactManifold >> isEmpty [
 
 { #category : #accessing }
 WDPContactManifold >> lastSeparatingAxis [
-	^ contacts isEmpty
-		ifTrue: [ nil ]
-		ifFalse: [ firstCollisionObject transform transformNormalVector: contacts last localFirstNormal ]
+	^ localLastSeparatingAxis ifNotNil: [ firstCollisionObject transform transformNormalVector: (secondCollisionObject transform transformNormalVector: contacts last localFirstNormal) ]
 ]
 
 { #category : #accessing }
@@ -124,24 +133,7 @@ WDPContactManifold >> size [
 ]
 
 { #category : #update }
-WDPContactManifold >> updateContacts [
-	| firstTransform secondTransform |
-	firstTransform := firstCollisionObject transform.
-	secondTransform := secondCollisionObject transform.
-	contacts do: [ :each |
-		each computeWorldVersionWithFirstTransform: firstTransform secondTransform:   secondTransform
-	].
-
-]
-
-{ #category : #update }
-WDPContactManifold >> updatingContactsDo: aBlock [
-	| firstTransform secondTransform |
-	firstTransform := firstCollisionObject transform.
-	secondTransform := secondCollisionObject transform.
-	contacts do: [ :each |
-		each computeWorldVersionWithFirstTransform: firstTransform secondTransform: secondTransform.
-		aBlock value: each
-	].
+WDPContactManifold >> update [
+	contacts do: [ :each | each update ].
 
 ]

@@ -85,12 +85,13 @@ WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
 ]
 
 { #category : #'constraint solving' }
-WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollisionResponse: contact [
+WDPDiscreteDynamicPhysicsWorld >> resolveContactCollisionResponse: contact [
 	"See Milling. 'Game Physics Engine Development'. Chapter 14 for details on these equations and the associated algorithms."
 	| firstCollisionObject secondCollisionObject restitutionCoefficient contactNormal  contactLocalToWorldMatrix3x3 relativeFirstPoint relativeSecondPoint firstContactVelocity secondContactVelocity relativeSeparationVelocity relativeContactSeparationVelocity deltaVelocity contactLocalImpulse contactImpulse contactLocalVelocityChange contactPoint relativeVelocityFromIntegrationDelta relativeContactVelocityFromIntegrationDelta planarImpulse staticFrictionCoefficient velocityChangePerImpulseWorldMatrix inverseMass velocityChangePerImpulseContactMatrix impulseChangePerVelocityContactMatrix |
-	firstCollisionObject := manifold firstCollisionObject.
-	secondCollisionObject := manifold secondCollisionObject.
+	firstCollisionObject := contact firstCollisionObject.
+	secondCollisionObject := contact secondCollisionObject.
 	
+	contact hasCollisionResponse ifFalse: [ ^ self ].
 	contact penetrationDistance <= 0.0 ifTrue: [ ^ self ].
 	
 	contactNormal := contact normal.
@@ -163,32 +164,34 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollis
 
 	contactImpulse := contactLocalToWorldMatrix3x3 * contactLocalImpulse.
 
-	manifold firstObjectHasResponse ifTrue: [
+	contact firstObjectHasResponse ifTrue: [
 		firstCollisionObject applyImpulse: contactImpulse inRelativePosition: relativeFirstPoint
 	].
-	manifold secondObjectHasResponse ifTrue: [
+	contact secondObjectHasResponse ifTrue: [
 		secondCollisionObject applyImpulse: contactImpulse negated inRelativePosition: relativeSecondPoint
 	].
 
 ]
 
 { #category : #'constraint solving' }
-WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactConstraint: contact relaxationFactor: relaxationFactor [
+WDPDiscreteDynamicPhysicsWorld >> resolveContactConstraint: contact relaxationFactor: relaxationFactor [
 	| firstCollisionObject secondCollisionObject inverseMassSum penetrationDistance penetrationDelta |
+	contact hasCollisionResponse ifFalse: [ ^ self ].
+	
 	penetrationDistance := contact penetrationDistance.
 	penetrationDistance <= 0 ifTrue: [ ^ self ].
 
-	firstCollisionObject := manifold firstCollisionObject.
-	secondCollisionObject := manifold secondCollisionObject.
+	firstCollisionObject := contact firstCollisionObject.
+	secondCollisionObject := contact secondCollisionObject.
 	
 	inverseMassSum := firstCollisionObject inverseMass + secondCollisionObject inverseMass.
 	inverseMassSum <= 0 ifTrue: [ ^ self ].
 	
 	penetrationDelta := contact normal * (penetrationDistance * relaxationFactor / inverseMassSum).
-	manifold firstObjectHasResponse ifTrue: [ 
+	contact firstObjectHasResponse ifTrue: [ 
 		firstCollisionObject translateBy: penetrationDelta * firstCollisionObject inverseMass
 	].
-	manifold secondObjectHasResponse ifTrue: [
+	contact secondObjectHasResponse ifTrue: [
 		secondCollisionObject translateBy: penetrationDelta * secondCollisionObject inverseMass negated
 	].
 
@@ -201,8 +204,9 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldCollisionResponse: conta
 		^ self
 	].
 
-	contactManifold updatingContactsDo: [ :eachContact |
-		self resolveContactManifold: contactManifold contactCollisionResponse: eachContact
+	contactManifold update.
+	contactManifold contacts do: [ :eachContact |
+		self resolveContactCollisionResponse: eachContact
 	].
 
 ]
@@ -214,8 +218,9 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldConstraints: contactMani
 		^ self
 	].
 
-	contactManifold updatingContactsDo: [ :eachContact |
-		self resolveContactManifold: contactManifold contactConstraint: eachContact relaxationFactor: relaxationFactor
+	contactManifold update.
+	contactManifold contacts do: [ :eachContact |
+		self resolveContactConstraint: eachContact relaxationFactor: relaxationFactor
 	].
 ]
 
@@ -250,7 +255,7 @@ WDPDiscreteDynamicPhysicsWorld >> updateWithDeltaTime: deltaTime [
 { #category : #enumerating }
 WDPDiscreteDynamicPhysicsWorld >> worldSpaceContactPointsDo: aBlock [
 	contactManifoldCache manifolds do: [ :eachManifold |
-		eachManifold contactsDo: [:eachContact |
+		eachManifold contacts do: [:eachContact |
 			aBlock cull: eachContact firstPoint cull: 1.
 			aBlock cull: eachContact secondPoint cull: 2.
 		]

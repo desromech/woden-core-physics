@@ -7,6 +7,8 @@ Class {
 	#instVars : [
 		'epoch',
 		'normal',
+		'firstCollisionObject',
+		'secondCollisionObject',
 		'requiredSeparation',
 		'firstPoint',
 		'secondPoint',
@@ -69,6 +71,23 @@ WDPContactPoint >> epoch: anObject [
 ]
 
 { #category : #accessing }
+WDPContactPoint >> firstCollisionObject [
+
+	^ firstCollisionObject
+]
+
+{ #category : #accessing }
+WDPContactPoint >> firstCollisionObject: anObject [
+
+	firstCollisionObject := anObject
+]
+
+{ #category : #accessing }
+WDPContactPoint >> firstObjectHasResponse [
+	^ firstCollisionObject collisionResponseGroupMask anyMask: secondCollisionObject collisionGroup
+]
+
+{ #category : #accessing }
 WDPContactPoint >> firstPoint [
 
 	^ firstPoint
@@ -91,6 +110,11 @@ WDPContactPoint >> flipped [
 		localFirstPoint: localSecondPoint;
 		localSecondPoint: localFirstPoint;
 		yourself
+]
+
+{ #category : #testing }
+WDPContactPoint >> hasCollisionResponse [
+	^ self firstObjectHasResponse or: [self secondObjectHasResponse]
 ]
 
 { #category : #testing }
@@ -195,6 +219,23 @@ WDPContactPoint >> requiredSeparation: anObject [
 ]
 
 { #category : #accessing }
+WDPContactPoint >> secondCollisionObject [
+
+	^ secondCollisionObject
+]
+
+{ #category : #accessing }
+WDPContactPoint >> secondCollisionObject: anObject [
+
+	secondCollisionObject := anObject
+]
+
+{ #category : #accessing }
+WDPContactPoint >> secondObjectHasResponse [
+	^ secondCollisionObject collisionResponseGroupMask anyMask: firstCollisionObject collisionGroup
+]
+
+{ #category : #accessing }
 WDPContactPoint >> secondPoint [
 
 	^ secondPoint
@@ -204,4 +245,9 @@ WDPContactPoint >> secondPoint [
 WDPContactPoint >> secondPoint: anObject [
 
 	secondPoint := anObject
+]
+
+{ #category : #updating }
+WDPContactPoint >> update [
+	self computeWorldVersionWithFirstTransform: firstCollisionObject transform secondTransform: secondCollisionObject transform
 ]
