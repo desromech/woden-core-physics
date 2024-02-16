@@ -14,7 +14,7 @@ Class {
 
 { #category : #defaults }
 WDPContactManifoldCache class >> defaultOldestKeptEpoch [
-	^ 8
+	^ 4
 ]
 
 { #category : #updating }

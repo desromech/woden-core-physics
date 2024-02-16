@@ -7,8 +7,16 @@ Class {
 	#instVars : [
 		'gravity'
 	],
+	#classVars : [
+		'ImportanceConstraintSolvingThreshold'
+	],
 	#category : #'WodenPhysics-Core-World'
 }
+
+{ #category : #'class initialization' }
+WDPDiscreteDynamicPhysicsWorld class >> initialize [
+	ImportanceConstraintSolvingThreshold := 16.
+]
 
 { #category : #broadphase }
 WDPDiscreteDynamicPhysicsWorld >> computeBroadphaseCandidatePairs [
@@ -255,29 +263,51 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldsCollisionsAndConstraint
 WDPDiscreteDynamicPhysicsWorld >> solveCollisionContactConstraintList: contacts [
 	| relaxationFactor iterationCount |
 	relaxationFactor := 1.0.
-	iterationCount := contacts size * 2.
-	1 to: iterationCount do: [ :i |
-		| contact | 
-		contact := self findMostSeverePenetrationContactInList: contacts.
-		contact ifNil: [ ^ self ].
+	contacts size <= ImportanceConstraintSolvingThreshold ifTrue: [ 
+		iterationCount := contacts size * 2.
+		1 to: iterationCount do: [ :i |
+			| contact | 
+			contact := self findMostSeverePenetrationContactInList: contacts.
+			contact ifNil: [ ^ self ].
 	
-		self resolveContactConstraint: contact relaxationFactor: relaxationFactor	
+			self resolveContactConstraint: contact relaxationFactor: relaxationFactor	
+		].
+	] ifFalse: [
+		contacts do: [ :contact |
+			contact update.
+		].
+
+		1 to: 2 do: [ :iteration |
+			contacts do: [ :contact |
+				self resolveContactConstraint: contact relaxationFactor: relaxationFactor				
+			]
+		]
 	].
+
 ]
 
 { #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> solveCollisionContactResponseList: contacts [
 	| iterationCount |
-	iterationCount := contacts size * 2.
 	contacts do: [ :eachContact | eachContact update ].
 	
-	1 to: iterationCount do: [ :i |
-		| contact | 
-		contact := self findMostSevereCollisionContactInList: contacts.
-		contact ifNil: [ ^ self ].
+	contacts size <= ImportanceConstraintSolvingThreshold ifTrue: [
+		iterationCount := contacts size * 2.
+		1 to: iterationCount do: [ :i |
+			| contact | 
+			contact := self findMostSevereCollisionContactInList: contacts.
+			contact ifNil: [ ^ self ].
 	
-		self resolveContactCollisionResponse: contact
+			self resolveContactCollisionResponse: contact
+		]
+	] ifFalse: [
+		1 to: 2 do: [ :iteration |
+			contacts do: [ :contact |
+				self resolveContactCollisionResponse: contact
+			]
+		]
 	].
+
 ]
 
 { #category : #update }
