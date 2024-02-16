@@ -87,7 +87,7 @@ WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
 { #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollisionResponse: contact [
 	"See Milling. 'Game Physics Engine Development'. Chapter 14 for details on these equations and the associated algorithms."
-	| firstCollisionObject secondCollisionObject restitutionCoefficient contactNormal  contactLocalToWorldMatrix3x3 relativeFirstPoint relativeSecondPoint firstContactVelocity secondContactVelocity relativeSeparationVelocity relativeContactSeparationVelocity deltaVelocity contactLocalImpulse contactImpulse contactLocalVelocityChange velocityChangePerImpulse firstTangentialVelocityChangePerImpulse secondTangentialVelocityChangePerImpulse contactPoint relativeVelocityFromIntegrationDelta relativeContactVelocityFromIntegrationDelta planarImpulse staticFrictionCoefficient |
+	| firstCollisionObject secondCollisionObject restitutionCoefficient contactNormal  contactLocalToWorldMatrix3x3 relativeFirstPoint relativeSecondPoint firstContactVelocity secondContactVelocity relativeSeparationVelocity relativeContactSeparationVelocity deltaVelocity contactLocalImpulse contactImpulse contactLocalVelocityChange contactPoint relativeVelocityFromIntegrationDelta relativeContactVelocityFromIntegrationDelta planarImpulse staticFrictionCoefficient velocityChangePerImpulseWorldMatrix inverseMass velocityChangePerImpulseContactMatrix impulseChangePerVelocityContactMatrix |
 	firstCollisionObject := manifold firstCollisionObject.
 	secondCollisionObject := manifold secondCollisionObject.
 	
@@ -101,13 +101,17 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollis
 
 	contactLocalToWorldMatrix3x3 := contact computeContactSpaceMatrix.
 
-	firstTangentialVelocityChangePerImpulse := firstCollisionObject computeTangentialVelocityChangePerImpulseFactorWorldForRelativeContactPoint: relativeFirstPoint normal: contactNormal.
-	secondTangentialVelocityChangePerImpulse := secondCollisionObject computeTangentialVelocityChangePerImpulseFactorWorldForRelativeContactPoint: relativeSecondPoint normal: contactNormal.
+	velocityChangePerImpulseWorldMatrix := 
+	(firstCollisionObject computeVelocityPerImpulseWorldMatrixForRelativeContactPoint: relativeFirstPoint) +
+	(secondCollisionObject computeVelocityPerImpulseWorldMatrixForRelativeContactPoint: relativeSecondPoint).
+	
+	velocityChangePerImpulseContactMatrix := contactLocalToWorldMatrix3x3 transpose * velocityChangePerImpulseWorldMatrix * contactLocalToWorldMatrix3x3.
 
-	velocityChangePerImpulse :=
-		firstCollisionObject inverseMass + firstTangentialVelocityChangePerImpulse +
-		secondCollisionObject inverseMass + secondTangentialVelocityChangePerImpulse.
-	velocityChangePerImpulse <= 0 ifTrue: [ ^ self ].
+	inverseMass := firstCollisionObject inverseMass + secondCollisionObject inverseMass.
+	velocityChangePerImpulseContactMatrix := velocityChangePerImpulseContactMatrix + (Matrix3x3 scale: inverseMass).
+	
+	(velocityChangePerImpulseContactMatrix determinant closeTo: 0.0) ifTrue: [ ^ self ].
+	impulseChangePerVelocityContactMatrix := velocityChangePerImpulseContactMatrix inverse.
 
 	firstContactVelocity := firstCollisionObject velocityAtRelativePoint: relativeFirstPoint.
 	secondContactVelocity := secondCollisionObject velocityAtRelativePoint: relativeSecondPoint.
@@ -133,7 +137,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollis
 		y: relativeContactSeparationVelocity y negated
 		z: relativeContactSeparationVelocity z negated.
 		
-	contactLocalImpulse := contactLocalVelocityChange / velocityChangePerImpulse.
+	contactLocalImpulse := impulseChangePerVelocityContactMatrix * contactLocalVelocityChange.
 
 	"Compute the planar length for simulating friction."
 	staticFrictionCoefficient := firstCollisionObject staticFrictionCoefficient min: secondCollisionObject staticFrictionCoefficient.
@@ -141,15 +145,24 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollis
 
 	"Is this in the limits for the static friction?"
 	planarImpulse > (contactLocalImpulse x * staticFrictionCoefficient) ifTrue: [
-		| dynamicFrictionCoefficient |
+		| dynamicFrictionCoefficient frictionNormalDelta |
 		dynamicFrictionCoefficient := firstCollisionObject dynamicFrictionCoefficient min: secondCollisionObject dynamicFrictionCoefficient.
+		
+		contactLocalImpulse y: contactLocalImpulse y / planarImpulse.
+		contactLocalImpulse z: contactLocalImpulse z / planarImpulse.
 
-		contactLocalImpulse y: contactLocalImpulse y / planarImpulse * dynamicFrictionCoefficient * contactLocalImpulse x.
-		contactLocalImpulse z: contactLocalImpulse z / planarImpulse * dynamicFrictionCoefficient * contactLocalImpulse x.
+		"contactLocalImpulse yz length = dynamicFrictionCoefficient * contactLocalImpulse x"
+		
+		"CHECK ME: What is the meaning of this correction? [From Millington Game Physics Engine Development, Chapter 15 pp 410]"
+		frictionNormalDelta := velocityChangePerImpulseContactMatrix firstRow dot: (Vector3 x: 1 y: dynamicFrictionCoefficient*contactLocalImpulse y z: dynamicFrictionCoefficient*contactLocalImpulse z).
+		contactLocalImpulse x: deltaVelocity / frictionNormalDelta.
+
+		contactLocalImpulse y: contactLocalImpulse y * dynamicFrictionCoefficient * contactLocalImpulse x.
+		contactLocalImpulse z: contactLocalImpulse z * dynamicFrictionCoefficient * contactLocalImpulse x.
 	].
 
 	contactImpulse := contactLocalToWorldMatrix3x3 * contactLocalImpulse.
-	
+
 	manifold firstObjectHasResponse ifTrue: [
 		firstCollisionObject applyImpulse: contactImpulse inRelativePosition: relativeFirstPoint
 	].

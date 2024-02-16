@@ -120,6 +120,11 @@ WDPCollisionObject >> collisionTreeNode: anObject [
 	collisionTreeNode := anObject
 ]
 
+{ #category : #update }
+WDPCollisionObject >> computeVelocityPerImpulseWorldMatrixForRelativeContactPoint: relativePoint [
+	^ Matrix3x3 zeros
+]
+
 { #category : #adding }
 WDPCollisionObject >> constructVisualizationSceneNode [
 	^ shape constructVisualizationSceneNode
@@ -166,9 +171,9 @@ WDPCollisionObject >> initialize [
 	linearVelocity := Vector3 zeros.
 	angularVelocity := Vector3 zeros.
 	
-	restitutionCoefficient := 0.5.
-	dynamicFrictionCoefficient := 0.1.
-	staticFrictionCoefficient := 0.1.
+	restitutionCoefficient := 0.2.
+	dynamicFrictionCoefficient := 0.5.
+	staticFrictionCoefficient := 0.6.
 	
 	collisionGroup := WDPCollisionMasks defaultCollisionGroup .
 	collisionResponseGroupMask := WDPCollisionMasks defaultCollisionResponseGroup.

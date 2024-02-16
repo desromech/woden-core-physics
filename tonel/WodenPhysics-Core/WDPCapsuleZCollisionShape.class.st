@@ -1,3 +1,6 @@
+"
+I am a capsule collision shape which is aligned along the Z axis.
+"
 Class {
 	#name : #WDPCapsuleZCollisionShape,
 	#superclass : #WDPAbstractCapsuleCollisionShape,

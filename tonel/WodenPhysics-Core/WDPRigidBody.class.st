@@ -112,20 +112,12 @@ WDPRigidBody >> computeMassDistribution [
 ]
 
 { #category : #update }
-WDPRigidBody >> computeTangentialVelocityChangePerImpulseFactorWorldForRelativeContactPoint: relativePoint normal: contactNormal [
-	| tangentialVelocityChangePerImpulse factor |
-	tangentialVelocityChangePerImpulse := self computeTangentialVelocityChangePerImpulseWorldForRelativeContactPoint: relativePoint normal: contactNormal.
-	factor := tangentialVelocityChangePerImpulse dot: contactNormal.
-	self assert: factor >= 0.0.
-	^ factor
-]
-
-{ #category : #update }
-WDPRigidBody >> computeTangentialVelocityChangePerImpulseWorldForRelativeContactPoint: relativePoint normal: contactNormal [
-	| torquePerUnitImpulse rotationPerUnitImpulse |
-	torquePerUnitImpulse := relativePoint cross: contactNormal.
+WDPRigidBody >> computeVelocityPerImpulseWorldMatrixForRelativeContactPoint: relativePoint [
+	| relativePointCrossMatrix torquePerUnitImpulse rotationPerUnitImpulse |
+	relativePointCrossMatrix := Matrix3x3 skewSymmetric: relativePoint.
+	torquePerUnitImpulse := relativePointCrossMatrix.
 	rotationPerUnitImpulse := worldInverseInertiaTensor * torquePerUnitImpulse.
-	^ rotationPerUnitImpulse cross: relativePoint
+	^ (relativePointCrossMatrix * rotationPerUnitImpulse) negated
 ]
 
 { #category : #accessing }

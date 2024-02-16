@@ -28,11 +28,6 @@ WDPCollisionShape >> constructVisualizationSceneNode [
 ]
 
 { #category : #accessing }
-WDPCollisionShape >> detectAndComputeCollisionContactPointsAt: transform with: otherShape at: otherTransform [
-	self subclassResponsibility
-]
-
-{ #category : #accessing }
 WDPCollisionShape >> detectAndComputeCollisionContactPointsAt: transform with: otherShape at: otherTransform separatingAxisHint: separatingAxisHint [
 	self subclassResponsibility
 ]
