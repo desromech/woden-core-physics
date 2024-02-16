@@ -87,20 +87,17 @@ WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
 { #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollisionResponse: contact [
 	"See Milling. 'Game Physics Engine Development'. Chapter 14 for details on these equations and the associated algorithms."
-	| firstCollisionObject secondCollisionObject restitutionCoefficient contactNormal  contactLocalToWorldMatrix3x3 relativeFirstPoint relativeSecondPoint firstContactVelocity secondContactVelocity relativeSeparationVelocity relativeContactSeparationVelocity deltaVelocity contactLocalImpulse contactImpulse contactLocalVelocityChange velocityChangePerImpulse firstTangentialVelocityChangePerImpulse secondTangentialVelocityChangePerImpulse |
+	| firstCollisionObject secondCollisionObject restitutionCoefficient contactNormal  contactLocalToWorldMatrix3x3 relativeFirstPoint relativeSecondPoint firstContactVelocity secondContactVelocity relativeSeparationVelocity relativeContactSeparationVelocity deltaVelocity contactLocalImpulse contactImpulse contactLocalVelocityChange velocityChangePerImpulse firstTangentialVelocityChangePerImpulse secondTangentialVelocityChangePerImpulse contactPoint |
 	firstCollisionObject := manifold firstCollisionObject.
 	secondCollisionObject := manifold secondCollisionObject.
 	
 	contact penetrationDistance <= 0.0 ifTrue: [ ^ self ].
 	
 	contactNormal := contact normal.
+	contactPoint := contact point.
 
-	relativeFirstPoint := contact firstPoint - firstCollisionObject position.
-	relativeSecondPoint := contact secondPoint - secondCollisionObject position.
-	Transcript
-		show: 'n '; show: contactNormal; cr;
-		show: 'rfp '; show: relativeFirstPoint;
-		show: ' rsp '; show: relativeSecondPoint; cr.
+	relativeFirstPoint := contactPoint - firstCollisionObject position.
+	relativeSecondPoint := contactPoint - secondCollisionObject position.
 
 	contactLocalToWorldMatrix3x3 := contact computeContactSpaceMatrix.
 

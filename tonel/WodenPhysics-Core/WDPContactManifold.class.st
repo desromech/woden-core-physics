@@ -16,9 +16,9 @@ Class {
 
 { #category : #adding }
 WDPContactManifold >> addContact: newContact [
-	contacts do: [ :eachExistingContact |
+	contacts doWithIndex: [ :eachExistingContact :index |
 		(eachExistingContact isSimilarTo: newContact) ifTrue: [ 
-			eachExistingContact epoch: (eachExistingContact epoch max: newContact epoch).
+			contacts at: index put: newContact.
 			^ self
 		].
 	].

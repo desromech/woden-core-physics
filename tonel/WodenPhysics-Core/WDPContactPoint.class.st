@@ -96,9 +96,8 @@ WDPContactPoint >> flipped [
 { #category : #testing }
 WDPContactPoint >> isSimilarTo: otherContact [
 	^ (localFirstPoint closeTo: otherContact localFirstPoint) and: [ 
-		(localSecondPoint closeTo: otherContact localSecondPoint) and: [ 
-		(normal closeTo: otherContact normal) and: [ 
-		requiredSeparation closeTo: otherContact requiredSeparation ]]]
+		(localSecondPoint closeTo: otherContact localSecondPoint)
+	]
 ]
 
 { #category : #accessing }
@@ -171,6 +170,11 @@ WDPContactPoint >> penetrationDistance [
 WDPContactPoint >> penetrationDistance: anObject [
 
 	penetrationDistance := anObject
+]
+
+{ #category : #accessing }
+WDPContactPoint >> point [
+	^ firstPoint + ((secondPoint - firstPoint) * 0.5)
 ]
 
 { #category : #printing }
