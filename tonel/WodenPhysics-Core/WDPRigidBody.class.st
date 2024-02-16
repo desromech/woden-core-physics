@@ -15,7 +15,11 @@ Class {
 		'worldInertiaTensor',
 		'worldInverseInertiaTensor',
 		'netForce',
-		'netTorque'
+		'netTorque',
+		'linearAcceleration',
+		'angularAcceleration',
+		'linearVelocityIntegrationDelta',
+		'angularVelocityIntegrationDelta'
 	],
 	#category : #'WodenPhysics-Core-CollisionObjects'
 }
@@ -31,6 +35,18 @@ WDPRigidBody class >> defaultLinearDamping [
 ]
 
 { #category : #accessing }
+WDPRigidBody >> angularAcceleration [
+
+	^ angularAcceleration
+]
+
+{ #category : #accessing }
+WDPRigidBody >> angularAcceleration: anObject [
+
+	angularAcceleration := anObject
+]
+
+{ #category : #accessing }
 WDPRigidBody >> angularDamping [
 
 	^ angularDamping
@@ -40,6 +56,18 @@ WDPRigidBody >> angularDamping [
 WDPRigidBody >> angularDamping: anObject [
 
 	angularDamping := anObject
+]
+
+{ #category : #accessing }
+WDPRigidBody >> angularVelocityIntegrationDelta [
+
+	^ angularVelocityIntegrationDelta
+]
+
+{ #category : #accessing }
+WDPRigidBody >> angularVelocityIntegrationDelta: anObject [
+
+	angularVelocityIntegrationDelta := anObject
 ]
 
 { #category : #update }
@@ -83,6 +111,23 @@ WDPRigidBody >> computeMassDistribution [
 	]
 ]
 
+{ #category : #update }
+WDPRigidBody >> computeTangentialVelocityChangePerImpulseFactorWorldForRelativeContactPoint: relativePoint normal: contactNormal [
+	| tangentialVelocityChangePerImpulse factor |
+	tangentialVelocityChangePerImpulse := self computeTangentialVelocityChangePerImpulseWorldForRelativeContactPoint: relativePoint normal: contactNormal.
+	factor := tangentialVelocityChangePerImpulse dot: contactNormal.
+	self assert: factor >= 0.0.
+	^ factor
+]
+
+{ #category : #update }
+WDPRigidBody >> computeTangentialVelocityChangePerImpulseWorldForRelativeContactPoint: relativePoint normal: contactNormal [
+	| torquePerUnitImpulse rotationPerUnitImpulse |
+	torquePerUnitImpulse := relativePoint cross: contactNormal.
+	rotationPerUnitImpulse := worldInverseInertiaTensor * torquePerUnitImpulse.
+	^ rotationPerUnitImpulse cross: relativePoint
+]
+
 { #category : #accessing }
 WDPRigidBody >> inertiaTensor [
 
@@ -111,23 +156,47 @@ WDPRigidBody >> initialize [
 
 { #category : #update }
 WDPRigidBody >> integrateMovementWithDeltaTime: deltaTime [
-	| linearAcceleration integratedPosition integratedOrientation angularAcceleration |
+	| integratedVelocity integratedAngularVelocity integratedPosition integratedOrientation orientationDelta |
 	mass isZero ifTrue: [
+		angularAcceleration := linearAcceleration := Vector3 zeros.
+		angularVelocityIntegrationDelta := linearVelocityIntegrationDelta := Vector3 zeros.
 		^ self
 	].
 	
-	linearAcceleration := owner gravity + (linearVelocity * linearDamping negated) + (netForce * inverseMass).
-	linearVelocity := linearVelocity + (linearAcceleration*deltaTime).
+	"Integrate linear velocity."
+	linearAcceleration := owner gravity + (netForce * inverseMass).
+	
+	integratedVelocity := self integrateVelocityWithAcceleration: linearAcceleration damping: linearDamping initialVelocity: linearVelocity dt: deltaTime.
+	linearVelocityIntegrationDelta := integratedVelocity - linearVelocity.
+	linearVelocity := integratedVelocity.
+
+	"Integrate angular velocity."	
+	angularAcceleration := (worldInverseInertiaTensor * netTorque).
+	integratedAngularVelocity := self integrateVelocityWithAcceleration: angularAcceleration damping: angularDamping initialVelocity: angularVelocity dt: deltaTime.
+	angularVelocityIntegrationDelta := integratedAngularVelocity - angularVelocity.
+	angularVelocity := integratedAngularVelocity.
+
+	"Integrate position"
 	integratedPosition := self position + (linearVelocity *deltaTime).
 
-	angularAcceleration := (angularVelocity * angularDamping negated) + (worldInverseInertiaTensor * netTorque).
-	angularVelocity := angularVelocity + (angularAcceleration*deltaTime).
-
-	integratedOrientation := self orientation + ((Quaternion xyz: angularVelocity * 0.5 *deltaTime) * self orientation).
-	integratedOrientation := integratedOrientation normalized.
+	"Integrate orientation"
+	orientationDelta := (Quaternion xyz: angularVelocity * (0.5 *deltaTime)) * self orientation.
+	integratedOrientation := (self orientation + orientationDelta) normalized.
 	self position: integratedPosition orientation: integratedOrientation.
 
 	self clearNetForcesAndTorque.
+]
+
+{ #category : #update }
+WDPRigidBody >> integrateVelocityWithAcceleration: a damping: k initialVelocity: v0 dt: dt [
+	^ (k closeTo: 0) ifTrue: [ 
+		v0 + (a*dt)
+	] ifFalse: [
+		| ve | 
+		ve := a / k.
+		^ ve - ((ve - v0) * ((k negated * dt) exp))
+	]
+	"^ v0 + ((a - (v0*k))*dt)"
 ]
 
 { #category : #accessing }
@@ -143,6 +212,18 @@ WDPRigidBody >> inverseMass [
 ]
 
 { #category : #accessing }
+WDPRigidBody >> linearAcceleration [
+
+	^ linearAcceleration
+]
+
+{ #category : #accessing }
+WDPRigidBody >> linearAcceleration: anObject [
+
+	^ linearAcceleration := anObject
+]
+
+{ #category : #accessing }
 WDPRigidBody >> linearDamping [
 
 	^ linearDamping
@@ -152,6 +233,18 @@ WDPRigidBody >> linearDamping [
 WDPRigidBody >> linearDamping: anObject [
 
 	linearDamping := anObject
+]
+
+{ #category : #accessing }
+WDPRigidBody >> linearVelocityIntegrationDelta [
+
+	^ linearVelocityIntegrationDelta
+]
+
+{ #category : #accessing }
+WDPRigidBody >> linearVelocityIntegrationDelta: anObject [
+
+	^ linearVelocityIntegrationDelta := anObject
 ]
 
 { #category : #accessing }
@@ -191,11 +284,14 @@ WDPRigidBody >> rotationMatrix [
 
 { #category : #update }
 WDPRigidBody >> transformChanged [
+	| transposedRotationMatrix |
 	super transformChanged.
 	rotationMatrix := self orientation asMatrix3x3.
-	worldInertiaTensor := rotationMatrix * inertiaTensor.
-	worldInverseInertiaTensor := rotationMatrix * inverseInertiaTensor.
-	
+	transposedRotationMatrix := rotationMatrix transpose.
+
+	worldInertiaTensor := rotationMatrix * inertiaTensor * transposedRotationMatrix.
+	worldInverseInertiaTensor := rotationMatrix * inverseInertiaTensor * transposedRotationMatrix.
+
 ]
 
 { #category : #accessing }

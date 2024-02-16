@@ -31,6 +31,12 @@ WDPContactManifold >> addContacts: newContacts [
 	newContacts do: [ :each | self addContact: each ].
 ]
 
+{ #category : #update }
+WDPContactManifold >> contactsDo: aBlock [
+	contacts do: aBlock
+
+]
+
 { #category : #accessing }
 WDPContactManifold >> epoch [
 

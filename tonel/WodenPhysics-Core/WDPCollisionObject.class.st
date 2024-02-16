@@ -28,6 +28,11 @@ WDPCollisionObject >> addOntoPhysicsWorld: aPhysicsWorld [
 ]
 
 { #category : #accessing }
+WDPCollisionObject >> angularAcceleration [
+	^ Vector3 zeros
+]
+
+{ #category : #accessing }
 WDPCollisionObject >> angularVelocity [
 
 	^ angularVelocity
@@ -37,6 +42,11 @@ WDPCollisionObject >> angularVelocity [
 WDPCollisionObject >> angularVelocity: anObject [
 
 	angularVelocity := anObject
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> angularVelocityIntegrationDelta [
+	^ Vector3 zeros
 ]
 
 { #category : #update }
@@ -180,6 +190,11 @@ WDPCollisionObject >> inverseMass [
 ]
 
 { #category : #accessing }
+WDPCollisionObject >> linearAcceleration [
+	^ Vector3 zeros
+]
+
+{ #category : #accessing }
 WDPCollisionObject >> linearVelocity [
 
 	^ linearVelocity
@@ -189,6 +204,11 @@ WDPCollisionObject >> linearVelocity [
 WDPCollisionObject >> linearVelocity: anObject [
 
 	linearVelocity := anObject
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> linearVelocityIntegrationDelta [
+	^ Vector3 zeros
 ]
 
 { #category : #model }

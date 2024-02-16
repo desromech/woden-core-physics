@@ -51,7 +51,7 @@ WDPConvexCollisionShape >> detectAndComputeCollisionContactPointsAt: transform w
 		}
 	] ifFalse: [
 		| distanceAndNormal |
-		distanceAndNormal := GeometricFunctions samplePenetrationDistanceAndNormalForSupport: firstSupportFunction with: secondSupportFunction separatingAxisHint: separatingAxisHint.
+		distanceAndNormal := GeometricFunctions samplePenetrationContactForSupport: firstSupportFunction with: secondSupportFunction margin: totalMargin separatingAxisHint: separatingAxisHint.
 		distanceAndNormal ifNil: [ ^ #() ].
 		
 		^ {WDPContactPoint new

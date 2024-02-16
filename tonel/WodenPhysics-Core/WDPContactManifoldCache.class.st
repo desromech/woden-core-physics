@@ -14,13 +14,12 @@ Class {
 
 { #category : #defaults }
 WDPContactManifoldCache class >> defaultOldestKeptEpoch [
-	^ 3
+	^ 4
 ]
 
 { #category : #updating }
 WDPContactManifoldCache >> beginEpoch [
-	epoch := epoch + 1.
-
+	epoch := epoch + 1
 ]
 
 { #category : #private }
@@ -35,7 +34,7 @@ WDPContactManifoldCache >> endEpoch [
 	expiredEpoch := epoch - self class defaultOldestKeptEpoch.
 	keptManifolds := OrderedCollection new.
 	manifolds do: [ :each |
-		each epoch = epoch ifTrue: [
+		each epoch >= expiredEpoch ifTrue: [
 			keptManifolds add: each.
 			each expireContactsUntil: expiredEpoch
 		] ifFalse: [ 

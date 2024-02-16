@@ -87,7 +87,7 @@ WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
 { #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollisionResponse: contact [
 	"See Milling. 'Game Physics Engine Development'. Chapter 14 for details on these equations and the associated algorithms."
-	| firstCollisionObject secondCollisionObject restitutionCoefficient contactNormal  contactLocalToWorldMatrix3x3 relativeFirstPoint relativeSecondPoint firstContactVelocity secondContactVelocity relativeSeparationVelocity relativeContactSeparationVelocity deltaVelocity contactLocalImpulse contactImpulse contactLocalVelocityChange firstVelocityChangePerImpulseWorld secondVelocityChangePerImpulseWorld velocityChangePerImpulse |
+	| firstCollisionObject secondCollisionObject restitutionCoefficient contactNormal  contactLocalToWorldMatrix3x3 relativeFirstPoint relativeSecondPoint firstContactVelocity secondContactVelocity relativeSeparationVelocity relativeContactSeparationVelocity deltaVelocity contactLocalImpulse contactImpulse contactLocalVelocityChange velocityChangePerImpulse firstTangentialVelocityChangePerImpulse secondTangentialVelocityChangePerImpulse |
 	firstCollisionObject := manifold firstCollisionObject.
 	secondCollisionObject := manifold secondCollisionObject.
 	
@@ -97,26 +97,19 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifold: manifold contactCollis
 
 	relativeFirstPoint := contact firstPoint - firstCollisionObject position.
 	relativeSecondPoint := contact secondPoint - secondCollisionObject position.
+	Transcript
+		show: 'n '; show: contactNormal; cr;
+		show: 'rfp '; show: relativeFirstPoint;
+		show: ' rsp '; show: relativeSecondPoint; cr.
 
 	contactLocalToWorldMatrix3x3 := contact computeContactSpaceMatrix.
 
-	"Torque per unit impulse."
-	firstVelocityChangePerImpulseWorld := relativeFirstPoint cross: contactNormal.
-	"Rotation per unit impulse."
-	firstVelocityChangePerImpulseWorld := firstCollisionObject worldInverseInertiaTensor * firstVelocityChangePerImpulseWorld.
-	"Velocity per unit impulse."
-	firstVelocityChangePerImpulseWorld := firstVelocityChangePerImpulseWorld cross: relativeFirstPoint.
+	firstTangentialVelocityChangePerImpulse := firstCollisionObject computeTangentialVelocityChangePerImpulseFactorWorldForRelativeContactPoint: relativeFirstPoint normal: contactNormal.
+	secondTangentialVelocityChangePerImpulse := secondCollisionObject computeTangentialVelocityChangePerImpulseFactorWorldForRelativeContactPoint: relativeSecondPoint normal: contactNormal.
 
-	"Torque per unit impulse."
-	secondVelocityChangePerImpulseWorld := relativeSecondPoint cross: contactNormal.
-	"Rotation per unit impulse."
-	secondVelocityChangePerImpulseWorld := secondCollisionObject worldInverseInertiaTensor * secondVelocityChangePerImpulseWorld.
-	"Velocity per unit impulse."
-	secondVelocityChangePerImpulseWorld := secondVelocityChangePerImpulseWorld cross: relativeSecondPoint.
-	
 	velocityChangePerImpulse :=
-		firstCollisionObject inverseMass + (firstVelocityChangePerImpulseWorld dot: contactNormal) +
-		secondCollisionObject inverseMass + (secondVelocityChangePerImpulseWorld dot: contactNormal).
+		firstCollisionObject inverseMass + firstTangentialVelocityChangePerImpulse +
+		secondCollisionObject inverseMass + secondTangentialVelocityChangePerImpulse.
 	velocityChangePerImpulse <= 0 ifTrue: [ ^ self ].
 
 	firstContactVelocity := firstCollisionObject linearVelocity + (firstCollisionObject angularVelocity cross: relativeFirstPoint).
@@ -216,4 +209,14 @@ WDPDiscreteDynamicPhysicsWorld >> updateWithDeltaTime: deltaTime [
 	self
 		integrateMovementWithDeltaTime: deltaTime;
 		detectAndResolveCollisionsWithDeltaTime: deltaTime
+]
+
+{ #category : #enumerating }
+WDPDiscreteDynamicPhysicsWorld >> worldSpaceContactPointsDo: aBlock [
+	contactManifoldCache manifolds do: [ :eachManifold |
+		eachManifold contactsDo: [:eachContact |
+			aBlock cull: eachContact firstPoint cull: 1.
+			aBlock cull: eachContact secondPoint cull: 2.
+		]
+	]
 ]

@@ -87,7 +87,7 @@ WDPhysicsWorldExamples class >> exampleFallingBoxOnBox [
 			position: (Vector3 y: -0.5);
 			yourself);
 		add: (WDPRigidBody new
-			shape: (WDPBoxCollisionShape halfExtent: (Vector3 x: 2 y: 0.1 z: 2));
+			shape: (WDPBoxCollisionShape halfExtent: (Vector3 x: 4 y: 0.1 z: 4));
 			mass: 0.0;
 			computeMassDistribution;
 			position: (Vector3 y: -1.1);
@@ -115,7 +115,7 @@ WDPhysicsWorldExamples class >> exampleFallingBoxOnBox2 [
 			position: (Vector3 y: -0.5);
 			yourself);
 		add: (WDPRigidBody new
-			shape: (WDPBoxCollisionShape halfExtent: (Vector3 x: 2 y: 0.1 z: 2));
+			shape: (WDPBoxCollisionShape halfExtent: (Vector3 x: 4 y: 0.1 z: 4));
 			mass: 0.0;
 			computeMassDistribution;
 			position: (Vector3 y: -1.1);

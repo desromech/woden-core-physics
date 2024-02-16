@@ -37,7 +37,7 @@ WDPPhysicsWorld >> addCollisionObject: aCollisionObject [
 
 { #category : #visualization }
 WDPPhysicsWorld >> buildInteractiveVisualizationScene [
-	| scene collisionObjectsWithSceneNodes |
+	| scene collisionObjectsWithSceneNodes contactPointMeshes contactPointsNode updateSlowDownFactor updateFrameId |
 	scene := WDScene new.
 	scene add: (WDDirectionalLightSource new
 		color: (Vector3 x: 1.0 y: 1.0 z: 0.8) normalized;
@@ -49,11 +49,46 @@ WDPPhysicsWorld >> buildInteractiveVisualizationScene [
 		scene add: sceneNode.
 		collisionObject -> sceneNode
 	].
+
+	contactPointMeshes := {
+		WDMeshBuilder new
+			currentMaterial: (WDUnlitMaterial new
+				colorFactor: Color red;
+				xray: true;
+				yourself);
+			addCubeWithHalfExtent: (Vector3 withAll: 0.05);
+			mesh.
+
+		WDMeshBuilder new
+			currentMaterial: (WDUnlitMaterial new
+				colorFactor: Color blue;
+				xray: true;
+				yourself);
+			addCubeWithHalfExtent: (Vector3 withAll: 0.05);
+			mesh.
+	}.
+	contactPointsNode := WDSceneNode new.
+	scene add: contactPointsNode.
+	
+	updateSlowDownFactor := 1.
+	updateFrameId := 0.
 	scene updateBlock: [ :deltaTime |
-		self updateWithDeltaTime: deltaTime.
-		collisionObjectsWithSceneNodes do: [ :each |
-			each value transform: each key transform
+		(updateFrameId % updateSlowDownFactor) = 0 ifTrue: [
+			self updateWithDeltaTime: deltaTime.
+			collisionObjectsWithSceneNodes do: [ :each |
+				each value transform: each key transform
+			].
+	
+			contactPointsNode removeAllChildren.
+			self worldSpaceContactPointsDo: [ :contactPoint :objectIndex |
+				contactPointsNode add: (WDSceneNode new
+					renderables: {contactPointMeshes at: objectIndex};
+					position: contactPoint;
+					yourself)
+			].
 		].
+	
+		updateFrameId := updateFrameId + 1.
 		true
 	].
 	^ scene
@@ -125,4 +160,8 @@ WDPPhysicsWorld >> saveCollisionStateIntoModels [
 
 { #category : #update }
 WDPPhysicsWorld >> updateWithDeltaTime: deltaTime [
+]
+
+{ #category : #enumerating }
+WDPPhysicsWorld >> worldSpaceContactPointsDo: aBlock [
 ]
