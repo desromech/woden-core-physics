@@ -82,6 +82,11 @@ WDPContactManifold >> firstObjectHasResponse [
 	^ firstCollisionObject collisionResponseGroupMask anyMask: secondCollisionObject collisionGroup
 ]
 
+{ #category : #testing }
+WDPContactManifold >> hasCollisionResponse [
+	^ self firstObjectHasResponse or: [ self secondObjectHasResponse ]
+]
+
 { #category : #initialization }
 WDPContactManifold >> initialize [
 	super initialize.

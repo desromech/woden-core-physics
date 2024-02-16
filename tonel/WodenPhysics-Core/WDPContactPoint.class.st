@@ -21,6 +21,11 @@ Class {
 	#category : #'WodenPhysics-Core-Constraints'
 }
 
+{ #category : #accessing }
+WDPContactPoint >> closingSpeed [
+	^ self separationSpeed negated
+]
+
 { #category : #'contact resolution' }
 WDPContactPoint >> computeContactSpaceMatrix [
 	| x y z |
@@ -117,6 +122,11 @@ WDPContactPoint >> hasCollisionResponse [
 	^ self firstObjectHasResponse or: [self secondObjectHasResponse]
 ]
 
+{ #category : #accessing }
+WDPContactPoint >> inverseMass [
+	^ firstCollisionObject inverseMass + secondCollisionObject inverseMass
+]
+
 { #category : #testing }
 WDPContactPoint >> isSimilarTo: otherContact [
 	^ (localFirstPoint closeTo: otherContact localFirstPoint) and: [ 
@@ -206,6 +216,16 @@ WDPContactPoint >> printOn: aStream [
 	aStream nextPutAll: 'normal: '; print: normal; nextPutAll: ' pd: '; print: penetrationDistance
 ]
 
+{ #category : #'as yet unclassified' }
+WDPContactPoint >> relativeFirstPoint [
+	^ firstPoint - firstCollisionObject position
+]
+
+{ #category : #'as yet unclassified' }
+WDPContactPoint >> relativeSecondPoint [
+	^ secondPoint - secondCollisionObject position
+]
+
 { #category : #accessing }
 WDPContactPoint >> requiredSeparation [
 
@@ -245,6 +265,11 @@ WDPContactPoint >> secondPoint [
 WDPContactPoint >> secondPoint: anObject [
 
 	secondPoint := anObject
+]
+
+{ #category : #accessing }
+WDPContactPoint >> separationSpeed [
+	^ (firstCollisionObject velocityAtRelativePoint: self relativeFirstPoint) - (secondCollisionObject velocityAtRelativePoint: self relativeSecondPoint) dot: normal
 ]
 
 { #category : #updating }

@@ -61,6 +61,48 @@ WDPDiscreteDynamicPhysicsWorld >> detectNarrowphaseCollisionOf: firstCollisionOb
 	contactManifoldCache insertContacts: contactPoints for: firstCollisionObject with: secondCollisionObject.
 ]
 
+{ #category : #'constraint solving' }
+WDPDiscreteDynamicPhysicsWorld >> findMostSevereCollisionContactInList: contactList [
+	| bestFound bestFoundClosingSpeed |
+	contactList ifEmpty: [ ^ nil ].
+	
+	bestFound := nil.
+	bestFoundClosingSpeed := Float negativeInfinity.
+	
+	contactList do: [ :contact |
+		(contact hasCollisionResponse and: [contact inverseMass > 0.0]) ifTrue: [
+			| closingSpeed |
+			closingSpeed := contact closingSpeed.
+			(bestFound isNil or: [closingSpeed > bestFoundClosingSpeed]) ifTrue: [ 
+				bestFound := contact.
+				bestFoundClosingSpeed := closingSpeed.
+			]
+		]
+	].
+
+	^ bestFound
+]
+
+{ #category : #'constraint solving' }
+WDPDiscreteDynamicPhysicsWorld >> findMostSeverePenetrationContactInList: contactList [
+	| bestFound |
+	contactList ifEmpty: [ ^ nil ].
+	
+	bestFound := nil.
+	contactList do: [ :contact |
+		(contact hasCollisionResponse and: [ contact inverseMass > 0.0 ]) ifTrue: [
+			contact update.
+			(bestFound isNil or: [contact penetrationDistance > bestFound penetrationDistance]) ifTrue: [ 
+				bestFound := contact
+			]
+		]
+	].
+
+	^ bestFound penetrationDistance >= 0
+		ifTrue: [ bestFound ]
+		ifFalse: [ nil ]
+]
+
 { #category : #accessing }
 WDPDiscreteDynamicPhysicsWorld >> gravity [
 
@@ -87,18 +129,14 @@ WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
 { #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactCollisionResponse: contact [
 	"See Milling. 'Game Physics Engine Development'. Chapter 14 for details on these equations and the associated algorithms."
-	| firstCollisionObject secondCollisionObject restitutionCoefficient contactNormal  contactLocalToWorldMatrix3x3 relativeFirstPoint relativeSecondPoint firstContactVelocity secondContactVelocity relativeSeparationVelocity relativeContactSeparationVelocity deltaVelocity contactLocalImpulse contactImpulse contactLocalVelocityChange contactPoint relativeVelocityFromIntegrationDelta relativeContactVelocityFromIntegrationDelta planarImpulse staticFrictionCoefficient velocityChangePerImpulseWorldMatrix inverseMass velocityChangePerImpulseContactMatrix impulseChangePerVelocityContactMatrix |
+	| firstCollisionObject secondCollisionObject restitutionCoefficient contactNormal  contactLocalToWorldMatrix3x3 relativeFirstPoint relativeSecondPoint firstContactVelocity secondContactVelocity relativeSeparationVelocity relativeContactSeparationVelocity deltaVelocity contactLocalImpulse contactImpulse contactLocalVelocityChange relativeVelocityFromIntegrationDelta relativeContactVelocityFromIntegrationDelta planarImpulse staticFrictionCoefficient velocityChangePerImpulseWorldMatrix inverseMass velocityChangePerImpulseContactMatrix impulseChangePerVelocityContactMatrix |
 	firstCollisionObject := contact firstCollisionObject.
 	secondCollisionObject := contact secondCollisionObject.
 	
-	contact hasCollisionResponse ifFalse: [ ^ self ].
-	contact penetrationDistance <= 0.0 ifTrue: [ ^ self ].
-	
 	contactNormal := contact normal.
-	contactPoint := contact point.
 
-	relativeFirstPoint := contactPoint - firstCollisionObject position.
-	relativeSecondPoint := contactPoint - secondCollisionObject position.
+	relativeFirstPoint := contact relativeFirstPoint.
+	relativeSecondPoint := contact relativeSecondPoint.
 
 	contactLocalToWorldMatrix3x3 := contact computeContactSpaceMatrix.
 
@@ -197,52 +235,49 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactConstraint: contact relaxationFa
 
 ]
 
-{ #category : #'constraint solving' }
-WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldCollisionResponse: contactManifold [
-	contactManifold isEmpty ifTrue: [ ^ self ].
-	(contactManifold firstObjectHasResponse or: [contactManifold secondObjectHasResponse]) ifFalse: [
-		^ self
-	].
-
-	contactManifold update.
-	contactManifold contacts do: [ :eachContact |
-		self resolveContactCollisionResponse: eachContact
-	].
-
-]
-
-{ #category : #'constraint solving' }
-WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldConstraints: contactManifold relaxationFactor: relaxationFactor [
-	contactManifold isEmpty ifTrue: [ ^ self ].
-	(contactManifold firstObjectHasResponse or: [contactManifold secondObjectHasResponse]) ifFalse: [
-		^ self
-	].
-
-	contactManifold update.
-	contactManifold contacts do: [ :eachContact |
-		self resolveContactConstraint: eachContact relaxationFactor: relaxationFactor
-	].
-]
-
 { #category : #update }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldsCollisionsAndConstraints: contactManifolds [
-	| numIterations relaxationFactor |
-	numIterations := 2.
-	1 to: numIterations do: [ :iteration |
-		"Resolve the collision responses."
-		contactManifolds do: [ :manifold |
-			self resolveContactManifoldCollisionResponse: manifold
-		].
-	].
-	
-	"Resolve the contact constraints."
-	relaxationFactor := 1.0.
-	1 to: numIterations do: [ :iteration |
-		contactManifolds do: [ :manifold |
-			self resolveContactManifoldConstraints: manifold relaxationFactor: relaxationFactor.
-		].
-	].
+	| contactList |
+	contactList := OrderedCollection new.
 
+	contactManifolds do: [ :manifold |
+		manifold update.
+		manifold hasCollisionResponse ifTrue: [ 
+			contactList addAll: manifold contacts
+		]
+	].
+		
+	self solveCollisionContactResponseList: contactList.
+	self solveCollisionContactConstraintList: contactList.
+]
+
+{ #category : #'constraint solving' }
+WDPDiscreteDynamicPhysicsWorld >> solveCollisionContactConstraintList: contacts [
+	| relaxationFactor iterationCount |
+	relaxationFactor := 1.0.
+	iterationCount := contacts size * 2.
+	1 to: iterationCount do: [ :i |
+		| contact | 
+		contact := self findMostSeverePenetrationContactInList: contacts.
+		contact ifNil: [ ^ self ].
+	
+		self resolveContactConstraint: contact relaxationFactor: relaxationFactor	
+	].
+]
+
+{ #category : #'constraint solving' }
+WDPDiscreteDynamicPhysicsWorld >> solveCollisionContactResponseList: contacts [
+	| iterationCount |
+	iterationCount := contacts size * 2.
+	contacts do: [ :eachContact | eachContact update ].
+	
+	1 to: iterationCount do: [ :i |
+		| contact | 
+		contact := self findMostSevereCollisionContactInList: contacts.
+		contact ifNil: [ ^ self ].
+	
+		self resolveContactCollisionResponse: contact
+	].
 ]
 
 { #category : #update }
