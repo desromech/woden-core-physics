@@ -221,7 +221,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactCollisionResponse: contact [
 
 { #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactConstraint: contact relaxationFactor: relaxationFactor [
-	| firstCollisionObject secondCollisionObject inverseMassSum penetrationDistance penetrationDelta |
+	| firstCollisionObject secondCollisionObject inverseInertia penetrationDistance penetrationDelta |
 	contact hasCollisionResponse ifFalse: [ ^ self ].
 	
 	penetrationDistance := contact penetrationDistance.
@@ -230,15 +230,15 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactConstraint: contact relaxationFa
 	firstCollisionObject := contact firstCollisionObject.
 	secondCollisionObject := contact secondCollisionObject.
 	
-	inverseMassSum := firstCollisionObject inverseMass + secondCollisionObject inverseMass.
-	inverseMassSum <= 0 ifTrue: [ ^ self ].
+	inverseInertia := contact inverseInertia.
+	inverseInertia <= 0 ifTrue: [ ^ self ].
 	
-	penetrationDelta := contact normal * (penetrationDistance * relaxationFactor / inverseMassSum).
+	penetrationDelta := contact normal * (penetrationDistance * relaxationFactor / inverseInertia).
 	contact firstObjectHasResponse ifTrue: [ 
-		firstCollisionObject translateBy: penetrationDelta * firstCollisionObject inverseMass
+		firstCollisionObject applyMovement: penetrationDelta atRelativePoint: contact relativeFirstPoint
 	].
 	contact secondObjectHasResponse ifTrue: [
-		secondCollisionObject translateBy: penetrationDelta * secondCollisionObject inverseMass negated
+		secondCollisionObject applyMovement: penetrationDelta negated atRelativePoint: contact relativeFirstPoint
 	].
 
 ]

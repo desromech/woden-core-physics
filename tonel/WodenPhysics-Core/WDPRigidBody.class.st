@@ -96,10 +96,27 @@ WDPRigidBody >> applyLinearImpulse: impulse [
 	linearVelocity := linearVelocity + (impulse*inverseMass)
 ]
 
+{ #category : #'as yet unclassified' }
+WDPRigidBody >> applyMovement: movement atRelativePoint: relativePoint [
+	| linearMovement angularMovement |
+	linearMovement := movement * inverseMass.
+	angularMovement := worldInverseInertiaTensor * (relativePoint cross: movement).
+	self translateBy: linearMovement andRotateByAngularIncrement: angularMovement.
+	
+]
+
 { #category : #update }
 WDPRigidBody >> clearNetForcesAndTorque [
 	netForce := Vector3 zeros.
 	netTorque := Vector3 zeros.
+]
+
+{ #category : #update }
+WDPRigidBody >> computeAngularInertiaForRelativeContactPoint: relativePoint normal: normal [
+	| torquePerUnitImpulse rotationPerUnitImpulse |
+	torquePerUnitImpulse := relativePoint cross: normal.
+	rotationPerUnitImpulse := worldInverseInertiaTensor * torquePerUnitImpulse.
+	^ (rotationPerUnitImpulse cross: relativePoint) dot: normal
 ]
 
 { #category : #'mass distribution' }

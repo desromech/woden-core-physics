@@ -19,7 +19,8 @@ WDPContactManifoldCache class >> defaultOldestKeptEpoch [
 
 { #category : #updating }
 WDPContactManifoldCache >> beginEpoch [
-	epoch := epoch + 1
+	epoch := epoch + 1.
+	self expireOldManifoldContacts
 ]
 
 { #category : #private }
@@ -30,12 +31,26 @@ WDPContactManifoldCache >> composeCollisionId: firstId with: secondId [
 
 { #category : #updating }
 WDPContactManifoldCache >> endEpoch [
+	self expireOldManifolds.
+	
+]
+
+{ #category : #updating }
+WDPContactManifoldCache >> expireOldManifoldContacts [
+	| expiredEpoch |
+	expiredEpoch := self expiredEpoch.
+	manifolds do: [ :each |
+		each expireContactsUntil: expiredEpoch for: epoch.
+	].
+
+]
+
+{ #category : #updating }
+WDPContactManifoldCache >> expireOldManifolds [
 	| expiredEpoch keptManifolds |
 	expiredEpoch := epoch - self class defaultOldestKeptEpoch.
 	keptManifolds := OrderedCollection new.
 	manifolds do: [ :each |
-		each expireContactsUntil: expiredEpoch for: epoch.
-		
 		(each epoch >= expiredEpoch and: [each contacts isNotEmpty]) ifTrue: [
 			keptManifolds add: each.
 		] ifFalse: [ 
@@ -44,6 +59,11 @@ WDPContactManifoldCache >> endEpoch [
 	].
 
 	manifolds := keptManifolds
+]
+
+{ #category : #updating }
+WDPContactManifoldCache >> expiredEpoch [
+	^ epoch - self class defaultOldestKeptEpoch
 ]
 
 { #category : #private }

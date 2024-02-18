@@ -79,6 +79,10 @@ WDPCollisionObject >> applyLinearImpulse: linearImpulse [
 	"By default do nothing."
 ]
 
+{ #category : #'as yet unclassified' }
+WDPCollisionObject >> applyMovement: movement atRelativePoint: relativePoint [
+]
+
 { #category : #accessing }
 WDPCollisionObject >> boundingBoxWithMargin [
 	^ self localBoundingBoxWithMargin transformedWith: transform
@@ -359,6 +363,13 @@ WDPCollisionObject >> transformChanged [
 { #category : #transforming }
 WDPCollisionObject >> translateBy: translation [
 	self position: self position + translation
+]
+
+{ #category : #transforming }
+WDPCollisionObject >> translateBy: linearIncrement andRotateByAngularIncrement: angularIncrement [
+	transform translation: transform translation + linearIncrement.
+	transform rotation: (Quaternion xyz: angularIncrement * 0.5) exp * transform rotation.
+	self transformChanged 
 ]
 
 { #category : #'as yet unclassified' }

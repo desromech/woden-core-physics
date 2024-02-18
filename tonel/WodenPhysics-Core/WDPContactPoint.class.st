@@ -131,6 +131,21 @@ WDPContactPoint >> hasCollisionResponse [
 ]
 
 { #category : #accessing }
+WDPContactPoint >> inverseAngularInertia [
+	^ (firstCollisionObject computeAngularInertiaForRelativeContactPoint: self relativeFirstPoint normal: normal) + (secondCollisionObject computeAngularInertiaForRelativeContactPoint: self relativeFirstPoint normal: normal)
+]
+
+{ #category : #accessing }
+WDPContactPoint >> inverseInertia [
+	^ self inverseLinearInertia + self inverseAngularInertia
+]
+
+{ #category : #accessing }
+WDPContactPoint >> inverseLinearInertia [
+	^ firstCollisionObject inverseMass + secondCollisionObject inverseMass
+]
+
+{ #category : #accessing }
 WDPContactPoint >> inverseMass [
 	^ firstCollisionObject inverseMass + secondCollisionObject inverseMass
 ]
@@ -278,6 +293,11 @@ WDPContactPoint >> secondPoint: anObject [
 { #category : #accessing }
 WDPContactPoint >> separationSpeed [
 	^ (firstCollisionObject velocityAtRelativePoint: self relativeFirstPoint) - (secondCollisionObject velocityAtRelativePoint: self relativeSecondPoint) dot: normal
+]
+
+{ #category : #accessing }
+WDPContactPoint >> totalInverseInertia [
+	^ self inverseLinearInertia + self inverseAngularInertia
 ]
 
 { #category : #updating }
