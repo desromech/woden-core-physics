@@ -25,6 +25,11 @@ Class {
 }
 
 { #category : #defaults }
+WDPRigidBody class >> angularMovementLimit [
+	^ 0.2
+]
+
+{ #category : #defaults }
 WDPRigidBody class >> defaultAngularDamping [
 	^ 0.2
 ]
@@ -103,6 +108,40 @@ WDPRigidBody >> applyMovement: movement atRelativePoint: relativePoint [
 	angularMovement := worldInverseInertiaTensor * (relativePoint cross: movement).
 	self translateBy: linearMovement andRotateByAngularIncrement: angularMovement.
 	
+]
+
+{ #category : #'as yet unclassified' }
+WDPRigidBody >> applyMovement: movement atRelativePoint: relativePoint withDirection: movementDirection [
+	| linearMovement angularMovement angularDirection angularFactor angularMovementLimit |
+	linearMovement := movement * inverseMass.
+
+	angularDirection := worldInverseInertiaTensor * (relativePoint cross: movementDirection).
+	angularFactor := angularDirection length.
+	(angularFactor closeTo: 0.0) ifTrue: [
+		^ self translateBy: movementDirection * linearMovement
+	].
+
+	angularDirection := angularDirection / angularFactor.
+
+	angularMovement := movement * angularFactor.
+	angularMovement abs <= 0.0 ifTrue: [ 
+		^ self translateBy: movementDirection * linearMovement
+	].
+
+	angularMovementLimit := self class angularMovementLimit.
+	angularMovement abs > self class angularMovementLimit ifTrue: [
+		| angularSpentMovement |
+		angularMovement := angularMovement >= 0
+			ifTrue: [ angularMovementLimit ]
+			ifFalse: [ angularMovementLimit negated ].
+		
+		angularSpentMovement := angularMovement / angularFactor.
+		self assert: angularSpentMovement >= 0.
+		linearMovement := (movement - angularSpentMovement) * inverseMass.
+	].
+
+	self translateBy: movementDirection * linearMovement andRotateByAngularIncrement: angularDirection*angularMovement.
+
 ]
 
 { #category : #update }

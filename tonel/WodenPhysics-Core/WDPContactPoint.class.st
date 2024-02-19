@@ -295,11 +295,6 @@ WDPContactPoint >> separationSpeed [
 	^ (firstCollisionObject velocityAtRelativePoint: self relativeFirstPoint) - (secondCollisionObject velocityAtRelativePoint: self relativeSecondPoint) dot: normal
 ]
 
-{ #category : #accessing }
-WDPContactPoint >> totalInverseInertia [
-	^ self inverseLinearInertia + self inverseAngularInertia
-]
-
 { #category : #updating }
 WDPContactPoint >> update [
 	self computeWorldVersionWithFirstTransform: firstCollisionObject transform secondTransform: secondCollisionObject transform

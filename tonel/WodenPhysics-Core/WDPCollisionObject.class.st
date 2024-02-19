@@ -80,7 +80,7 @@ WDPCollisionObject >> applyLinearImpulse: linearImpulse [
 ]
 
 { #category : #'as yet unclassified' }
-WDPCollisionObject >> applyMovement: movement atRelativePoint: relativePoint [
+WDPCollisionObject >> applyMovement: movement atRelativePoint: relativePoint withDirection: movementDirection [
 ]
 
 { #category : #accessing }
@@ -122,6 +122,11 @@ WDPCollisionObject >> collisionTreeNode [
 WDPCollisionObject >> collisionTreeNode: anObject [
 
 	collisionTreeNode := anObject
+]
+
+{ #category : #update }
+WDPCollisionObject >> computeAngularInertiaForRelativeContactPoint: relativePoint normal: normal [
+	^ 0.0
 ]
 
 { #category : #update }
