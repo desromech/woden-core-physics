@@ -19,7 +19,9 @@ Class {
 		'linearAcceleration',
 		'angularAcceleration',
 		'linearVelocityIntegrationDelta',
-		'angularVelocityIntegrationDelta'
+		'angularVelocityIntegrationDelta',
+		'contactIslandId',
+		'contactIslandParent'
 	],
 	#category : #'WodenPhysics-Core-CollisionObjects'
 }
@@ -177,6 +179,24 @@ WDPRigidBody >> computeVelocityPerImpulseWorldMatrixForRelativeContactPoint: rel
 ]
 
 { #category : #accessing }
+WDPRigidBody >> contactIslandId [
+
+	^ contactIslandId
+]
+
+{ #category : #accessing }
+WDPRigidBody >> contactIslandId: anObject [
+
+	contactIslandId := anObject
+]
+
+{ #category : #'as yet unclassified' }
+WDPRigidBody >> getContactIslandRoot [
+	self == contactIslandParent ifTrue: [ ^ self ].
+	^ contactIslandParent := contactIslandParent getContactIslandRoot
+]
+
+{ #category : #accessing }
 WDPRigidBody >> inertiaTensor [
 
 	^ inertiaTensor
@@ -259,6 +279,17 @@ WDPRigidBody >> inverseMass [
 	^ inverseMass
 ]
 
+{ #category : #initialization }
+WDPRigidBody >> joinContactIslandWith: other [
+	self assert: other participatesInContactResolution.
+	contactIslandParent == self ifTrue: [ 
+		contactIslandParent := other getContactIslandRoot
+	] ifFalse: [ 
+		self getContactIslandRoot joinContactIslandWith: other
+	].
+
+]
+
 { #category : #accessing }
 WDPRigidBody >> linearAcceleration [
 
@@ -322,6 +353,17 @@ WDPRigidBody >> netForce [
 WDPRigidBody >> netTorque [
 
 	^ netTorque
+]
+
+{ #category : #'as yet unclassified' }
+WDPRigidBody >> participatesInContactResolution [
+	^ inverseMass ~= 0
+]
+
+{ #category : #initialization }
+WDPRigidBody >> resetContactIslandRoot [
+	contactIslandParent := self.
+	contactIslandId := nil.
 ]
 
 { #category : #accessing }

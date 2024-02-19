@@ -107,6 +107,35 @@ WDPPhysicsWorld >> composeCollisionId: firstId with: secondId [
 ]
 
 { #category : #'as yet unclassified' }
+WDPPhysicsWorld >> computeContactIslandsForManifolds: contactManifolds [
+	| contactIslands |
+	collisionObjects do: [ :each | each resetContactIslandRoot ].
+
+	contactManifolds do: [ :manifold |
+		(manifold firstCollisionObject participatesInContactResolution and: [manifold secondCollisionObject participatesInContactResolution ]) ifTrue: [
+			manifold firstCollisionObject joinContactIslandWith: manifold secondCollisionObject
+		].
+	].
+
+	contactIslands := OrderedCollection new.
+
+	contactManifolds do: [ :manifold |
+		manifold contactIslandRoot ifNotNil: [ :contactIslandRoot |
+			contactIslandRoot contactIslandId ifNil: [
+				contactIslands add: OrderedCollection new.
+				contactIslandRoot contactIslandId: contactIslands size
+			].
+		
+			(contactIslands at: contactIslandRoot contactIslandId)
+				add: manifold
+		]
+	].
+
+	^ contactIslands
+	
+]
+
+{ #category : #'as yet unclassified' }
 WDPPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairSet: pairsSet [
 	| boundingBoxToFind |
 	boundingBoxToFind := collidingObject boundingBoxWithMargin.

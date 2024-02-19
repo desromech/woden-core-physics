@@ -141,6 +141,11 @@ WDPCollisionObject >> constructVisualizationSceneNode [
 		yourself
 ]
 
+{ #category : #'as yet unclassified' }
+WDPCollisionObject >> contactIslandRoot [
+	^ nil
+]
+
 { #category : #accessing }
 WDPCollisionObject >> dynamicFrictionCoefficient [
 
@@ -283,6 +288,11 @@ WDPCollisionObject >> owner: anObject [
 	owner := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+WDPCollisionObject >> participatesInContactResolution [
+	^ false
+]
+
 { #category : #accessing }
 WDPCollisionObject >> position [
 	^ transform translation
@@ -300,6 +310,10 @@ WDPCollisionObject >> position: aPosition orientation: anOrientation [
 		rotation: anOrientation;
 		translation: aPosition.
 	self transformChanged
+]
+
+{ #category : #initialization }
+WDPCollisionObject >> resetContactIslandRoot [
 ]
 
 { #category : #accessing }

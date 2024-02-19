@@ -45,6 +45,13 @@ WDPContactManifold >> addContacts: newContacts [
 ]
 
 { #category : #accessing }
+WDPContactManifold >> contactIslandRoot [
+	firstCollisionObject participatesInContactResolution ifTrue: [ ^ firstCollisionObject getContactIslandRoot ].
+	secondCollisionObject participatesInContactResolution ifTrue: [ ^ secondCollisionObject getContactIslandRoot ].
+	^ nil
+]
+
+{ #category : #accessing }
 WDPContactManifold >> contacts [
 
 	^ contacts

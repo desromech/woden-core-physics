@@ -245,18 +245,25 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactConstraint: contact relaxationFa
 
 { #category : #update }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldsCollisionsAndConstraints: contactManifolds [
-	| contactList |
+	| contactList contactIslands |
+	contactIslands := self computeContactIslandsForManifolds: contactManifolds.
 	contactList := OrderedCollection new.
 
-	contactManifolds do: [ :manifold |
-		manifold update.
-		manifold hasCollisionResponse ifTrue: [ 
-			contactList addAll: manifold contacts
-		]
-	].
+	contactIslands do: [ :eachIsland |
+		contactList removeAll.
+
+		contactManifolds do: [ :manifold |
+			manifold hasCollisionResponse ifTrue: [ 
+				contactList addAll: manifold contacts
+			]
+		].
 		
-	self solveCollisionContactResponseList: contactList.
-	self solveCollisionContactConstraintList: contactList.
+		self solveCollisionContactResponseList: contactList.
+		self solveCollisionContactConstraintList: contactList.		
+	].
+
+
+
 ]
 
 { #category : #'constraint solving' }
