@@ -61,7 +61,12 @@ WDPCollisionObject >> applyForce: force [
 
 { #category : #update }
 WDPCollisionObject >> applyForce: force inPosition: worldPosition [
-	self applyForce: force
+	self applyForce: force inRelativePosition: worldPosition - self position
+]
+
+{ #category : #update }
+WDPCollisionObject >> applyForce: force inRelativePosition: relativePosition [
+	"By default do nothing."
 ]
 
 { #category : #update }
@@ -208,6 +213,16 @@ WDPCollisionObject >> inverseMass [
 	^ 0.0
 ]
 
+{ #category : #testing }
+WDPCollisionObject >> isAwake [
+	^ false
+]
+
+{ #category : #testing }
+WDPCollisionObject >> isSleeping [
+	^ self isAwake not
+]
+
 { #category : #accessing }
 WDPCollisionObject >> linearAcceleration [
 	^ Vector3 zeros
@@ -316,6 +331,10 @@ WDPCollisionObject >> position: aPosition orientation: anOrientation [
 WDPCollisionObject >> resetContactIslandRoot [
 ]
 
+{ #category : #initialization }
+WDPCollisionObject >> resetSleepingState [
+]
+
 { #category : #accessing }
 WDPCollisionObject >> restitutionCoefficient [
 
@@ -394,6 +413,10 @@ WDPCollisionObject >> translateBy: linearIncrement andRotateByAngularIncrement: 
 { #category : #'as yet unclassified' }
 WDPCollisionObject >> velocityAtRelativePoint: relativePoint [
 	^ Vector3 zeros
+]
+
+{ #category : #'as yet unclassified' }
+WDPCollisionObject >> wakeUp [
 ]
 
 { #category : #accessing }

@@ -51,7 +51,7 @@ WDPContactManifoldCache >> expireOldManifolds [
 	expiredEpoch := epoch - self class defaultOldestKeptEpoch.
 	keptManifolds := OrderedCollection new.
 	manifolds do: [ :each |
-		(each epoch >= expiredEpoch and: [each contacts isNotEmpty]) ifTrue: [
+		each epoch = epoch ifTrue: [
 			keptManifolds add: each.
 		] ifFalse: [ 
 			manifoldDictionary removeKey: each pairId

@@ -21,7 +21,9 @@ Class {
 		'linearVelocityIntegrationDelta',
 		'angularVelocityIntegrationDelta',
 		'contactIslandId',
-		'contactIslandParent'
+		'contactIslandParent',
+		'isAwake',
+		'averageMovementAmount'
 	],
 	#category : #'WodenPhysics-Core-CollisionObjects'
 }
@@ -32,6 +34,11 @@ WDPRigidBody class >> angularMovementLimit [
 ]
 
 { #category : #defaults }
+WDPRigidBody class >> averageMovementAmountSleepingThreshold [
+	^ 0.01
+]
+
+{ #category : #defaults }
 WDPRigidBody class >> defaultAngularDamping [
 	^ 0.2
 ]
@@ -39,6 +46,16 @@ WDPRigidBody class >> defaultAngularDamping [
 { #category : #defaults }
 WDPRigidBody class >> defaultLinearDamping [
 	^ 0.2
+]
+
+{ #category : #defaults }
+WDPRigidBody class >> wakeUpMovementDeltaTreshold [
+	^ 0.001
+]
+
+{ #category : #defaults }
+WDPRigidBody class >> wakingUpAverageMovementAmount [
+	^ 2.0
 ]
 
 { #category : #accessing }
@@ -79,12 +96,21 @@ WDPRigidBody >> angularVelocityIntegrationDelta: anObject [
 
 { #category : #update }
 WDPRigidBody >> applyAngularImpulse: impulse [
-	angularVelocity := angularVelocity + (worldInverseInertiaTensor * impulse)
+	angularVelocity := angularVelocity + (worldInverseInertiaTensor * impulse).
+	self checkWakeUpDueToExternalImpulse
 ]
 
 { #category : #update }
 WDPRigidBody >> applyForce: force [
 	netForce := netForce + force.
+	self wakeUp
+]
+
+{ #category : #update }
+WDPRigidBody >> applyForce: force inRelativePosition: relativePosition [
+	netForce := netForce + force.
+	netTorque := netTorque + (relativePosition cross: force).
+	self wakeUp
 ]
 
 { #category : #update }
@@ -94,22 +120,15 @@ WDPRigidBody >> applyImpulse: impulse inPosition: worldPosition [
 
 { #category : #update }
 WDPRigidBody >> applyImpulse: impulse inRelativePosition: relativePosition [
-	self applyLinearImpulse: impulse.
-	self applyAngularImpulse: (relativePosition cross: impulse).
+	linearVelocity := linearVelocity + (impulse*inverseMass).
+	angularVelocity := angularVelocity + (worldInverseInertiaTensor * (relativePosition cross: impulse)).
+	self checkWakeUpDueToExternalImpulse
 ]
 
 { #category : #update }
 WDPRigidBody >> applyLinearImpulse: impulse [
-	linearVelocity := linearVelocity + (impulse*inverseMass)
-]
-
-{ #category : #'as yet unclassified' }
-WDPRigidBody >> applyMovement: movement atRelativePoint: relativePoint [
-	| linearMovement angularMovement |
-	linearMovement := movement * inverseMass.
-	angularMovement := worldInverseInertiaTensor * (relativePoint cross: movement).
-	self translateBy: linearMovement andRotateByAngularIncrement: angularMovement.
-	
+	linearVelocity := linearVelocity + (impulse*inverseMass).
+	self checkWakeUpDueToExternalImpulse.
 ]
 
 { #category : #'as yet unclassified' }
@@ -120,14 +139,14 @@ WDPRigidBody >> applyMovement: movement atRelativePoint: relativePoint withDirec
 	angularDirection := worldInverseInertiaTensor * (relativePoint cross: movementDirection).
 	angularFactor := angularDirection length.
 	(angularFactor closeTo: 0.0) ifTrue: [
-		^ self translateBy: movementDirection * linearMovement
+		^ self wakeUpForTranslationBy: movementDirection * linearMovement
 	].
 
 	angularDirection := angularDirection / angularFactor.
 
 	angularMovement := movement * angularFactor.
 	angularMovement abs <= 0.0 ifTrue: [ 
-		^ self translateBy: movementDirection * linearMovement
+		^ self wakeUpForTranslationBy: movementDirection * linearMovement
 	].
 
 	angularMovementLimit := self class angularMovementLimit.
@@ -142,8 +161,28 @@ WDPRigidBody >> applyMovement: movement atRelativePoint: relativePoint withDirec
 		linearMovement := (movement - angularSpentMovement) * inverseMass.
 	].
 
-	self translateBy: movementDirection * linearMovement andRotateByAngularIncrement: angularDirection*angularMovement.
+	self wakeUpForTranslationBy: movementDirection * linearMovement andRotateByAngularIncrement: angularDirection*angularMovement
+]
 
+{ #category : #'as yet unclassified' }
+WDPRigidBody >> checkTimeToSleep: weight [
+	| movementAmount |
+	isAwake ifFalse: [ ^ self ].
+	
+	movementAmount := self movementAmount.
+	averageMovementAmount := averageMovementAmount interpolateTo: movementAmount at: weight.
+	averageMovementAmount <= self class averageMovementAmountSleepingThreshold ifTrue: [
+		"Transcript show: id; show: ' got to sleep'; cr."
+		self setSleepingStateFactors
+	]
+]
+
+{ #category : #'as yet unclassified' }
+WDPRigidBody >> checkWakeUpDueToExternalImpulse [
+	isAwake ifTrue: [ ^ self ].
+	self movementAmount > self class averageMovementAmountSleepingThreshold ifTrue: [ 
+		self wakeUp
+	]
 ]
 
 { #category : #update }
@@ -220,14 +259,14 @@ WDPRigidBody >> initialize [
 	angularDamping := self class defaultAngularDamping.
 	netForce := Vector3 zeros.
 	netTorque := Vector3 zeros.
+	self setSleepingStateFactors.
 ]
 
 { #category : #update }
 WDPRigidBody >> integrateMovementWithDeltaTime: deltaTime [
 	| integratedVelocity integratedAngularVelocity integratedPosition integratedOrientation |
 	mass isZero ifTrue: [
-		angularAcceleration := linearAcceleration := Vector3 zeros.
-		angularVelocityIntegrationDelta := linearVelocityIntegrationDelta := Vector3 zeros.
+		self setSleepingStateFactors.
 		^ self
 	].
 	
@@ -277,6 +316,11 @@ WDPRigidBody >> inverseInertiaTensor [
 WDPRigidBody >> inverseMass [
 
 	^ inverseMass
+]
+
+{ #category : #testing }
+WDPRigidBody >> isAwake [
+	^ isAwake
 ]
 
 { #category : #initialization }
@@ -338,6 +382,11 @@ WDPRigidBody >> mass: aNumber [
 	inverseMass := aNumber = 0 ifTrue: [ 0 ] ifFalse: [ aNumber reciprocal ].
 ]
 
+{ #category : #'as yet unclassified' }
+WDPRigidBody >> movementAmount [
+	^ linearVelocity length2 + angularVelocity length2
+]
+
 { #category : #testing }
 WDPRigidBody >> needsCollisionDetection [
 	^ mass ~= 0
@@ -366,10 +415,25 @@ WDPRigidBody >> resetContactIslandRoot [
 	contactIslandId := nil.
 ]
 
+{ #category : #'as yet unclassified' }
+WDPRigidBody >> resetSleepingState [
+	isAwake := false.
+]
+
 { #category : #accessing }
 WDPRigidBody >> rotationMatrix [
 
 	^ rotationMatrix
+]
+
+{ #category : #update }
+WDPRigidBody >> setSleepingStateFactors [
+	isAwake := false.
+	angularAcceleration := linearAcceleration := Vector3 zeros.
+	angularVelocityIntegrationDelta := linearVelocityIntegrationDelta := Vector3 zeros.
+	linearVelocity := angularVelocity := Vector3 zeros.
+	averageMovementAmount := 0.
+	self clearNetForcesAndTorque
 ]
 
 { #category : #update }
@@ -387,6 +451,43 @@ WDPRigidBody >> transformChanged [
 { #category : #'as yet unclassified' }
 WDPRigidBody >> velocityAtRelativePoint: relativePoint [
 	^ linearVelocity + (angularVelocity cross: relativePoint)
+]
+
+{ #category : #'as yet unclassified' }
+WDPRigidBody >> wakeUp [
+	isAwake ifTrue: [ ^ self ].
+	inverseMass = 0 ifTrue: [ ^ self ].
+	
+	"Transcript show: id; show: ' wakeUp'; cr."
+	isAwake := true.
+	averageMovementAmount := self class wakingUpAverageMovementAmount.
+	owner ifNotNil: [ 
+		owner addAwakeRigidBody: self
+	]
+]
+
+{ #category : #'as yet unclassified' }
+WDPRigidBody >> wakeUpForTranslationBy: linearIncrement [
+	isAwake ifFalse: [
+		| movementAmount |
+		movementAmount := linearIncrement length2.
+		movementAmount < self class wakeUpMovementDeltaTreshold ifTrue: [ ^ self ].
+		self wakeUp
+	].
+
+	self translateBy: linearIncrement
+]
+
+{ #category : #'as yet unclassified' }
+WDPRigidBody >> wakeUpForTranslationBy: linearIncrement andRotateByAngularIncrement: angularIncrement [
+	isAwake ifFalse: [
+		| movementAmount |
+		movementAmount := linearIncrement length2 + angularIncrement length2.
+		movementAmount < self class wakeUpMovementDeltaTreshold ifTrue: [ ^ self ].
+		self wakeUp
+	].
+
+	self translateBy: linearIncrement andRotateByAngularIncrement: angularIncrement
 ]
 
 { #category : #accessing }

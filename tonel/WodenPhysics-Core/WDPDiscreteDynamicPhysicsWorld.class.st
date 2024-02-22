@@ -23,7 +23,7 @@ WDPDiscreteDynamicPhysicsWorld >> computeBroadphaseCandidatePairs [
 	| pairSet broadphasePairs |
 	pairSet := Set new.	
 	broadphasePairs := OrderedCollection new.
-	collisionObjects do: [ :each |
+	awakeRigidBodies do: [ :each |
 		each needsCollisionDetection ifTrue: [ 
 			self findBroadphasePairsFor: each into: broadphasePairs pairSet: pairSet
 		]
@@ -131,7 +131,7 @@ WDPDiscreteDynamicPhysicsWorld >> initialize [
 
 { #category : #update }
 WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
-	collisionObjects do: [ :each | each integrateMovementWithDeltaTime: deltaTime ]
+	awakeRigidBodies do: [ :each | each integrateMovementWithDeltaTime: deltaTime ]
 ]
 
 { #category : #'constraint solving' }
@@ -321,7 +321,8 @@ WDPDiscreteDynamicPhysicsWorld >> solveCollisionContactResponseList: contacts [
 WDPDiscreteDynamicPhysicsWorld >> updateWithDeltaTime: deltaTime [
 	self
 		integrateMovementWithDeltaTime: deltaTime;
-		detectAndResolveCollisionsWithDeltaTime: deltaTime
+		detectAndResolveCollisionsWithDeltaTime: deltaTime;
+		sendToSleepRestingObjects: deltaTime
 ]
 
 { #category : #enumerating }

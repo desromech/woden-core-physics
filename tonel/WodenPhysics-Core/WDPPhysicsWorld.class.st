@@ -6,6 +6,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'collisionObjects',
+		'awakeRigidBodies',
 		'collisionObjectTree',
 		'collisionObjectIdCount',
 		'contactManifoldCache',
@@ -19,9 +20,20 @@ WDPPhysicsWorld class >> isAbstract [
 	^ self == WDPPhysicsWorld
 ]
 
+{ #category : #defaults }
+WDPPhysicsWorld class >> movementAverageTau [
+	^ 0.15
+]
+
 { #category : #adding }
 WDPPhysicsWorld >> add: aPhysicsWorldObject [
 	aPhysicsWorldObject addOntoPhysicsWorld: self
+]
+
+{ #category : #adding }
+WDPPhysicsWorld >> addAwakeRigidBody: rigidBody [
+	awakeRigidBodies add: rigidBody.
+	
 ]
 
 { #category : #adding }
@@ -32,7 +44,9 @@ WDPPhysicsWorld >> addCollisionObject: aCollisionObject [
 	collisionObjects add: aCollisionObject.
 	aCollisionObject collisionTreeNode: (collisionObjectTree insertValue: aCollisionObject withBoundingBox: aCollisionObject boundingBoxWithMargin).
 	aCollisionObject owner: self; id: collisionObjectIdCount.
+	
 	collisionObjectIdCount := collisionObjectIdCount + 1.
+	aCollisionObject resetSleepingState; wakeUp.
 	
 ]
 
@@ -173,6 +187,7 @@ WDPPhysicsWorld >> hasToConsiderInBroadphase: firstObject with: secondObject [
 WDPPhysicsWorld >> initialize [
 	super initialize.
 	collisionObjects := OrderedCollection new.
+	awakeRigidBodies := OrderedCollection new.
 	collisionObjectTree := WMDbvt new.
 	collisionObjectIdCount := 0.
 	contactManifoldCache := WDPContactManifoldCache new.
@@ -199,6 +214,15 @@ WDPPhysicsWorld >> restingContactVelocityLimit: anObject [
 { #category : #'as yet unclassified' }
 WDPPhysicsWorld >> saveCollisionStateIntoModels [
 	collisionObjects do: [ :each | each saveStateFromModel ]
+]
+
+{ #category : #'as yet unclassified' }
+WDPPhysicsWorld >> sendToSleepRestingObjects: deltaTime [
+	| tau weight |
+	tau := self class movementAverageTau.
+	weight := (tau negated * deltaTime) exp * tau.
+	awakeRigidBodies do: [ :each | each checkTimeToSleep: weight ].
+	awakeRigidBodies removeAllSuchThat: [ :each | each isSleeping ].
 ]
 
 { #category : #update }
