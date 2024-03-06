@@ -246,9 +246,9 @@ WDPCollisionObject >> linearVelocityIntegrationDelta [
 ]
 
 { #category : #model }
-WDPCollisionObject >> loadStateFromModel [
+WDPCollisionObject >> loadStateFromModelWithDeltaTime: deltaTime [
 	model ifNotNil: [ 
-		model loadCollisionStateInto: self.
+		model loadCollisionStateInto: self deltaTime: deltaTime.
 	].
 
 ]

@@ -23,7 +23,8 @@ Class {
 		'contactIslandId',
 		'contactIslandParent',
 		'isAwake',
-		'averageMovementAmount'
+		'averageMovementAmount',
+		'internalAcceleration'
 	],
 	#category : #'WodenPhysics-Core-CollisionObjects'
 }
@@ -255,6 +256,7 @@ WDPRigidBody >> initialize [
 	super initialize.
 	mass := inverseMass := 0.0.
 	inertiaTensor := inverseInertiaTensor := Matrix3x3 zeros.
+	internalAcceleration := Vector3 zeros.
 	linearDamping := self class defaultLinearDamping.
 	angularDamping := self class defaultAngularDamping.
 	netForce := Vector3 zeros.
@@ -271,7 +273,7 @@ WDPRigidBody >> integrateMovementWithDeltaTime: deltaTime [
 	].
 	
 	"Integrate linear velocity."
-	linearAcceleration := owner gravity + (netForce * inverseMass).
+	linearAcceleration := owner gravity + (netForce * inverseMass) + internalAcceleration.
 	
 	integratedVelocity := self integrateVelocityWithAcceleration: linearAcceleration damping: linearDamping initialVelocity: linearVelocity dt: deltaTime.
 	linearVelocityIntegrationDelta := integratedVelocity - linearVelocity.
@@ -307,6 +309,18 @@ WDPRigidBody >> integrateVelocityWithAcceleration: a damping: k initialVelocity:
 ]
 
 { #category : #accessing }
+WDPRigidBody >> internalAcceleration [
+
+	^ internalAcceleration
+]
+
+{ #category : #accessing }
+WDPRigidBody >> internalAcceleration: anObject [
+	internalAcceleration := anObject.
+	linearAcceleration length2 > 0.0 ifTrue: [ self wakeUp ]
+]
+
+{ #category : #accessing }
 WDPRigidBody >> inverseInertiaTensor [
 
 	^ inverseInertiaTensor
@@ -338,12 +352,6 @@ WDPRigidBody >> joinContactIslandWith: other [
 WDPRigidBody >> linearAcceleration [
 
 	^ linearAcceleration
-]
-
-{ #category : #accessing }
-WDPRigidBody >> linearAcceleration: anObject [
-
-	^ linearAcceleration := anObject
 ]
 
 { #category : #accessing }

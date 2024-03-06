@@ -196,7 +196,12 @@ WDPPhysicsWorld >> initialize [
 
 { #category : #'as yet unclassified' }
 WDPPhysicsWorld >> loadCollisionStateFromModels [
-	collisionObjects do: [ :each | each loadStateFromModel ]
+	self loadCollisionStateFromModelsWithDeltaTime: 0.0
+]
+
+{ #category : #'as yet unclassified' }
+WDPPhysicsWorld >> loadCollisionStateFromModelsWithDeltaTime: delta [
+	collisionObjects do: [ :each | each loadStateFromModelWithDeltaTime: delta ]
 ]
 
 { #category : #accessing }
