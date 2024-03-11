@@ -167,6 +167,51 @@ WDPhysicsWorldExamples class >> exampleFallingCapsuleAndFloor2 [
 		buildInteractiveVisualizationScene) openInWindow
 ]
 
+{ #category : #examples }
+WDPhysicsWorldExamples class >> exampleRoom [
+	"
+	self exampleRoom
+	"
+	| world |
+	world := WDPDiscreteDynamicPhysicsWorld new
+		gravity: (Vector3 y: -9.8);
+		yourself.
+		
+	{
+		AABox min: (Vector3 x: -10 y: -0.5 z: -10) max: (Vector3 x: 10 y: 0.0 z: 10).
+		AABox min: (Vector3 x: -10 y: 5.0 z: -10) max: (Vector3 x: 10 y: 5.0 z: 10).
+
+		AABox min: (Vector3 x: -10 y: 0 z: 10) max: (Vector3 x: 10 y: 5.0 z: 10).
+		AABox min: (Vector3 x: -10 y: 0 z: -10) max: (Vector3 x: 10 y: 5.0 z: -10).
+
+		AABox min: (Vector3 x: -10 y: 0 z: -10) max: (Vector3 x: -10 y: 5.0 z: 10).
+		AABox min: (Vector3 x: 10 y: 0 z: -10) max: (Vector3 x: 10 y: 5.0 z: 10).
+
+		AABox min: (Vector3 x: -1 y: 0 z: -6) max: (Vector3 x: 1 y: 1.0 z: -5).
+	} do: [ :eachBox |
+		world add: (WDPCollisionObject new
+			shape: (WDPBoxCollisionShape halfExtent: eachBox halfExtent);
+			position: eachBox center;
+			yourself)
+	].
+
+	world add: (WDPRigidBody new
+		shape: (WDPBoxCollisionShape halfExtent: 0.125);
+		mass: 1.0;
+		computeMassDistribution;
+		position: (Vector3 x: 0.0 y: 1.5 z: -3);
+		yourself).
+
+	world add: (WDPRigidBody new
+		shape: (WDPCapsuleYCollisionShape height: 1.6 - 0.6 radius: 0.3);
+		mass: 70.0;
+		computeMassDistribution;
+		position: (Vector3 x: 0.0 y: 2.0 z: 0);
+		yourself).
+
+	world buildInteractiveVisualizationScene openInWindow
+]
+
 { #category : #'see class side' }
 WDPhysicsWorldExamples >> seeClassSide [
 ]
