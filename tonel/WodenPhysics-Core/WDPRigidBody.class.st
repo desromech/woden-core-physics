@@ -317,7 +317,7 @@ WDPRigidBody >> internalAcceleration [
 { #category : #accessing }
 WDPRigidBody >> internalAcceleration: anObject [
 	internalAcceleration := anObject.
-	linearAcceleration length2 > 0.0 ifTrue: [ self wakeUp ]
+	internalAcceleration length2 > 0.0 ifTrue: [ self wakeUp ]
 ]
 
 { #category : #accessing }
