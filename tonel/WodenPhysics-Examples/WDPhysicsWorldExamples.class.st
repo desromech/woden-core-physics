@@ -203,8 +203,7 @@ WDPhysicsWorldExamples class >> exampleRoom [
 		yourself).
 
 	world add: (WDPRigidBody new
-		"shape: (WDPCapsuleYCollisionShape height: 1.6 - 0.6 radius: 0.3);"
-		shape: (WDPBoxCollisionShape halfExtent: (Vector3 x: 0.3 y: 0.8 z: 0.3));
+		shape: (WDPCapsuleYCollisionShape height: 1.6 - 0.6 radius: 0.3);
 		mass: 70.0;
 		"computeMassDistribution;"
 		position: (Vector3 x: 0.0 y: 2.0 z: 0);

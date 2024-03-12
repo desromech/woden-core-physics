@@ -239,7 +239,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactConstraint: contact relaxationFa
 		firstCollisionObject applyMovement: penetrationDelta atRelativePoint: contact relativeFirstPoint withDirection: contact normal
 	].
 	contact secondObjectHasResponse ifTrue: [
-		secondCollisionObject applyMovement: penetrationDelta atRelativePoint: contact relativeFirstPoint withDirection: contact normal negated
+		secondCollisionObject applyMovement: penetrationDelta atRelativePoint: contact relativeSecondPoint withDirection: contact normal negated
 	].
 
 ]
@@ -281,12 +281,9 @@ WDPDiscreteDynamicPhysicsWorld >> solveCollisionContactConstraintList: contacts 
 			self resolveContactConstraint: contact relaxationFactor: relaxationFactor	
 		].
 	] ifFalse: [
-		contacts do: [ :contact |
-			contact update.
-		].
-
 		1 to: 2 do: [ :iteration |
 			contacts do: [ :contact |
+				contact update.
 				self resolveContactConstraint: contact relaxationFactor: relaxationFactor				
 			]
 		]
