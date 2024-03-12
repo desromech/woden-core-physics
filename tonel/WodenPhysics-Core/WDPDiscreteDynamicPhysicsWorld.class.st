@@ -28,6 +28,7 @@ WDPDiscreteDynamicPhysicsWorld >> computeBroadphaseCandidatePairs [
 			self findBroadphasePairsFor: each into: broadphasePairs pairSet: pairSet
 		]
 	].
+
 	^ broadphasePairs
 ]
 
@@ -157,7 +158,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactCollisionResponse: contact [
 	inverseMass := firstCollisionObject inverseMass + secondCollisionObject inverseMass.
 	velocityChangePerImpulseContactMatrix := velocityChangePerImpulseContactMatrix + (Matrix3x3 scale: inverseMass).
 	
-	(velocityChangePerImpulseContactMatrix determinant closeTo: 0.0) ifTrue: [ ^ self ].
+	(velocityChangePerImpulseContactMatrix determinant = 0) ifTrue: [ ^ self ].
 	impulseChangePerVelocityContactMatrix := velocityChangePerImpulseContactMatrix inverse.
 
 	firstContactVelocity := firstCollisionObject velocityAtRelativePoint: relativeFirstPoint.
@@ -248,7 +249,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldsCollisionsAndConstraint
 	| contactList contactIslands |
 	contactIslands := self computeContactIslandsForManifolds: contactManifolds.
 	contactList := OrderedCollection new.
-
+	
 	contactIslands do: [ :eachIsland |
 		contactList removeAll.
 

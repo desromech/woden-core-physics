@@ -245,7 +245,7 @@ WDPRigidBody >> inertiaTensor [
 { #category : #accessing }
 WDPRigidBody >> inertiaTensor: aMatrix3x3 [
 	inertiaTensor := aMatrix3x3.
-	inverseInertiaTensor := (inertiaTensor determinant closeTo: 0)
+	inverseInertiaTensor := (inertiaTensor determinant = 0)
 		ifTrue: [ Matrix3x3 zeros ]
 		ifFalse: [ inertiaTensor inverse ]
 	
