@@ -212,6 +212,72 @@ WDPhysicsWorldExamples class >> exampleRoom [
 	world buildInteractiveVisualizationScene openInWindow
 ]
 
+{ #category : #examples }
+WDPhysicsWorldExamples class >> exampleSuspendedBoxWithRod [
+	"
+	self exampleSuspendedBoxWithRod
+	"
+	| world suspendedBox anchorBox |
+	world := WDPDiscreteDynamicPhysicsWorld new
+		gravity: (Vector3 y: -9.8);
+		yourself.
+	
+	suspendedBox := WDPRigidBody new
+		shape: (WDPBoxCollisionShape halfExtent: 0.5);
+		mass: 1.0;
+		computeMassDistribution;
+		position: (Vector3 x: 1.0 y: 1.0);
+		yourself.
+	world add: suspendedBox.
+
+	anchorBox := WDPCollisionObject new
+		shape: (WDPBoxCollisionShape halfExtent: 0.1);
+		position: (Vector3 y: 1.0);
+		yourself.
+	world add: anchorBox.
+	
+	world add: (WDPRodConstraint new
+		firstObject: anchorBox;
+		secondObject: suspendedBox;
+		secondObjectLocalAnchorPoint: (Vector3 x: -0.5);
+		yourself).
+	
+	world buildInteractiveVisualizationScene openInWindow
+]
+
+{ #category : #examples }
+WDPhysicsWorldExamples class >> exampleSuspendedBoxWithRope [
+	"
+	self exampleSuspendedBoxWithRope
+	"
+	| world suspendedBox anchorBox |
+	world := WDPDiscreteDynamicPhysicsWorld new
+		gravity: (Vector3 y: -9.8);
+		yourself.
+	
+	suspendedBox := WDPRigidBody new
+		shape: (WDPBoxCollisionShape halfExtent: 0.5);
+		mass: 1.0;
+		computeMassDistribution;
+		position: (Vector3 x: 1.0 y: 1.0);
+		yourself.
+	world add: suspendedBox.
+
+	anchorBox := WDPCollisionObject new
+		shape: (WDPBoxCollisionShape halfExtent: 0.1);
+		position: (Vector3 y: 1.0);
+		yourself.
+	world add: anchorBox.
+	
+	world add: (WDPRopeConstraint new
+		firstObject: anchorBox;
+		secondObject: suspendedBox;
+		secondObjectLocalAnchorPoint: (Vector3 x: -0.5);
+		yourself).
+	
+	world buildInteractiveVisualizationScene openInWindow
+]
+
 { #category : #'see class side' }
 WDPhysicsWorldExamples >> seeClassSide [
 ]

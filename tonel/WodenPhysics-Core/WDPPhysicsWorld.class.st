@@ -10,7 +10,8 @@ Class {
 		'collisionObjectTree',
 		'collisionObjectIdCount',
 		'contactManifoldCache',
-		'restingContactVelocityLimit'
+		'restingContactVelocityLimit',
+		'forceGenerators'
 	],
 	#category : #'WodenPhysics-Core-World'
 }
@@ -48,6 +49,11 @@ WDPPhysicsWorld >> addCollisionObject: aCollisionObject [
 	collisionObjectIdCount := collisionObjectIdCount + 1.
 	aCollisionObject resetSleepingState; wakeUp.
 	
+]
+
+{ #category : #adding }
+WDPPhysicsWorld >> addForceGenerator: aForceGenerator [
+	forceGenerators add: aForceGenerator
 ]
 
 { #category : #visualization }
@@ -186,6 +192,7 @@ WDPPhysicsWorld >> hasToConsiderInBroadphase: firstObject with: secondObject [
 { #category : #initialization }
 WDPPhysicsWorld >> initialize [
 	super initialize.
+	forceGenerators := OrderedCollection new.
 	collisionObjects := OrderedCollection new.
 	awakeRigidBodies := OrderedCollection new.
 	collisionObjectTree := WMDbvt new.

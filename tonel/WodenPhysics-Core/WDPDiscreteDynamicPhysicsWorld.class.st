@@ -70,6 +70,11 @@ WDPDiscreteDynamicPhysicsWorld >> detectNarrowphaseCollisionOf: firstCollisionOb
 	contactManifoldCache insertContacts: contactPoints for: firstCollisionObject with: secondCollisionObject.
 ]
 
+{ #category : #update }
+WDPDiscreteDynamicPhysicsWorld >> evaluateForceGeneratorsWithDeltaTime: deltaTime [
+	forceGenerators do: [ :each | each evaluateWithDeltaTime: deltaTime ]
+]
+
 { #category : #'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> findMostSevereCollisionContactInList: contactList [
 	| bestFound bestFoundClosingSpeed |
@@ -318,6 +323,7 @@ WDPDiscreteDynamicPhysicsWorld >> solveCollisionContactResponseList: contacts [
 { #category : #update }
 WDPDiscreteDynamicPhysicsWorld >> updateWithDeltaTime: deltaTime [
 	self
+		evaluateForceGeneratorsWithDeltaTime: deltaTime;
 		integrateMovementWithDeltaTime: deltaTime;
 		detectAndResolveCollisionsWithDeltaTime: deltaTime;
 		sendToSleepRestingObjects: deltaTime
