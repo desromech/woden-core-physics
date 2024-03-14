@@ -90,7 +90,7 @@ WDPConvexCollisionShape >> rayCast: ray [
 	^ WDPShapeRayCastingResult new
 		shape: self;
 		distance: gjkResult first;
-		normal: gjkResult second;
+		normal: gjkResult second normalized;
 		yourself
 	
 	
