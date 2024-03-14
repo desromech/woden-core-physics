@@ -204,6 +204,27 @@ WDPPhysicsWorld >> loadCollisionStateFromModelsWithDeltaTime: delta [
 	collisionObjects do: [ :each | each loadStateFromModelWithDeltaTime: delta ]
 ]
 
+{ #category : #queries }
+WDPPhysicsWorld >> rayCast: ray forFirstSuchThat: aPredicate [
+	| bestResult |
+	bestResult := nil.
+	collisionObjectTree leavesIntersectingRay: ray do: [:leafNode |
+		| collisionObject |
+		collisionObject := leafNode value.
+		(aPredicate value: collisionObject) ifTrue: [
+			| result |
+			result := collisionObject rayCast: ray.
+			result ifNotNil: [
+				(bestResult isNil or: [result distance < bestResult distance]) ifTrue: [
+					bestResult := result
+				]
+			]
+		].
+	].
+
+	^ bestResult
+]
+
 { #category : #accessing }
 WDPPhysicsWorld >> restingContactVelocityLimit [
 

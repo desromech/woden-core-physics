@@ -80,3 +80,18 @@ WDPConvexCollisionShape >> localSupportInDirection: aDirection [
 WDPConvexCollisionShape >> localSupportInDirectionWithMargin: aDirection [
 	^ (self localSupportInDirection: aDirection) + margin
 ]
+
+{ #category : #accessing }
+WDPConvexCollisionShape >> rayCast: ray [
+	| gjkResult |
+	gjkResult := GeometricFunctions gjkRayCast: ray support: [:d | self localSupportInDirectionWithMargin: d].
+	gjkResult ifNil: [ ^ nil ].
+	
+	^ WDPShapeRayCastingResult new
+		shape: self;
+		distance: gjkResult first;
+		normal: gjkResult second;
+		yourself
+	
+	
+]

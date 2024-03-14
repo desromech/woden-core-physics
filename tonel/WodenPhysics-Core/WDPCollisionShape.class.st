@@ -73,3 +73,8 @@ WDPCollisionShape >> margin: aNumber [
 	margin := aNumber.
 	localBoundingBoxWithMargin := nil.
 ]
+
+{ #category : #accessing }
+WDPCollisionShape >> rayCast: ray [
+	self subclassResponsibility
+]

@@ -327,6 +327,22 @@ WDPCollisionObject >> position: aPosition orientation: anOrientation [
 	self transformChanged
 ]
 
+{ #category : #accessing }
+WDPCollisionObject >> rayCast: ray [
+	| localRay localRayResult |
+	localRay := ray inverseTransformedWith: transform.
+	localRayResult := shape rayCast: localRay.
+	localRayResult ifNil: [ ^ nil ].
+	
+	^ WDPCollisionObjectRayCastingResult new
+		collisionObject: self;
+		shape: localRayResult shape;
+		distance: localRayResult distance;
+		normal: localRayResult normal;
+		yourself
+	
+]
+
 { #category : #initialization }
 WDPCollisionObject >> resetContactIslandRoot [
 ]
