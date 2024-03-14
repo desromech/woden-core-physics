@@ -13,14 +13,14 @@ Class {
 
 { #category : #evaluation }
 WDPHoldObjectConstraint >> evaluateWithDeltaTime: deltaTime [
-	| targetPosition relativePositionDelta springForce |
+	| targetPosition relativePositionDelta springForce dampingForce targetVelocity |
 	targetPosition := firstObject transformPositionToWorld: targetRelativePosition.
 	
 	relativePositionDelta := targetPosition - secondObject position.
-	springForce := stiffness * relativePositionDelta.
-	Transcript show: 'relativePositionDelta '; show: relativePositionDelta; cr.
-	Transcript show: 'springForce '; show: springForce; cr.
-	secondObject applyForce: springForce.
+	targetVelocity := firstObject linearVelocity - secondObject linearVelocity.
+	springForce := relativePositionDelta * stiffness.
+	dampingForce := targetVelocity * damping.
+	secondObject applyForce: springForce + dampingForce.
 
 ]
 

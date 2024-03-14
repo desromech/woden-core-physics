@@ -6,11 +6,24 @@ Class {
 	#superclass : #WDPForceGeneratorConstraint,
 	#instVars : [
 		'stiffness',
+		'damping',
 		'firstObject',
 		'secondObject'
 	],
 	#category : #'WodenPhysics-Core-Constraints'
 }
+
+{ #category : #accessing }
+WDPObjectPairUnionConstraint >> damping [
+
+	^ damping
+]
+
+{ #category : #accessing }
+WDPObjectPairUnionConstraint >> damping: anObject [
+
+	damping := anObject
+]
 
 { #category : #accessing }
 WDPObjectPairUnionConstraint >> firstObject [
@@ -28,6 +41,7 @@ WDPObjectPairUnionConstraint >> firstObject: anObject [
 WDPObjectPairUnionConstraint >> initialize [
 	super initialize.
 	stiffness := 50.0.
+	damping := 10.0.
 ]
 
 { #category : #accessing }
