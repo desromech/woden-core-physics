@@ -15,7 +15,7 @@ Class {
 WDPObjectAnchoredPairUnionConstraint >> firstObjectAnchorPoint [
 	^ firstObject
 		ifNil: [firstObjectLocalAnchorPoint]
-		ifNotNil: [firstObject transformLocalPosition: firstObjectLocalAnchorPoint]
+		ifNotNil: [firstObject transformPositionToWorld: firstObjectLocalAnchorPoint]
 ]
 
 { #category : #accessing }
@@ -40,7 +40,7 @@ WDPObjectAnchoredPairUnionConstraint >> initialize [
 WDPObjectAnchoredPairUnionConstraint >> secondObjectAnchorPoint [
 	^ secondObject
 		ifNil: [ secondObjectLocalAnchorPoint ]
-		ifNotNil: [ secondObject transformLocalPosition: secondObjectLocalAnchorPoint ]
+		ifNotNil: [ secondObject transformPositionToWorld: secondObjectLocalAnchorPoint ]
 ]
 
 { #category : #accessing }

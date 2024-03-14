@@ -429,6 +429,11 @@ WDPCollisionObject >> transformLocalPosition: localPosition [
 	^ transform transformPosition: localPosition
 ]
 
+{ #category : #'as yet unclassified' }
+WDPCollisionObject >> transformPositionToWorld: localPosition [
+	^ transform transformPosition: localPosition
+]
+
 { #category : #transforming }
 WDPCollisionObject >> translateBy: translation [
 	self position: self position + translation
