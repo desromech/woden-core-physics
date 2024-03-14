@@ -53,7 +53,9 @@ WDPPhysicsWorld >> addCollisionObject: aCollisionObject [
 
 { #category : #adding }
 WDPPhysicsWorld >> addForceGenerator: aForceGenerator [
-	forceGenerators add: aForceGenerator
+	self assert: aForceGenerator owner isNil.
+	forceGenerators add: aForceGenerator.
+	aForceGenerator owner: self
 ]
 
 { #category : #visualization }
@@ -230,6 +232,13 @@ WDPPhysicsWorld >> rayCast: ray forFirstSuchThat: aPredicate [
 	].
 
 	^ bestResult
+]
+
+{ #category : #removing }
+WDPPhysicsWorld >> removeForceGenerator: forceGenerator [
+	forceGenerator owner == self ifFalse: [ ^ self ].
+	forceGenerators remove: forceGenerator.
+	forceGenerator owner: nil
 ]
 
 { #category : #accessing }

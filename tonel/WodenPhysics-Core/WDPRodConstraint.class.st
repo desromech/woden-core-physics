@@ -3,7 +3,7 @@ I am a rod constraint.
 "
 Class {
 	#name : #WDPRodConstraint,
-	#superclass : #WDPPairObjectUnionConstraint,
+	#superclass : #WDPPairObjectAnchoredUnionConstraint,
 	#instVars : [
 		'length'
 	],

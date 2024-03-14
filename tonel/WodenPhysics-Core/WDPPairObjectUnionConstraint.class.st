@@ -1,5 +1,5 @@
 "
-I am a constraint which is used for joining a pair of objects on specific anchor points.
+I am a constraint which is used for joining a pair of objects.
 "
 Class {
 	#name : #WDPPairObjectUnionConstraint,
@@ -7,9 +7,7 @@ Class {
 	#instVars : [
 		'stiffness',
 		'firstObject',
-		'firstObjectLocalAnchorPoint',
-		'secondObject',
-		'secondObjectLocalAnchorPoint'
+		'secondObject'
 	],
 	#category : #'WodenPhysics-Core-Constraints'
 }
@@ -26,28 +24,10 @@ WDPPairObjectUnionConstraint >> firstObject: anObject [
 	firstObject := anObject
 ]
 
-{ #category : #accessing }
-WDPPairObjectUnionConstraint >> firstObjectAnchorPoint [
-	^ firstObject transform transformPosition: firstObjectLocalAnchorPoint
-]
-
-{ #category : #accessing }
-WDPPairObjectUnionConstraint >> firstObjectLocalAnchorPoint [
-
-	^ firstObjectLocalAnchorPoint
-]
-
-{ #category : #accessing }
-WDPPairObjectUnionConstraint >> firstObjectLocalAnchorPoint: anObject [
-
-	firstObjectLocalAnchorPoint := anObject
-]
-
 { #category : #initialization }
 WDPPairObjectUnionConstraint >> initialize [
 	super initialize.
 	stiffness := 50.0.
-	firstObjectLocalAnchorPoint := secondObjectLocalAnchorPoint := Vector3 zeros.
 ]
 
 { #category : #accessing }
@@ -60,23 +40,6 @@ WDPPairObjectUnionConstraint >> secondObject [
 WDPPairObjectUnionConstraint >> secondObject: anObject [
 
 	secondObject := anObject
-]
-
-{ #category : #accessing }
-WDPPairObjectUnionConstraint >> secondObjectAnchorPoint [
-	^ secondObject transform transformPosition: secondObjectLocalAnchorPoint
-]
-
-{ #category : #accessing }
-WDPPairObjectUnionConstraint >> secondObjectLocalAnchorPoint [
-
-	^ secondObjectLocalAnchorPoint
-]
-
-{ #category : #accessing }
-WDPPairObjectUnionConstraint >> secondObjectLocalAnchorPoint: anObject [
-
-	secondObjectLocalAnchorPoint := anObject
 ]
 
 { #category : #accessing }

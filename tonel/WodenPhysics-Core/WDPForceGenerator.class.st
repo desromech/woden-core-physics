@@ -4,6 +4,9 @@ I am a generator of forces.
 Class {
 	#name : #WDPForceGenerator,
 	#superclass : #Object,
+	#instVars : [
+		'owner'
+	],
 	#category : #'WodenPhysics-Core-Constraints'
 }
 
@@ -14,4 +17,16 @@ WDPForceGenerator >> addOntoPhysicsWorld: aPhysicsWorld [
 
 { #category : #evaluation }
 WDPForceGenerator >> evaluateWithDeltaTime: deltaTime [
+]
+
+{ #category : #accessing }
+WDPForceGenerator >> owner [
+
+	^ owner
+]
+
+{ #category : #accessing }
+WDPForceGenerator >> owner: anObject [
+
+	owner := anObject
 ]

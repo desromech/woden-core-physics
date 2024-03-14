@@ -3,7 +3,7 @@ I am a rope constraint.
 "
 Class {
 	#name : #WDPRopeConstraint,
-	#superclass : #WDPPairObjectUnionConstraint,
+	#superclass : #WDPPairObjectAnchoredUnionConstraint,
 	#instVars : [
 		'length'
 	],
