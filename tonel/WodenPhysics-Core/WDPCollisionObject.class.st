@@ -17,7 +17,8 @@ Class {
 		'staticFrictionCoefficient',
 		'model',
 		'collisionGroup',
-		'collisionResponseGroupMask'
+		'collisionResponseGroupMask',
+		'collisionObjectExclusionSet'
 	],
 	#category : #'WodenPhysics-Core-CollisionObjects'
 }
@@ -111,6 +112,18 @@ WDPCollisionObject >> collisionGroup: anObject [
 ]
 
 { #category : #accessing }
+WDPCollisionObject >> collisionObjectExclusionSet [
+
+	^ collisionObjectExclusionSet
+]
+
+{ #category : #accessing }
+WDPCollisionObject >> collisionObjectExclusionSet: anObject [
+
+	collisionObjectExclusionSet := anObject
+]
+
+{ #category : #accessing }
 WDPCollisionObject >> collisionResponseGroupMask [
 
 	^ collisionResponseGroupMask
@@ -201,6 +214,7 @@ WDPCollisionObject >> initialize [
 	
 	collisionGroup := WDPCollisionMasks defaultCollisionGroup .
 	collisionResponseGroupMask := WDPCollisionMasks defaultCollisionResponseGroup.
+	collisionObjectExclusionSet := #().
 
 ]
 

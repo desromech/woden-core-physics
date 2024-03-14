@@ -187,6 +187,9 @@ WDPPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairS
 
 { #category : #'as yet unclassified' }
 WDPPhysicsWorld >> hasToConsiderInBroadphase: firstObject with: secondObject [
+	(firstObject collisionObjectExclusionSet includes: secondObject) ifTrue: [ ^ false ].
+	(secondObject collisionObjectExclusionSet includes: firstObject) ifTrue: [ ^ false ].
+
 	^ (firstObject collisionResponseGroupMask anyMask: secondObject collisionGroup) or: 
 		(secondObject collisionResponseGroupMask anyMask: firstObject collisionGroup)
 ]
