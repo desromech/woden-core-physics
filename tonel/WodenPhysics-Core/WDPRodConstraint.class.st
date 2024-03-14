@@ -3,7 +3,7 @@ I am a rod constraint.
 "
 Class {
 	#name : #WDPRodConstraint,
-	#superclass : #WDPPairObjectAnchoredUnionConstraint,
+	#superclass : #WDPObjectAnchoredPairUnionConstraint,
 	#instVars : [
 		'length'
 	],
@@ -23,8 +23,12 @@ WDPRodConstraint >> evaluateWithDeltaTime: deltaTime [
 	forceDirection := ropeVector / ropeVectorLength.
 	force := forceDirection negated * stiffness * deltaLength.
 	
-	firstObject applyForce: force inPosition: firstAnchorPoint.
-	secondObject applyForce: force negated inPosition: secondAnchorPoint.
+	firstObject ifNotNil: [
+		firstObject applyForce: force inPosition: firstAnchorPoint.
+	].
+	secondObject ifNotNil: [ 	
+		secondObject applyForce: force negated inPosition: secondAnchorPoint
+	].
 ]
 
 { #category : #initialization }

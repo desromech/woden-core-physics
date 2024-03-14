@@ -2,7 +2,7 @@
 I am a constraint which is used for joining a pair of objects.
 "
 Class {
-	#name : #WDPPairObjectUnionConstraint,
+	#name : #WDPObjectPairUnionConstraint,
 	#superclass : #WDPForceGeneratorConstraint,
 	#instVars : [
 		'stiffness',
@@ -13,43 +13,43 @@ Class {
 }
 
 { #category : #accessing }
-WDPPairObjectUnionConstraint >> firstObject [
+WDPObjectPairUnionConstraint >> firstObject [
 
 	^ firstObject
 ]
 
 { #category : #accessing }
-WDPPairObjectUnionConstraint >> firstObject: anObject [
+WDPObjectPairUnionConstraint >> firstObject: anObject [
 
 	firstObject := anObject
 ]
 
 { #category : #initialization }
-WDPPairObjectUnionConstraint >> initialize [
+WDPObjectPairUnionConstraint >> initialize [
 	super initialize.
 	stiffness := 50.0.
 ]
 
 { #category : #accessing }
-WDPPairObjectUnionConstraint >> secondObject [
+WDPObjectPairUnionConstraint >> secondObject [
 
 	^ secondObject
 ]
 
 { #category : #accessing }
-WDPPairObjectUnionConstraint >> secondObject: anObject [
+WDPObjectPairUnionConstraint >> secondObject: anObject [
 
 	secondObject := anObject
 ]
 
 { #category : #accessing }
-WDPPairObjectUnionConstraint >> stiffness [
+WDPObjectPairUnionConstraint >> stiffness [
 
 	^ stiffness
 ]
 
 { #category : #accessing }
-WDPPairObjectUnionConstraint >> stiffness: anObject [
+WDPObjectPairUnionConstraint >> stiffness: anObject [
 
 	stiffness := anObject
 ]

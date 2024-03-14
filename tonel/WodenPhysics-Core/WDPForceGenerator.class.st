@@ -30,3 +30,8 @@ WDPForceGenerator >> owner: anObject [
 
 	owner := anObject
 ]
+
+{ #category : #adding }
+WDPForceGenerator >> removeFromPhysicsWorld: aPhysicsWorld [
+	aPhysicsWorld removeForceGenerator: self
+]

@@ -88,6 +88,11 @@ WDPCollisionObject >> applyLinearImpulse: linearImpulse [
 WDPCollisionObject >> applyMovement: movement atRelativePoint: relativePoint withDirection: movementDirection [
 ]
 
+{ #category : #update }
+WDPCollisionObject >> applyTorque: force [
+	"By default do nothing."
+]
+
 { #category : #accessing }
 WDPCollisionObject >> boundingBoxWithMargin [
 	^ self localBoundingBoxWithMargin transformedWith: transform
@@ -343,6 +348,11 @@ WDPCollisionObject >> rayCast: ray [
 	
 ]
 
+{ #category : #adding }
+WDPCollisionObject >> removeFromPhysicsWorld: aPhysicsWorld [
+	aPhysicsWorld removeCollisionObject: self
+]
+
 { #category : #initialization }
 WDPCollisionObject >> resetContactIslandRoot [
 ]
@@ -412,6 +422,11 @@ WDPCollisionObject >> transformChanged [
 	owner ifNotNil: [ 
 		owner collisionObjectTransformChanged: self
 	]
+]
+
+{ #category : #'as yet unclassified' }
+WDPCollisionObject >> transformLocalPosition: localPosition [
+	^ transform transformPosition: localPosition
 ]
 
 { #category : #transforming }

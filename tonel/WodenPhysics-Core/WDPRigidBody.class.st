@@ -165,6 +165,12 @@ WDPRigidBody >> applyMovement: movement atRelativePoint: relativePoint withDirec
 	self wakeUpForTranslationBy: movementDirection * linearMovement andRotateByAngularIncrement: angularDirection*angularMovement
 ]
 
+{ #category : #update }
+WDPRigidBody >> applyTorque: torque [
+	netTorque := netTorque + torque.
+	self wakeUp
+]
+
 { #category : #'as yet unclassified' }
 WDPRigidBody >> checkTimeToSleep: weight [
 	| movementAmount |

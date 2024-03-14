@@ -234,6 +234,25 @@ WDPPhysicsWorld >> rayCast: ray forFirstSuchThat: aPredicate [
 	^ bestResult
 ]
 
+{ #category : #adding }
+WDPPhysicsWorld >> remove: aPhysicsWorldObject [
+	aPhysicsWorldObject removeFromPhysicsWorld: self
+]
+
+{ #category : #adding }
+WDPPhysicsWorld >> removeCollisionObject: aCollisionObject [
+	self assert: aCollisionObject owner == self.
+	self assert: aCollisionObject collisionTreeNode isNotNil.
+	
+	aCollisionObject isAwake ifTrue: [ 
+		awakeRigidBodies remove: aCollisionObject ifAbsent: [ ]
+	].
+	collisionObjects remove: aCollisionObject.
+	collisionObjectTree removeNode: aCollisionObject collisionTreeNode.
+	aCollisionObject owner: nil; id: nil.
+
+]
+
 { #category : #removing }
 WDPPhysicsWorld >> removeForceGenerator: forceGenerator [
 	forceGenerator owner == self ifFalse: [ ^ self ].

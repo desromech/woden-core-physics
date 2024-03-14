@@ -1,9 +1,9 @@
 "
-I am a constraint that attempts to keep to objects with a specific relative position and relative orientation.
+I am a constraint that attempts to keep to objects with a specific relative position and relative orientation. I am used for modeling the situation where a hand is holding an object.
 "
 Class {
-	#name : #WDPRelativeTransformUnionConstraint,
-	#superclass : #WDPPairObjectUnionConstraint,
+	#name : #WDPHoldObjectConstraint,
+	#superclass : #WDPObjectPairUnionConstraint,
 	#instVars : [
 		'targetRelativePosition',
 		'targetRelativeOrientation'
@@ -12,7 +12,7 @@ Class {
 }
 
 { #category : #evaluation }
-WDPRelativeTransformUnionConstraint >> evaluateWithDeltaTime: deltaTime [
+WDPHoldObjectConstraint >> evaluateWithDeltaTime: deltaTime [
 	| relativePosition relativeOrientation relativePositionDelta springForce |
 	relativePosition := firstObject position - secondObject position.
 	relativeOrientation := firstObject orientation * secondObject orientation inverse.
@@ -30,7 +30,7 @@ WDPRelativeTransformUnionConstraint >> evaluateWithDeltaTime: deltaTime [
 ]
 
 { #category : #initialization }
-WDPRelativeTransformUnionConstraint >> initialize [
+WDPHoldObjectConstraint >> initialize [
 	super initialize.
 	targetRelativePosition := Vector3 zeros.
 	targetRelativeOrientation := Quaternion identity.
@@ -38,25 +38,25 @@ WDPRelativeTransformUnionConstraint >> initialize [
 ]
 
 { #category : #accessing }
-WDPRelativeTransformUnionConstraint >> targetRelativeOrientation [
+WDPHoldObjectConstraint >> targetRelativeOrientation [
 
 	^ targetRelativeOrientation
 ]
 
 { #category : #accessing }
-WDPRelativeTransformUnionConstraint >> targetRelativeOrientation: anObject [
+WDPHoldObjectConstraint >> targetRelativeOrientation: anObject [
 
 	targetRelativeOrientation := anObject
 ]
 
 { #category : #accessing }
-WDPRelativeTransformUnionConstraint >> targetRelativePosition [
+WDPHoldObjectConstraint >> targetRelativePosition [
 
 	^ targetRelativePosition
 ]
 
 { #category : #accessing }
-WDPRelativeTransformUnionConstraint >> targetRelativePosition: anObject [
+WDPHoldObjectConstraint >> targetRelativePosition: anObject [
 
 	targetRelativePosition := anObject
 ]
