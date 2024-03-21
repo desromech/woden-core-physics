@@ -74,7 +74,22 @@ WDPCollisionShape >> margin: aNumber [
 	localBoundingBoxWithMargin := nil.
 ]
 
-{ #category : #accessing }
+{ #category : #testing }
 WDPCollisionShape >> rayCast: ray [
 	self subclassResponsibility
+]
+
+{ #category : #testing }
+WDPCollisionShape >> withTransform: shapeTransform intersectsBox: box withTransform: boxTransform [
+	^ false
+]
+
+{ #category : #testing }
+WDPCollisionShape >> withTransform: shapeTransform intersectsSphere: sphere [
+	^ self withTransform: shapeTransform intersectsSphere: sphere withTransform: ReversibleAffineTransform3D identity
+]
+
+{ #category : #testing }
+WDPCollisionShape >> withTransform: shapeTransform intersectsSphere: sphere withTransform: sphereTransform [
+	^ false
 ]

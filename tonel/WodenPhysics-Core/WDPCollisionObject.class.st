@@ -222,6 +222,21 @@ WDPCollisionObject >> initialize [
 WDPCollisionObject >> integrateMovementWithDeltaTime: deltaTime [
 ]
 
+{ #category : #tests }
+WDPCollisionObject >> intersectsBox: box withTransform: boxTransform [
+	^ shape withTransform: transform intersectsBox: box withTransform: boxTransform
+]
+
+{ #category : #tests }
+WDPCollisionObject >> intersectsSphere: sphere [
+	^ shape withTransform: transform intersectsSphere: sphere
+]
+
+{ #category : #tests }
+WDPCollisionObject >> intersectsSphere: sphere withTransform: sphereTransform [
+	^ shape withTransform: transform intersectsSphere: sphere withTransform: sphereTransform
+]
+
 { #category : #accessing }
 WDPCollisionObject >> inverseInertiaTensor [
 	^ Matrix3x3 zeros
@@ -444,8 +459,18 @@ WDPCollisionObject >> transformLocalPosition: localPosition [
 ]
 
 { #category : #'as yet unclassified' }
+WDPCollisionObject >> transformOrientationToWorld: orientation [
+	^ transform rotation * orientation
+]
+
+{ #category : #'as yet unclassified' }
 WDPCollisionObject >> transformPositionToWorld: localPosition [
 	^ transform transformPosition: localPosition
+]
+
+{ #category : #'as yet unclassified' }
+WDPCollisionObject >> transformWorldPositionToLocal: localPosition [
+	^ transform inverseTransformPosition: localPosition
 ]
 
 { #category : #transforming }

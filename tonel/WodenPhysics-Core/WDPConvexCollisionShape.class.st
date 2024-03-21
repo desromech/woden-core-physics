@@ -95,3 +95,19 @@ WDPConvexCollisionShape >> rayCast: ray [
 	
 	
 ]
+
+{ #category : #accessing }
+WDPConvexCollisionShape >> withTransform: shapeTransform intersectsBox: box withTransform: boxTransform [
+	| mySupportFunction otherSupportFunction |
+	mySupportFunction := GeometricFunctions transformSupportFunction: self localSupportFunction with: shapeTransform.
+	otherSupportFunction := GeometricFunctions transformSupportFunction: box supportFunction with: boxTransform.
+	^ (GeometricFunctions gjkDistanceFrom: mySupportFunction to: otherSupportFunction) <= margin
+]
+
+{ #category : #accessing }
+WDPConvexCollisionShape >> withTransform: shapeTransform intersectsSphere: sphere withTransform: sphereTransform [
+	| mySupportFunction otherSupportFunction |
+	mySupportFunction := GeometricFunctions transformSupportFunction: self localSupportFunction with: shapeTransform.
+	otherSupportFunction := GeometricFunctions transformSupportFunction: sphere supportFunction with: sphereTransform.
+	^ (GeometricFunctions gjkDistanceFrom: mySupportFunction to: otherSupportFunction) <= margin
+]

@@ -185,6 +185,59 @@ WDPPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairS
 	]
 ]
 
+{ #category : #queries }
+WDPPhysicsWorld >> findObjectsIntersectingBox: box transform: transform suchThat: aPredicate [
+	| results transformedBox |
+	results := OrderedCollection new.
+	transformedBox := box transformedWith: transform.
+	collisionObjectTree leavesIntersectingBox: transformedBox do: [:leafNode |
+		| collisionObject |
+		collisionObject := leafNode value.
+		(aPredicate value: collisionObject) ifTrue: [
+			(collisionObject intersectsBox: box withTransform: transform) ifTrue: [ 
+				results add: collisionObject
+			]
+		].
+	].
+
+	^ results
+]
+
+{ #category : #queries }
+WDPPhysicsWorld >> findObjectsIntersectingSphere: sphere suchThat: aPredicate [
+	| results transformedBox |
+	results := OrderedCollection new.
+	collisionObjectTree leavesIntersectingSphere: sphere do: [:leafNode |
+		| collisionObject |
+		collisionObject := leafNode value.
+		(aPredicate value: collisionObject) ifTrue: [
+			(collisionObject intersectsSphere: sphere) ifTrue: [
+				results add: collisionObject
+			]
+		].
+	].
+
+	^ results
+]
+
+{ #category : #queries }
+WDPPhysicsWorld >> findObjectsIntersectingSphere: sphere transform: transform suchThat: aPredicate [
+	| results transformedBox |
+	results := OrderedCollection new.
+	transformedBox := sphere boundingBox transformedWith: transform.
+	collisionObjectTree leavesIntersectingBox: transformedBox do: [:leafNode |
+		| collisionObject |
+		collisionObject := leafNode value.
+		(aPredicate value: collisionObject) ifTrue: [
+			(collisionObject intersectsSphere: sphere withTransform: transform) ifTrue: [
+				results add: collisionObject
+			]
+		].
+	].
+
+	^ results
+]
+
 { #category : #'as yet unclassified' }
 WDPPhysicsWorld >> hasToConsiderInBroadphase: firstObject with: secondObject [
 	(firstObject collisionObjectExclusionSet includes: secondObject) ifTrue: [ ^ false ].
