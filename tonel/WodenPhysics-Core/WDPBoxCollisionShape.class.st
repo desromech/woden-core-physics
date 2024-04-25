@@ -33,7 +33,7 @@ WDPBoxCollisionShape >> computeInertiaTensorWithMass: mass [
 WDPBoxCollisionShape >> constructVisualizationSceneNode [
 	^ (WDMeshBuilder new
 			addCubeWithHalfExtent: halfExtent;
-			mesh) asSceneNode 
+			mesh) asSceneNode
 ]
 
 { #category : #accessing }
