@@ -59,6 +59,15 @@ WDPCompoundCollisionShape >> componentsIntersectingBox: boundingBoxToTest do: aB
 	].
 ]
 
+{ #category : #'collision detection' }
+WDPCompoundCollisionShape >> componentsIntersectingRay: rayToTest do: aBlock [
+	components do: [ :each |
+		(each boundingBox hasIntersectionWithRay: rayToTest) ifTrue: [ 
+			aBlock value: each
+		]
+	].
+]
+
 { #category : #adding }
 WDPCompoundCollisionShape >> constructVisualizationSceneNode [
 	| compoundNode |
@@ -112,5 +121,16 @@ WDPCompoundCollisionShape >> isCompoundCollisionShape [
 
 { #category : #'collision detection' }
 WDPCompoundCollisionShape >> rayCast: ray [
+	| result |
+	result := nil.
+	self componentsIntersectingRay: ray do: [:eachComponent |
+		| shapeRay shapeRayResult |
+		shapeRay := ray inverseTransformedWith: eachComponent transform.
+		shapeRayResult := eachComponent shape rayCast: shapeRay.
+		(result isNil or: [shapeRayResult distance < result distance]) ifTrue: [
+			result := shapeRayResult
+		].
+	].
+
 	^ nil
 ]
