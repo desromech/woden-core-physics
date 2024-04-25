@@ -26,6 +26,11 @@ WDPConvexCollisionShape >> detectAndComputeCollisionContactPointsAt: transform w
 ]
 
 { #category : #accessing }
+WDPConvexCollisionShape >> detectAndComputeCollisionContactPointsAt: transform withCompoundShape: otherShape at: otherTransform separatingAxisHint: separatingAxisHint [
+	^ otherShape detectAndComputeCollisionContactPointsAt: otherTransform withConvexShape: self at: transform separatingAxisHint: separatingAxisHint
+]
+
+{ #category : #accessing }
 WDPConvexCollisionShape >> detectAndComputeCollisionContactPointsAt: transform withConvexShape: otherShape at: otherTransform separatingAxisHint: separatingAxisHint [
 	| firstSupportFunction secondSupportFunction
 		gjkSimplex closestPointToOrigin totalMargin shapeDistance |

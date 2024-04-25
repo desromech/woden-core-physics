@@ -33,6 +33,11 @@ WDPCollisionShape >> detectAndComputeCollisionContactPointsAt: transform with: o
 ]
 
 { #category : #'collision detection' }
+WDPCollisionShape >> detectAndComputeCollisionContactPointsAt: transform withCompoundShape: otherShape at: otherTransform separatingAxisHint: separatingAxisHint [
+	self subclassResponsibility
+]
+
+{ #category : #'collision detection' }
 WDPCollisionShape >> detectAndComputeCollisionContactPointsAt: transform withConvexShape: otherShape at: otherTransform separatingAxisHint: separatingAxisHint [
 	self subclassResponsibility
 ]
@@ -43,6 +48,11 @@ WDPCollisionShape >> initialize [
 	margin := 0.01.
 	localBoundingBox := AABox new.
 	localBoundingBoxWithMargin := nil.
+]
+
+{ #category : #testing }
+WDPCollisionShape >> isCompoundCollisionShape [
+	^ false
 ]
 
 { #category : #testing }

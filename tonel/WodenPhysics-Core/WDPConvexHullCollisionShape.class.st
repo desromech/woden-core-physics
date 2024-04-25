@@ -27,7 +27,7 @@ WDPConvexHullCollisionShape >> localSupportInDirection: aDirection [
 	points do: [ :each |
 		| distance |
 		distance := each dot: aDirection.
-		distance > bestFound ifTrue: [ 
+		distance > bestDistance ifTrue: [ 
 			bestDistance := distance.
 			bestFound := each.
 		]

@@ -3,10 +3,16 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'shape',
-		'transform'
+		'transform',
+		'boundingBox'
 	],
 	#category : #'WodenPhysics-Core-Shapes'
 }
+
+{ #category : #accessing }
+WDPCompoundCollisionShapeComponent >> boundingBox [
+	^ boundingBox ifNil: [boundingBox := shape localBoundingBoxWithMargin transformedWith: transform]
+]
 
 { #category : #accessing }
 WDPCompoundCollisionShapeComponent >> shape [

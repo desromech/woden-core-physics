@@ -168,6 +168,68 @@ WDPhysicsWorldExamples class >> exampleFallingCapsuleAndFloor2 [
 ]
 
 { #category : #examples }
+WDPhysicsWorldExamples class >> exampleFallingCompound2OnBox [
+	"
+	self exampleFallingCompound2OnBox
+	"
+	(WDPDiscreteDynamicPhysicsWorld new
+		gravity: (Vector3 y: -9.8);
+		add: (WDPRigidBody new
+			shape: (WDPCompoundCollisionShape new
+				addShape: (WDPSphereCollisionShape radius: 0.5) withTransform: (TRSTransform3D translation: (Vector3 y: 0.5));
+				addShape: (WDPConvexHullCollisionShape withPoints: (AABox halfExtent: 0.4) corners);
+				yourself);
+			mass: 1.0;
+			computeMassDistribution;
+			position: (Vector3 x: 0.8 y: 1.5);
+			yourself);
+		add: (WDPRigidBody new
+			shape: (WDPBoxCollisionShape halfExtent: 0.5);
+			mass: 0.0;
+			computeMassDistribution;
+			position: (Vector3 y: -0.5);
+			yourself);
+		add: (WDPRigidBody new
+			shape: (WDPBoxCollisionShape halfExtent: (Vector3 x: 4 y: 0.1 z: 4));
+			mass: 0.0;
+			computeMassDistribution;
+			position: (Vector3 y: -1.1);
+			yourself);
+		buildInteractiveVisualizationScene) openInWindow
+]
+
+{ #category : #examples }
+WDPhysicsWorldExamples class >> exampleFallingCompoundOnBox [
+	"
+	self exampleFallingCompoundOnBox
+	"
+	(WDPDiscreteDynamicPhysicsWorld new
+		gravity: (Vector3 y: -9.8);
+		add: (WDPRigidBody new
+			shape: (WDPCompoundCollisionShape new
+				addShape: (WDPSphereCollisionShape radius: 0.5);
+				addShape: (WDPBoxCollisionShape halfExtent: 0.4) withTransform: (TRSTransform3D translation: (Vector3 y: 0.5));
+				yourself);
+			mass: 1.0;
+			computeMassDistribution;
+			position: (Vector3 x: 0.8 y: 1.5);
+			yourself);
+		add: (WDPRigidBody new
+			shape: (WDPBoxCollisionShape halfExtent: 0.5);
+			mass: 0.0;
+			computeMassDistribution;
+			position: (Vector3 y: -0.5);
+			yourself);
+		add: (WDPRigidBody new
+			shape: (WDPBoxCollisionShape halfExtent: (Vector3 x: 4 y: 0.1 z: 4));
+			mass: 0.0;
+			computeMassDistribution;
+			position: (Vector3 y: -1.1);
+			yourself);
+		buildInteractiveVisualizationScene) openInWindow
+]
+
+{ #category : #examples }
 WDPhysicsWorldExamples class >> exampleRoom [
 	"
 	self exampleRoom
