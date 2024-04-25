@@ -119,7 +119,7 @@ WDPPhysicsWorld >> buildInteractiveVisualizationScene [
 
 { #category : #update }
 WDPPhysicsWorld >> collisionObjectTransformChanged: aCollisionObject [
-	self assert: aCollisionObject collisionTreeNode isNotNil.
+	self assert: aCollisionObject collisionTreeNode notNil.
 	collisionObjectTree updateLeafNode: aCollisionObject collisionTreeNode boundingBox: aCollisionObject boundingBoxWithMargin
 ]
 
@@ -298,7 +298,7 @@ WDPPhysicsWorld >> remove: aPhysicsWorldObject [
 { #category : #adding }
 WDPPhysicsWorld >> removeCollisionObject: aCollisionObject [
 	self assert: aCollisionObject owner == self.
-	self assert: aCollisionObject collisionTreeNode isNotNil.
+	self assert: aCollisionObject collisionTreeNode notNil.
 	
 	aCollisionObject isAwake ifTrue: [ 
 		awakeRigidBodies remove: aCollisionObject ifAbsent: [ ]
