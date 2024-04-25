@@ -3,7 +3,7 @@ I am a null collision shape.
 "
 Class {
 	#name : #WDPNullCollisionShape,
-	#superclass : #WDPConvexCollisionShape,
+	#superclass : #WDPCollisionShape,
 	#classInstVars : [
 		'uniqueInstance'
 	],
@@ -25,7 +25,27 @@ WDPNullCollisionShape >> constructVisualizationSceneNode [
 	^ WDSceneNode new
 ]
 
+{ #category : #'collision detection' }
+WDPNullCollisionShape >> detectAndComputeCollisionContactPointsAt: transform with: otherShape at: otherTransform separatingAxisHint: separatingAxisHint [
+	^ #()
+]
+
+{ #category : #'collision detection' }
+WDPNullCollisionShape >> detectAndComputeCollisionContactPointsAt: transform withConvexShape: otherShape at: otherTransform separatingAxisHint: separatingAxisHint [
+	^ #()
+]
+
+{ #category : #testing }
+WDPNullCollisionShape >> isEmptyShape [
+	^ true
+]
+
 { #category : #'intersection testing' }
 WDPNullCollisionShape >> localSupportInDirection: aDirection [
 	^ Vector3 zeros
+]
+
+{ #category : #testing }
+WDPNullCollisionShape >> rayCast: ray [
+	^ nil
 ]
