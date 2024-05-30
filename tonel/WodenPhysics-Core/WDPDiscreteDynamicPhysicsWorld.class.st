@@ -258,7 +258,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldsCollisionsAndConstraint
 	contactIslands do: [ :eachIsland |
 		contactList removeAll.
 
-		contactManifolds do: [ :manifold |
+		eachIsland do: [ :manifold |
 			manifold hasCollisionResponse ifTrue: [ 
 				contactList addAll: manifold contacts
 			]
@@ -267,7 +267,6 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldsCollisionsAndConstraint
 		self solveCollisionContactResponseList: contactList.
 		self solveCollisionContactConstraintList: contactList.		
 	].
-
 
 
 ]
