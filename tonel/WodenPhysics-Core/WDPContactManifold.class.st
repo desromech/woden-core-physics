@@ -2,8 +2,8 @@
 I encapsulate a contact manifold.
 "
 Class {
-	#name : #WDPContactManifold,
-	#superclass : #Object,
+	#name : 'WDPContactManifold',
+	#superclass : 'Object',
 	#instVars : [
 		'pairId',
 		'epoch',
@@ -15,15 +15,17 @@ Class {
 	#classVars : [
 		'MaxSeparationTolerance'
 	],
-	#category : #'WodenPhysics-Core-Constraints'
+	#category : 'WodenPhysics-Core-Constraints',
+	#package : 'WodenPhysics-Core',
+	#tag : 'Constraints'
 }
 
-{ #category : #'class initialization' }
+{ #category : 'class initialization' }
 WDPContactManifold class >> initialize [
 	MaxSeparationTolerance := 0.01.
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 WDPContactManifold >> addContact: newContact [
 	localLastSeparatingAxis := newContact localFirstNormal.
 	newContact firstCollisionObject: firstCollisionObject.
@@ -39,43 +41,43 @@ WDPContactManifold >> addContact: newContact [
 	contacts add: newContact
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 WDPContactManifold >> addContacts: newContacts [
 	newContacts do: [ :each | self addContact: each ].
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactManifold >> contactIslandRoot [
 	firstCollisionObject participatesInContactResolution ifTrue: [ ^ firstCollisionObject getContactIslandRoot ].
 	secondCollisionObject participatesInContactResolution ifTrue: [ ^ secondCollisionObject getContactIslandRoot ].
 	^ nil
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactManifold >> contacts [
 
 	^ contacts
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactManifold >> contacts: anObject [
 
 	contacts := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactManifold >> epoch [
 
 	^ epoch
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactManifold >> epoch: anObject [
 
 	epoch := anObject
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPContactManifold >> expireContactsUntil: oldestEpoch for: newEpoch [
 	contacts do: [ :each |
 		each update.
@@ -85,79 +87,79 @@ WDPContactManifold >> expireContactsUntil: oldestEpoch for: newEpoch [
 	]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactManifold >> firstCollisionObject [
 
 	^ firstCollisionObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactManifold >> firstCollisionObject: anObject [
 
 	firstCollisionObject := anObject
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 WDPContactManifold >> firstObjectHasResponse [
 	^ firstCollisionObject collisionResponseGroupMask anyMask: secondCollisionObject collisionGroup
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 WDPContactManifold >> hasCollisionResponse [
 	^ self firstObjectHasResponse or: [ self secondObjectHasResponse ]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 WDPContactManifold >> initialize [
 	super initialize.
 	contacts := OrderedCollection new.
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 WDPContactManifold >> isEmpty [
 	^ contacts isEmpty
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactManifold >> lastSeparatingAxis [
 	^ localLastSeparatingAxis ifNotNil: [ firstCollisionObject transform transformNormalVector: (secondCollisionObject transform transformNormalVector: localLastSeparatingAxis) ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactManifold >> pairId [
 
 	^ pairId
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactManifold >> pairId: anObject [
 
 	pairId := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactManifold >> secondCollisionObject [
 
 	^ secondCollisionObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactManifold >> secondCollisionObject: anObject [
 
 	secondCollisionObject := anObject
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 WDPContactManifold >> secondObjectHasResponse [
 	^ secondCollisionObject collisionResponseGroupMask anyMask: firstCollisionObject collisionGroup
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 WDPContactManifold >> size [
 	^ contacts size
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPContactManifold >> update [
 	contacts do: [ :each | each update ].
 

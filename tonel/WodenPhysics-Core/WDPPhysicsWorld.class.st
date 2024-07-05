@@ -2,8 +2,8 @@
 I am a physics world.
 "
 Class {
-	#name : #WDPPhysicsWorld,
-	#superclass : #Object,
+	#name : 'WDPPhysicsWorld',
+	#superclass : 'Object',
 	#instVars : [
 		'collisionObjects',
 		'awakeRigidBodies',
@@ -13,31 +13,33 @@ Class {
 		'restingContactVelocityLimit',
 		'forceGenerators'
 	],
-	#category : #'WodenPhysics-Core-World'
+	#category : 'WodenPhysics-Core-World',
+	#package : 'WodenPhysics-Core',
+	#tag : 'World'
 }
 
-{ #category : #testing }
+{ #category : 'testing' }
 WDPPhysicsWorld class >> isAbstract [
 	^ self == WDPPhysicsWorld
 ]
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 WDPPhysicsWorld class >> movementAverageTau [
 	^ 0.15
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 WDPPhysicsWorld >> add: aPhysicsWorldObject [
 	aPhysicsWorldObject addOntoPhysicsWorld: self
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 WDPPhysicsWorld >> addAwakeRigidBody: rigidBody [
 	awakeRigidBodies add: rigidBody.
 	
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 WDPPhysicsWorld >> addCollisionObject: aCollisionObject [
 	self assert: aCollisionObject owner isNil.
 	self assert: aCollisionObject collisionTreeNode isNil.
@@ -51,14 +53,14 @@ WDPPhysicsWorld >> addCollisionObject: aCollisionObject [
 	
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 WDPPhysicsWorld >> addForceGenerator: aForceGenerator [
 	self assert: aForceGenerator owner isNil.
 	forceGenerators add: aForceGenerator.
 	aForceGenerator owner: self
 ]
 
-{ #category : #visualization }
+{ #category : 'visualization' }
 WDPPhysicsWorld >> buildInteractiveVisualizationScene [
 	| scene collisionObjectsWithSceneNodes contactPointMeshes contactPointsNode updateSlowDownFactor updateFrameId |
 	scene := WDScene new.
@@ -117,18 +119,18 @@ WDPPhysicsWorld >> buildInteractiveVisualizationScene [
 	^ scene
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPPhysicsWorld >> collisionObjectTransformChanged: aCollisionObject [
 	self assert: aCollisionObject collisionTreeNode notNil.
 	collisionObjectTree updateLeafNode: aCollisionObject collisionTreeNode boundingBox: aCollisionObject boundingBoxWithMargin
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPPhysicsWorld >> composeCollisionId: firstId with: secondId [
 	^ firstId | (secondId << 32)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPPhysicsWorld >> computeContactIslandsForManifolds: contactManifolds [
 	| contactIslands |
 	collisionObjects do: [ :each | each resetContactIslandRoot ].
@@ -157,7 +159,7 @@ WDPPhysicsWorld >> computeContactIslandsForManifolds: contactManifolds [
 	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairSet: pairsSet [
 	| boundingBoxToFind |
 	boundingBoxToFind := collidingObject boundingBoxWithMargin.
@@ -185,7 +187,7 @@ WDPPhysicsWorld >> findBroadphasePairsFor: collidingObject into: pairsList pairS
 	]
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 WDPPhysicsWorld >> findObjectsIntersectingBox: box transform: transform suchThat: aPredicate [
 	| results transformedBox |
 	results := OrderedCollection new.
@@ -203,7 +205,7 @@ WDPPhysicsWorld >> findObjectsIntersectingBox: box transform: transform suchThat
 	^ results
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 WDPPhysicsWorld >> findObjectsIntersectingSphere: sphere suchThat: aPredicate [
 	| results transformedBox |
 	results := OrderedCollection new.
@@ -220,7 +222,7 @@ WDPPhysicsWorld >> findObjectsIntersectingSphere: sphere suchThat: aPredicate [
 	^ results
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 WDPPhysicsWorld >> findObjectsIntersectingSphere: sphere transform: transform suchThat: aPredicate [
 	| results transformedBox |
 	results := OrderedCollection new.
@@ -238,7 +240,7 @@ WDPPhysicsWorld >> findObjectsIntersectingSphere: sphere transform: transform su
 	^ results
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPPhysicsWorld >> hasToConsiderInBroadphase: firstObject with: secondObject [
 	(firstObject collisionObjectExclusionSet includes: secondObject) ifTrue: [ ^ false ].
 	(secondObject collisionObjectExclusionSet includes: firstObject) ifTrue: [ ^ false ].
@@ -247,7 +249,7 @@ WDPPhysicsWorld >> hasToConsiderInBroadphase: firstObject with: secondObject [
 		(secondObject collisionResponseGroupMask anyMask: firstObject collisionGroup)
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 WDPPhysicsWorld >> initialize [
 	super initialize.
 	forceGenerators := OrderedCollection new.
@@ -259,17 +261,17 @@ WDPPhysicsWorld >> initialize [
 	restingContactVelocityLimit := 0.1
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPPhysicsWorld >> loadCollisionStateFromModels [
 	self loadCollisionStateFromModelsWithDeltaTime: 0.0
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPPhysicsWorld >> loadCollisionStateFromModelsWithDeltaTime: delta [
 	collisionObjects do: [ :each | each loadStateFromModelWithDeltaTime: delta ]
 ]
 
-{ #category : #queries }
+{ #category : 'queries' }
 WDPPhysicsWorld >> rayCast: ray forFirstSuchThat: aPredicate [
 	| bestResult |
 	bestResult := nil.
@@ -290,12 +292,12 @@ WDPPhysicsWorld >> rayCast: ray forFirstSuchThat: aPredicate [
 	^ bestResult
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 WDPPhysicsWorld >> remove: aPhysicsWorldObject [
 	aPhysicsWorldObject removeFromPhysicsWorld: self
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 WDPPhysicsWorld >> removeCollisionObject: aCollisionObject [
 	self assert: aCollisionObject owner == self.
 	self assert: aCollisionObject collisionTreeNode notNil.
@@ -309,31 +311,31 @@ WDPPhysicsWorld >> removeCollisionObject: aCollisionObject [
 
 ]
 
-{ #category : #removing }
+{ #category : 'removing' }
 WDPPhysicsWorld >> removeForceGenerator: forceGenerator [
 	forceGenerator owner == self ifFalse: [ ^ self ].
 	forceGenerators remove: forceGenerator.
 	forceGenerator owner: nil
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPPhysicsWorld >> restingContactVelocityLimit [
 
 	^ restingContactVelocityLimit
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPPhysicsWorld >> restingContactVelocityLimit: anObject [
 
 	restingContactVelocityLimit := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPPhysicsWorld >> saveCollisionStateIntoModels [
 	collisionObjects do: [ :each | each saveStateFromModel ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPPhysicsWorld >> sendToSleepRestingObjects: deltaTime [
 	| tau weight |
 	tau := self class movementAverageTau.
@@ -342,10 +344,10 @@ WDPPhysicsWorld >> sendToSleepRestingObjects: deltaTime [
 	awakeRigidBodies removeAllSuchThat: [ :each | each isSleeping ].
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPPhysicsWorld >> updateWithDeltaTime: deltaTime [
 ]
 
-{ #category : #enumerating }
+{ #category : 'enumerating' }
 WDPPhysicsWorld >> worldSpaceContactPointsDo: aBlock [
 ]

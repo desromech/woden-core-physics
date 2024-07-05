@@ -2,23 +2,25 @@
 I am a physics world that performs simulations by using discrete collision detection.
 "
 Class {
-	#name : #WDPDiscreteDynamicPhysicsWorld,
-	#superclass : #WDPPhysicsWorld,
+	#name : 'WDPDiscreteDynamicPhysicsWorld',
+	#superclass : 'WDPPhysicsWorld',
 	#instVars : [
 		'gravity'
 	],
 	#classVars : [
 		'ImportanceConstraintSolvingThreshold'
 	],
-	#category : #'WodenPhysics-Core-World'
+	#category : 'WodenPhysics-Core-World',
+	#package : 'WodenPhysics-Core',
+	#tag : 'World'
 }
 
-{ #category : #'class initialization' }
+{ #category : 'class initialization' }
 WDPDiscreteDynamicPhysicsWorld class >> initialize [
 	ImportanceConstraintSolvingThreshold := 16.
 ]
 
-{ #category : #broadphase }
+{ #category : 'broadphase' }
 WDPDiscreteDynamicPhysicsWorld >> computeBroadphaseCandidatePairs [
 	| pairSet broadphasePairs |
 	pairSet := Set new.	
@@ -32,7 +34,7 @@ WDPDiscreteDynamicPhysicsWorld >> computeBroadphaseCandidatePairs [
 	^ broadphasePairs
 ]
 
-{ #category : #narrowphase }
+{ #category : 'narrowphase' }
 WDPDiscreteDynamicPhysicsWorld >> computeNarrowPhaseConstantFromBroadphaseCandidatePairs: broadphaseCandidatePairs [
 	contactManifoldCache beginEpoch.
 	broadphaseCandidatePairs do: [ :each |
@@ -43,7 +45,7 @@ WDPDiscreteDynamicPhysicsWorld >> computeNarrowPhaseConstantFromBroadphaseCandid
 	^ contactManifoldCache manifolds
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPDiscreteDynamicPhysicsWorld >> detectAndResolveCollisionsWithDeltaTime: deltaTime [
 	| broadphaseCandidatePairs contactManifolds |
 	broadphaseCandidatePairs := self computeBroadphaseCandidatePairs.
@@ -51,7 +53,7 @@ WDPDiscreteDynamicPhysicsWorld >> detectAndResolveCollisionsWithDeltaTime: delta
 	self resolveContactManifoldsCollisionsAndConstraints: contactManifolds
 ]
 
-{ #category : #narrowphase }
+{ #category : 'narrowphase' }
 WDPDiscreteDynamicPhysicsWorld >> detectNarrowphaseCollisionOf: firstCollisionObject with: secondCollisionObject [
 	| firstShape firstTransform secondShape secondTransform contactPoints separatingAxisHint |
 	firstShape := firstCollisionObject shape.
@@ -70,12 +72,12 @@ WDPDiscreteDynamicPhysicsWorld >> detectNarrowphaseCollisionOf: firstCollisionOb
 	contactManifoldCache insertContacts: contactPoints for: firstCollisionObject with: secondCollisionObject.
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPDiscreteDynamicPhysicsWorld >> evaluateForceGeneratorsWithDeltaTime: deltaTime [
 	forceGenerators do: [ :each | each evaluateWithDeltaTime: deltaTime ]
 ]
 
-{ #category : #'constraint solving' }
+{ #category : 'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> findMostSevereCollisionContactInList: contactList [
 	| bestFound bestFoundClosingSpeed |
 	contactList ifEmpty: [ ^ nil ].
@@ -97,7 +99,7 @@ WDPDiscreteDynamicPhysicsWorld >> findMostSevereCollisionContactInList: contactL
 	^ bestFound
 ]
 
-{ #category : #'constraint solving' }
+{ #category : 'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> findMostSeverePenetrationContactInList: contactList [
 	| bestFound |
 	contactList ifEmpty: [ ^ nil ].
@@ -117,30 +119,30 @@ WDPDiscreteDynamicPhysicsWorld >> findMostSeverePenetrationContactInList: contac
 		ifFalse: [ nil ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPDiscreteDynamicPhysicsWorld >> gravity [
 
 	^ gravity
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPDiscreteDynamicPhysicsWorld >> gravity: anObject [
 
 	gravity := anObject
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 WDPDiscreteDynamicPhysicsWorld >> initialize [
 	super initialize.
 	gravity := Vector3 zeros.
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPDiscreteDynamicPhysicsWorld >> integrateMovementWithDeltaTime: deltaTime [
 	awakeRigidBodies do: [ :each | each integrateMovementWithDeltaTime: deltaTime ]
 ]
 
-{ #category : #'constraint solving' }
+{ #category : 'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactCollisionResponse: contact [
 	"See Milling. 'Game Physics Engine Development'. Chapter 14 for details on these equations and the associated algorithms."
 	| firstCollisionObject secondCollisionObject restitutionCoefficient contactNormal  contactLocalToWorldMatrix3x3 relativeFirstPoint relativeSecondPoint firstContactVelocity secondContactVelocity relativeSeparationVelocity relativeContactSeparationVelocity deltaVelocity contactLocalImpulse contactImpulse contactLocalVelocityChange relativeVelocityFromIntegrationDelta relativeContactVelocityFromIntegrationDelta planarImpulse staticFrictionCoefficient velocityChangePerImpulseWorldMatrix inverseMass velocityChangePerImpulseContactMatrix impulseChangePerVelocityContactMatrix |
@@ -225,7 +227,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactCollisionResponse: contact [
 
 ]
 
-{ #category : #'constraint solving' }
+{ #category : 'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactConstraint: contact relaxationFactor: relaxationFactor [
 	| firstCollisionObject secondCollisionObject inverseInertia penetrationDistance penetrationDelta |
 	contact hasCollisionResponse ifFalse: [ ^ self ].
@@ -249,7 +251,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactConstraint: contact relaxationFa
 
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldsCollisionsAndConstraints: contactManifolds [
 	| contactList contactIslands |
 	contactIslands := self computeContactIslandsForManifolds: contactManifolds.
@@ -271,7 +273,7 @@ WDPDiscreteDynamicPhysicsWorld >> resolveContactManifoldsCollisionsAndConstraint
 
 ]
 
-{ #category : #'constraint solving' }
+{ #category : 'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> solveCollisionContactConstraintList: contacts [
 	| relaxationFactor iterationCount |
 	relaxationFactor := 1.0.
@@ -295,7 +297,7 @@ WDPDiscreteDynamicPhysicsWorld >> solveCollisionContactConstraintList: contacts 
 
 ]
 
-{ #category : #'constraint solving' }
+{ #category : 'constraint solving' }
 WDPDiscreteDynamicPhysicsWorld >> solveCollisionContactResponseList: contacts [
 	| iterationCount |
 	contacts do: [ :eachContact | eachContact update ].
@@ -319,7 +321,7 @@ WDPDiscreteDynamicPhysicsWorld >> solveCollisionContactResponseList: contacts [
 
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPDiscreteDynamicPhysicsWorld >> updateWithDeltaTime: deltaTime [
 	self
 		evaluateForceGeneratorsWithDeltaTime: deltaTime;
@@ -328,7 +330,7 @@ WDPDiscreteDynamicPhysicsWorld >> updateWithDeltaTime: deltaTime [
 		sendToSleepRestingObjects: deltaTime
 ]
 
-{ #category : #enumerating }
+{ #category : 'enumerating' }
 WDPDiscreteDynamicPhysicsWorld >> worldSpaceContactPointsDo: aBlock [
 	contactManifoldCache manifolds do: [ :eachManifold |
 		eachManifold contacts do: [:eachContact |

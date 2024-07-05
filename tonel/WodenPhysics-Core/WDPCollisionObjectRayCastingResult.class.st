@@ -2,21 +2,23 @@
 I encapsulate a specific ray casting query result.
 "
 Class {
-	#name : #WDPCollisionObjectRayCastingResult,
-	#superclass : #WDPShapeRayCastingResult,
+	#name : 'WDPCollisionObjectRayCastingResult',
+	#superclass : 'WDPShapeRayCastingResult',
 	#instVars : [
 		'collisionObject'
 	],
-	#category : #'WodenPhysics-Core-Objects'
+	#category : 'WodenPhysics-Core-Objects',
+	#package : 'WodenPhysics-Core',
+	#tag : 'Objects'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPCollisionObjectRayCastingResult >> collisionObject [
 
 	^ collisionObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPCollisionObjectRayCastingResult >> collisionObject: anObject [
 
 	collisionObject := anObject

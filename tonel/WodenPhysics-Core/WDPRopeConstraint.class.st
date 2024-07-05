@@ -2,15 +2,17 @@
 I am a rope constraint.
 "
 Class {
-	#name : #WDPRopeConstraint,
-	#superclass : #WDPObjectAnchoredPairUnionConstraint,
+	#name : 'WDPRopeConstraint',
+	#superclass : 'WDPObjectAnchoredPairUnionConstraint',
 	#instVars : [
 		'length'
 	],
-	#category : #'WodenPhysics-Core-Constraints'
+	#category : 'WodenPhysics-Core-Constraints',
+	#package : 'WodenPhysics-Core',
+	#tag : 'Constraints'
 }
 
-{ #category : #evaluation }
+{ #category : 'evaluation' }
 WDPRopeConstraint >> evaluateWithDeltaTime: deltaTime [
 	| firstAnchorPoint secondAnchorPoint ropeVector ropeVectorLength deltaLength forceDirection force |
 	firstAnchorPoint := self firstObjectAnchorPoint.
@@ -32,19 +34,19 @@ WDPRopeConstraint >> evaluateWithDeltaTime: deltaTime [
 
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 WDPRopeConstraint >> initialize [
 	super initialize.
 	length := 1.0.
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRopeConstraint >> length [
 
 	^ length
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRopeConstraint >> length: anObject [
 
 	length := anObject
