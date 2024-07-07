@@ -2,8 +2,8 @@
 I am a rigid body that lives in a physics world.
 "
 Class {
-	#name : #WDPRigidBody,
-	#superclass : #WDPCollisionObject,
+	#name : 'WDPRigidBody',
+	#superclass : 'WDPCollisionObject',
 	#instVars : [
 		'mass',
 		'inverseMass',
@@ -26,113 +26,115 @@ Class {
 		'averageMovementAmount',
 		'internalAcceleration'
 	],
-	#category : #'WodenPhysics-Core-CollisionObjects'
+	#category : 'WodenPhysics-Core-CollisionObjects',
+	#package : 'WodenPhysics-Core',
+	#tag : 'CollisionObjects'
 }
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 WDPRigidBody class >> angularMovementLimit [
 	^ 0.2
 ]
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 WDPRigidBody class >> averageMovementAmountSleepingThreshold [
 	^ 0.01
 ]
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 WDPRigidBody class >> defaultAngularDamping [
 	^ 0.2
 ]
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 WDPRigidBody class >> defaultLinearDamping [
 	^ 0.2
 ]
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 WDPRigidBody class >> wakeUpMovementDeltaTreshold [
 	^ 0.001
 ]
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 WDPRigidBody class >> wakingUpAverageMovementAmount [
 	^ 2.0
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> angularAcceleration [
 
 	^ angularAcceleration
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> angularAcceleration: anObject [
 
 	angularAcceleration := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> angularDamping [
 
 	^ angularDamping
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> angularDamping: anObject [
 
 	angularDamping := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> angularVelocityIntegrationDelta [
 
 	^ angularVelocityIntegrationDelta
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> angularVelocityIntegrationDelta: anObject [
 
 	angularVelocityIntegrationDelta := anObject
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPRigidBody >> applyAngularImpulse: impulse [
 	angularVelocity := angularVelocity + (worldInverseInertiaTensor * impulse).
 	self checkWakeUpDueToExternalImpulse
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPRigidBody >> applyForce: force [
 	netForce := netForce + force.
 	self wakeUp
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPRigidBody >> applyForce: force inRelativePosition: relativePosition [
 	netForce := netForce + force.
 	netTorque := netTorque + (relativePosition cross: force).
 	self wakeUp
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPRigidBody >> applyImpulse: impulse inPosition: worldPosition [
 	self applyImpulse: impulse inRelativePosition: worldPosition - self position
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPRigidBody >> applyImpulse: impulse inRelativePosition: relativePosition [
 	linearVelocity := linearVelocity + (impulse*inverseMass).
 	angularVelocity := angularVelocity + (worldInverseInertiaTensor * (relativePosition cross: impulse)).
 	self checkWakeUpDueToExternalImpulse
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPRigidBody >> applyLinearImpulse: impulse [
 	linearVelocity := linearVelocity + (impulse*inverseMass).
 	self checkWakeUpDueToExternalImpulse.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPRigidBody >> applyMovement: movement atRelativePoint: relativePoint withDirection: movementDirection [
 	| linearMovement angularMovement angularDirection angularFactor angularMovementLimit |
 	linearMovement := movement * inverseMass.
@@ -165,13 +167,13 @@ WDPRigidBody >> applyMovement: movement atRelativePoint: relativePoint withDirec
 	self wakeUpForTranslationBy: movementDirection * linearMovement andRotateByAngularIncrement: angularDirection*angularMovement
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPRigidBody >> applyTorque: torque [
 	netTorque := netTorque + torque.
 	self wakeUp
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPRigidBody >> checkTimeToSleep: weight [
 	| movementAmount |
 	isAwake ifFalse: [ ^ self ].
@@ -184,7 +186,7 @@ WDPRigidBody >> checkTimeToSleep: weight [
 	]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPRigidBody >> checkWakeUpDueToExternalImpulse [
 	isAwake ifTrue: [ ^ self ].
 	self movementAmount > self class averageMovementAmountSleepingThreshold ifTrue: [ 
@@ -192,13 +194,13 @@ WDPRigidBody >> checkWakeUpDueToExternalImpulse [
 	]
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPRigidBody >> clearNetForcesAndTorque [
 	netForce := Vector3 zeros.
 	netTorque := Vector3 zeros.
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPRigidBody >> computeAngularInertiaForRelativeContactPoint: relativePoint normal: normal [
 	| torquePerUnitImpulse rotationPerUnitImpulse |
 	torquePerUnitImpulse := relativePoint cross: normal.
@@ -206,7 +208,7 @@ WDPRigidBody >> computeAngularInertiaForRelativeContactPoint: relativePoint norm
 	^ (rotationPerUnitImpulse cross: relativePoint) dot: normal
 ]
 
-{ #category : #'mass distribution' }
+{ #category : 'mass distribution' }
 WDPRigidBody >> computeMassDistribution [
 	mass = 0 ifTrue: [ 
 		self inertiaTensor: Matrix3x3 zeros.
@@ -215,7 +217,7 @@ WDPRigidBody >> computeMassDistribution [
 	]
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPRigidBody >> computeVelocityPerImpulseWorldMatrixForRelativeContactPoint: relativePoint [
 	| relativePointCrossMatrix torquePerUnitImpulse rotationPerUnitImpulse |
 	relativePointCrossMatrix := Matrix3x3 skewSymmetric: relativePoint.
@@ -224,31 +226,31 @@ WDPRigidBody >> computeVelocityPerImpulseWorldMatrixForRelativeContactPoint: rel
 	^ (relativePointCrossMatrix * rotationPerUnitImpulse) negated
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> contactIslandId [
 
 	^ contactIslandId
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> contactIslandId: anObject [
 
 	contactIslandId := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPRigidBody >> getContactIslandRoot [
 	self == contactIslandParent ifTrue: [ ^ self ].
 	^ contactIslandParent := contactIslandParent getContactIslandRoot
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> inertiaTensor [
 
 	^ inertiaTensor
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> inertiaTensor: aMatrix3x3 [
 	inertiaTensor := aMatrix3x3.
 	inverseInertiaTensor := (inertiaTensor determinant = 0)
@@ -257,7 +259,7 @@ WDPRigidBody >> inertiaTensor: aMatrix3x3 [
 	
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 WDPRigidBody >> initialize [
 	super initialize.
 	mass := inverseMass := 0.0.
@@ -270,7 +272,7 @@ WDPRigidBody >> initialize [
 	self setSleepingStateFactors.
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPRigidBody >> integrateMovementWithDeltaTime: deltaTime [
 	| integratedVelocity integratedAngularVelocity integratedPosition integratedOrientation |
 	mass isZero ifTrue: [
@@ -302,7 +304,7 @@ WDPRigidBody >> integrateMovementWithDeltaTime: deltaTime [
 	self clearNetForcesAndTorque.
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPRigidBody >> integrateVelocityWithAcceleration: a damping: k initialVelocity: v0 dt: dt [
 	^ (k closeTo: 0) ifTrue: [ 
 		v0 + (a*dt)
@@ -314,36 +316,36 @@ WDPRigidBody >> integrateVelocityWithAcceleration: a damping: k initialVelocity:
 	"^ v0 + ((a - (v0*k))*dt)"
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> internalAcceleration [
 
 	^ internalAcceleration
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> internalAcceleration: anObject [
 	internalAcceleration := anObject.
 	internalAcceleration length2 > 0.0 ifTrue: [ self wakeUp ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> inverseInertiaTensor [
 
 	^ inverseInertiaTensor
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> inverseMass [
 
 	^ inverseMass
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 WDPRigidBody >> isAwake [
 	^ isAwake
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 WDPRigidBody >> joinContactIslandWith: other [
 	self assert: other participatesInContactResolution.
 	contactIslandParent == self ifTrue: [ 
@@ -354,93 +356,93 @@ WDPRigidBody >> joinContactIslandWith: other [
 
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> linearAcceleration [
 
 	^ linearAcceleration
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> linearDamping [
 
 	^ linearDamping
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> linearDamping: anObject [
 
 	linearDamping := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> linearVelocityIntegrationDelta [
 
 	^ linearVelocityIntegrationDelta
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> linearVelocityIntegrationDelta: anObject [
 
 	^ linearVelocityIntegrationDelta := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> mass [
 
 	^ mass
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> mass: aNumber [
 	mass := aNumber.
 	inverseMass := aNumber = 0 ifTrue: [ 0 ] ifFalse: [ aNumber reciprocal ].
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPRigidBody >> movementAmount [
 	^ linearVelocity length2 + angularVelocity length2
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 WDPRigidBody >> needsCollisionDetection [
 	^ mass ~= 0
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> netForce [
 
 	^ netForce
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> netTorque [
 
 	^ netTorque
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPRigidBody >> participatesInContactResolution [
 	^ inverseMass ~= 0
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 WDPRigidBody >> resetContactIslandRoot [
 	contactIslandParent := self.
 	contactIslandId := nil.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPRigidBody >> resetSleepingState [
 	isAwake := false.
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> rotationMatrix [
 
 	^ rotationMatrix
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPRigidBody >> setSleepingStateFactors [
 	isAwake := false.
 	angularAcceleration := linearAcceleration := Vector3 zeros.
@@ -450,7 +452,7 @@ WDPRigidBody >> setSleepingStateFactors [
 	self clearNetForcesAndTorque
 ]
 
-{ #category : #update }
+{ #category : 'update' }
 WDPRigidBody >> transformChanged [
 	| transposedRotationMatrix |
 	super transformChanged.
@@ -462,12 +464,12 @@ WDPRigidBody >> transformChanged [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPRigidBody >> velocityAtRelativePoint: relativePoint [
 	^ linearVelocity + (angularVelocity cross: relativePoint)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPRigidBody >> wakeUp [
 	isAwake ifTrue: [ ^ self ].
 	inverseMass = 0 ifTrue: [ ^ self ].
@@ -480,7 +482,7 @@ WDPRigidBody >> wakeUp [
 	]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPRigidBody >> wakeUpForTranslationBy: linearIncrement [
 	isAwake ifFalse: [
 		| movementAmount |
@@ -492,7 +494,7 @@ WDPRigidBody >> wakeUpForTranslationBy: linearIncrement [
 	self translateBy: linearIncrement
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPRigidBody >> wakeUpForTranslationBy: linearIncrement andRotateByAngularIncrement: angularIncrement [
 	isAwake ifFalse: [
 		| movementAmount |
@@ -504,13 +506,13 @@ WDPRigidBody >> wakeUpForTranslationBy: linearIncrement andRotateByAngularIncrem
 	self translateBy: linearIncrement andRotateByAngularIncrement: angularIncrement
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> worldInertiaTensor [
 
 	^ worldInertiaTensor
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRigidBody >> worldInverseInertiaTensor [
 
 	^ worldInverseInertiaTensor

@@ -2,8 +2,8 @@
 I represent a single contact point in a contact manifold.
 "
 Class {
-	#name : #WDPContactPoint,
-	#superclass : #Object,
+	#name : 'WDPContactPoint',
+	#superclass : 'Object',
 	#instVars : [
 		'epoch',
 		'normal',
@@ -21,20 +21,22 @@ Class {
 	#classVars : [
 		'PointEpsilon'
 	],
-	#category : #'WodenPhysics-Core-Constraints'
+	#category : 'WodenPhysics-Core-Constraints',
+	#package : 'WodenPhysics-Core',
+	#tag : 'Constraints'
 }
 
-{ #category : #'class initialization' }
+{ #category : 'class initialization' }
 WDPContactPoint class >> initialize [
 	PointEpsilon := 0.001.
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> closingSpeed [
 	^ self separationSpeed negated
 ]
 
-{ #category : #'contact resolution' }
+{ #category : 'contact resolution' }
 WDPContactPoint >> computeContactSpaceMatrix [
 	| x y z |
 	x := normal.
@@ -49,7 +51,7 @@ WDPContactPoint >> computeContactSpaceMatrix [
 
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 WDPContactPoint >> computeLocalVersionWithFirstTransform: firstTransform secondTransform: secondTransform [
 	localFirstPoint := firstTransform inverseTransformPosition: firstPoint.
 	localSecondPoint := secondTransform inverseTransformPosition: secondPoint.
@@ -57,13 +59,13 @@ WDPContactPoint >> computeLocalVersionWithFirstTransform: firstTransform secondT
 	localSecondNormal := secondTransform inverseTransformNormalVector: (firstTransform inverseTransformNormalVector: normal negated).
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 WDPContactPoint >> computeWorldContactPointAndDistances [
 	penetrationDistance := requiredSeparation + (secondPoint - firstPoint dot: normal).
 	
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 WDPContactPoint >> computeWorldVersionWithFirstTransform: firstTransform secondTransform: secondTransform [
 	firstPoint := firstTransform transformPosition: localFirstPoint.
 	secondPoint := secondTransform transformPosition: localSecondPoint.
@@ -71,48 +73,48 @@ WDPContactPoint >> computeWorldVersionWithFirstTransform: firstTransform secondT
 	self computeWorldContactPointAndDistances.
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> epoch [
 
 	^ epoch
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> epoch: anObject [
 
 	epoch := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> firstCollisionObject [
 
 	^ firstCollisionObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> firstCollisionObject: anObject [
 
 	firstCollisionObject := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> firstObjectHasResponse [
 	^ firstCollisionObject collisionResponseGroupMask anyMask: secondCollisionObject collisionGroup
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> firstPoint [
 
 	^ firstPoint
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> firstPoint: anObject [
 
 	firstPoint := anObject
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 WDPContactPoint >> flipped [
 	^ self copy
 		normal: normal negated;
@@ -125,177 +127,177 @@ WDPContactPoint >> flipped [
 		yourself
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 WDPContactPoint >> hasCollisionResponse [
 	^ self firstObjectHasResponse or: [self secondObjectHasResponse]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> inverseAngularInertia [
 	^ (firstCollisionObject computeAngularInertiaForRelativeContactPoint: self relativeFirstPoint normal: normal) + (secondCollisionObject computeAngularInertiaForRelativeContactPoint: self relativeFirstPoint normal: normal)
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> inverseInertia [
 	^ self inverseLinearInertia + self inverseAngularInertia
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> inverseLinearInertia [
 	^ firstCollisionObject inverseMass + secondCollisionObject inverseMass
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> inverseMass [
 	^ firstCollisionObject inverseMass + secondCollisionObject inverseMass
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 WDPContactPoint >> isSimilarTo: otherContact [
 	^ (localFirstPoint closeTo: otherContact localFirstPoint precision: PointEpsilon) and: [ 
 		(localSecondPoint closeTo: otherContact localSecondPoint precision: PointEpsilon)
 	]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> localFirstNormal [
 
 	^ localFirstNormal
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> localFirstNormal: anObject [
 
 	localFirstNormal := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> localFirstPoint [
 
 	^ localFirstPoint
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> localFirstPoint: anObject [
 
 	localFirstPoint := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> localSecondNormal [
 
 	^ localSecondNormal
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> localSecondNormal: anObject [
 
 	localSecondNormal := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> localSecondPoint [
 
 	^ localSecondPoint
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> localSecondPoint: anObject [
 
 	localSecondPoint := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> normal [
 
 	^ normal
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> normal: anObject [
 
 	normal := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> penetrationDistance [
 
 	^ penetrationDistance
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> penetrationDistance: anObject [
 
 	penetrationDistance := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> point [
 	^ firstPoint + ((secondPoint - firstPoint) * 0.5)
 ]
 
-{ #category : #printing }
+{ #category : 'printing' }
 WDPContactPoint >> printOn: aStream [
 	aStream nextPutAll: 'normal: '; print: normal; nextPutAll: ' pd: '; print: penetrationDistance
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPContactPoint >> relativeFirstPoint [
 	^ firstPoint - firstCollisionObject position
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 WDPContactPoint >> relativeSecondPoint [
 	^ secondPoint - secondCollisionObject position
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> requiredSeparation [
 
 	^ requiredSeparation
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> requiredSeparation: anObject [
 
 	requiredSeparation := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> secondCollisionObject [
 
 	^ secondCollisionObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> secondCollisionObject: anObject [
 
 	secondCollisionObject := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> secondObjectHasResponse [
 	^ secondCollisionObject collisionResponseGroupMask anyMask: firstCollisionObject collisionGroup
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> secondPoint [
 
 	^ secondPoint
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> secondPoint: anObject [
 
 	secondPoint := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactPoint >> separationSpeed [
 	^ (firstCollisionObject velocityAtRelativePoint: self relativeFirstPoint) - (secondCollisionObject velocityAtRelativePoint: self relativeSecondPoint) dot: normal
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 WDPContactPoint >> update [
 	self computeWorldVersionWithFirstTransform: firstCollisionObject transform secondTransform: secondCollisionObject transform
 ]

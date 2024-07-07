@@ -2,8 +2,8 @@
 I hold a set of collision bit masks.
 "
 Class {
-	#name : #WDPCollisionMasks,
-	#superclass : #Object,
+	#name : 'WDPCollisionMasks',
+	#superclass : 'Object',
 	#classVars : [
 		'AllNonSolid',
 		'AllSolid',
@@ -16,35 +16,37 @@ Class {
 		'Static',
 		'Vehicle'
 	],
-	#category : #'WodenPhysics-Core-CollisionObjects'
+	#category : 'WodenPhysics-Core-CollisionObjects',
+	#package : 'WodenPhysics-Core',
+	#tag : 'CollisionObjects'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPCollisionMasks class >> allNonSolid [
 	^ AllNonSolid
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPCollisionMasks class >> allSolid [
 	^ AllSolid
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPCollisionMasks class >> character [
 	^ CharacterObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPCollisionMasks class >> defaultCollisionGroup [
 	^ DefaultCollisionGroup
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPCollisionMasks class >> defaultCollisionResponseGroup [
 	^ DefaultCollisionResponseGroup
 ]
 
-{ #category : #'class initialization' }
+{ #category : 'class initialization' }
 WDPCollisionMasks class >> initialize [
 	Static := 1<<0.
 	Kinematic := 1<<1.
@@ -60,27 +62,27 @@ WDPCollisionMasks class >> initialize [
 	DefaultCollisionResponseGroup := AllSolid.
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPCollisionMasks class >> kinematic [
 	^ Kinematic
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPCollisionMasks class >> rigidBody [
 	^ RigidBody
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPCollisionMasks class >> sensor [
 	^ Sensor
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPCollisionMasks class >> static [
 	^ Static
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPCollisionMasks class >> vehicle [
 	^ Vehicle
 ]

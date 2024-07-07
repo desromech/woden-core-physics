@@ -2,15 +2,17 @@
 I am a rod constraint.
 "
 Class {
-	#name : #WDPRodConstraint,
-	#superclass : #WDPObjectAnchoredPairUnionConstraint,
+	#name : 'WDPRodConstraint',
+	#superclass : 'WDPObjectAnchoredPairUnionConstraint',
 	#instVars : [
 		'length'
 	],
-	#category : #'WodenPhysics-Core-Constraints'
+	#category : 'WodenPhysics-Core-Constraints',
+	#package : 'WodenPhysics-Core',
+	#tag : 'Constraints'
 }
 
-{ #category : #evaluation }
+{ #category : 'evaluation' }
 WDPRodConstraint >> evaluateWithDeltaTime: deltaTime [
 	| firstAnchorPoint secondAnchorPoint ropeVector ropeVectorLength deltaLength forceDirection force |
 	firstAnchorPoint := self firstObjectAnchorPoint.
@@ -31,19 +33,19 @@ WDPRodConstraint >> evaluateWithDeltaTime: deltaTime [
 	].
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 WDPRodConstraint >> initialize [
 	super initialize.
 	length := 1.0.
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRodConstraint >> length [
 
 	^ length
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPRodConstraint >> length: anObject [
 
 	length := anObject

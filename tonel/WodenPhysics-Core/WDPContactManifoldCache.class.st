@@ -2,40 +2,42 @@
 I am a cache of contact manifolds.
 "
 Class {
-	#name : #WDPContactManifoldCache,
-	#superclass : #Object,
+	#name : 'WDPContactManifoldCache',
+	#superclass : 'Object',
 	#instVars : [
 		'manifolds',
 		'epoch',
 		'manifoldDictionary'
 	],
-	#category : #'WodenPhysics-Core-Constraints'
+	#category : 'WodenPhysics-Core-Constraints',
+	#package : 'WodenPhysics-Core',
+	#tag : 'Constraints'
 }
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 WDPContactManifoldCache class >> defaultOldestKeptEpoch [
 	^ 4
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 WDPContactManifoldCache >> beginEpoch [
 	epoch := epoch + 1.
 	self expireOldManifoldContacts
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 WDPContactManifoldCache >> composeCollisionId: firstId with: secondId [
 	self assert: firstId < secondId.
 	^ firstId | (secondId << 32)
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 WDPContactManifoldCache >> endEpoch [
 	self expireOldManifolds.
 	
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 WDPContactManifoldCache >> expireOldManifoldContacts [
 	| expiredEpoch |
 	expiredEpoch := self expiredEpoch.
@@ -45,7 +47,7 @@ WDPContactManifoldCache >> expireOldManifoldContacts [
 
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 WDPContactManifoldCache >> expireOldManifolds [
 	| expiredEpoch keptManifolds |
 	expiredEpoch := epoch - self class defaultOldestKeptEpoch.
@@ -61,12 +63,12 @@ WDPContactManifoldCache >> expireOldManifolds [
 	manifolds := keptManifolds
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 WDPContactManifoldCache >> expiredEpoch [
 	^ epoch - self class defaultOldestKeptEpoch
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 WDPContactManifoldCache >> getOrCreateManifoldFor: firstCollisionObject with: secondCollisionObject [
 	| pairId manifold |
 	pairId := self composeCollisionId: firstCollisionObject id with: secondCollisionObject id.
@@ -85,7 +87,7 @@ WDPContactManifoldCache >> getOrCreateManifoldFor: firstCollisionObject with: se
 	^ manifold
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 WDPContactManifoldCache >> initialize [
 	super initialize.
 	manifolds := OrderedCollection new.
@@ -93,7 +95,7 @@ WDPContactManifoldCache >> initialize [
 	epoch := 0.
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 WDPContactManifoldCache >> insertContacts: contactPoints for: firstCollisionObject with: secondCollisionObject [
 	contactPoints ifEmpty: [ ^ self ].
 
@@ -103,14 +105,14 @@ WDPContactManifoldCache >> insertContacts: contactPoints for: firstCollisionObje
 
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 WDPContactManifoldCache >> lastSeparatingAxisFor: firstCollisionObject with: secondCollisionObject [
 	^ manifoldDictionary at: (self composeCollisionId: firstCollisionObject id with: secondCollisionObject id)
 		ifPresent: [:manifold | manifold lastSeparatingAxis ]
 		ifAbsent: [ nil ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 WDPContactManifoldCache >> manifolds [
 	^ manifolds
 ]
