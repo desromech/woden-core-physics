@@ -3,7 +3,7 @@ I encapsulate a specific ray casting query result.
 "
 Class {
 	#name : 'WDPCollisionObjectRayCastingResult',
-	#superclass : 'WDPShapeRayCastingResult',
+	#superclass : 'WDShapeRayCastingResult',
 	#instVars : [
 		'collisionObject'
 	],
