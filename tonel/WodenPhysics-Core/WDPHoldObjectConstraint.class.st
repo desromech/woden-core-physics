@@ -26,7 +26,11 @@ WDPHoldObjectConstraint >> evaluateWithDeltaTime: deltaTime [
 	secondObject applyForce: (springForce + dampingForce) * secondObject mass.
 
 	targetAngularVelocity := firstObject angularVelocity - secondObject angularVelocity.
+	
 	relativeOrientationDelta := targetOrientation * secondObject orientation inverse.
+	(targetOrientation dot: secondObject orientation) < 0 ifTrue: [
+		relativeOrientationDelta := relativeOrientationDelta negated
+	].
 	relativeOrientationRotationDelta := relativeOrientationDelta normalized ln * 2.0.
 	springTorque := relativeOrientationRotationDelta xyz * stiffness.
 	dampingTorque := targetAngularVelocity * damping.
