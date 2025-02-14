@@ -2,12 +2,13 @@
 I hold a collection of different physics world examples.
 "
 Class {
-	#name : #WDPhysicsWorldExamples,
-	#superclass : #Object,
-	#category : #'WodenPhysics-Examples'
+	#name : 'WDPhysicsWorldExamples',
+	#superclass : 'Object',
+	#category : 'WodenPhysics-Examples',
+	#package : 'WodenPhysics-Examples'
 }
 
-{ #category : #examples }
+{ #category : 'examples' }
 WDPhysicsWorldExamples class >> exampleFallingBox [
 	"
 	self exampleFallingBox
@@ -23,7 +24,7 @@ WDPhysicsWorldExamples class >> exampleFallingBox [
 		buildInteractiveVisualizationScene) openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WDPhysicsWorldExamples class >> exampleFallingBoxAndFloor [
 	"
 	self exampleFallingBoxAndFloor
@@ -45,7 +46,7 @@ WDPhysicsWorldExamples class >> exampleFallingBoxAndFloor [
 		buildInteractiveVisualizationScene) openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WDPhysicsWorldExamples class >> exampleFallingBoxAndFloor2 [
 	"
 	self exampleFallingBoxAndFloor2
@@ -67,7 +68,7 @@ WDPhysicsWorldExamples class >> exampleFallingBoxAndFloor2 [
 		buildInteractiveVisualizationScene) openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WDPhysicsWorldExamples class >> exampleFallingBoxOnBox [
 	"
 	self exampleFallingBoxOnBox
@@ -95,7 +96,7 @@ WDPhysicsWorldExamples class >> exampleFallingBoxOnBox [
 		buildInteractiveVisualizationScene) openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WDPhysicsWorldExamples class >> exampleFallingBoxOnBox2 [
 	"
 	self exampleFallingBoxOnBox
@@ -123,7 +124,35 @@ WDPhysicsWorldExamples class >> exampleFallingBoxOnBox2 [
 		buildInteractiveVisualizationScene) openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
+WDPhysicsWorldExamples class >> exampleFallingBoxOnConvexHull [
+	"
+	self exampleFallingBoxOnConvexHull
+	"
+	(WDPDiscreteDynamicPhysicsWorld new
+		gravity: (Vector3 y: -9.8);
+		add: (WDPRigidBody new
+			shape: (WDBoxCollisionShape halfExtent: 0.5);
+			mass: 1.0;
+			computeMassDistribution;
+			position: (Vector3 x: 0.6 y: 1.5);
+			yourself);
+		add: (WDPRigidBody new
+			shape: (WDBoxCollisionShape halfExtent: 0.5);
+			mass: 0.0;
+			computeMassDistribution;
+			position: (Vector3 y: -0.5);
+			yourself);
+		add: (WDPRigidBody new
+			shape: (WDConvexHullCollisionShape withPoints:(AABox halfExtent: (Vector3 x: 4 y: 0.1 z: 4)) corners);
+			mass: 0.0;
+			computeMassDistribution;
+			position: (Vector3 y: -1.1);
+			yourself);
+		buildInteractiveVisualizationScene) openInWindow
+]
+
+{ #category : 'examples' }
 WDPhysicsWorldExamples class >> exampleFallingCapsuleAndFloor [
 	"
 	self exampleFallingBoxAndFloor
@@ -145,7 +174,7 @@ WDPhysicsWorldExamples class >> exampleFallingCapsuleAndFloor [
 		buildInteractiveVisualizationScene) openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WDPhysicsWorldExamples class >> exampleFallingCapsuleAndFloor2 [
 	"
 	self exampleFallingBoxAndFloor2
@@ -167,7 +196,7 @@ WDPhysicsWorldExamples class >> exampleFallingCapsuleAndFloor2 [
 		buildInteractiveVisualizationScene) openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WDPhysicsWorldExamples class >> exampleFallingCompound2OnBox [
 	"
 	self exampleFallingCompound2OnBox
@@ -198,7 +227,7 @@ WDPhysicsWorldExamples class >> exampleFallingCompound2OnBox [
 		buildInteractiveVisualizationScene) openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WDPhysicsWorldExamples class >> exampleFallingCompoundOnBox [
 	"
 	self exampleFallingCompoundOnBox
@@ -229,7 +258,7 @@ WDPhysicsWorldExamples class >> exampleFallingCompoundOnBox [
 		buildInteractiveVisualizationScene) openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WDPhysicsWorldExamples class >> exampleRoom [
 	"
 	self exampleRoom
@@ -274,7 +303,7 @@ WDPhysicsWorldExamples class >> exampleRoom [
 	world buildInteractiveVisualizationScene openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WDPhysicsWorldExamples class >> exampleSuspendedBoxWithRod [
 	"
 	self exampleSuspendedBoxWithRod
@@ -307,7 +336,7 @@ WDPhysicsWorldExamples class >> exampleSuspendedBoxWithRod [
 	world buildInteractiveVisualizationScene openInWindow
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 WDPhysicsWorldExamples class >> exampleSuspendedBoxWithRope [
 	"
 	self exampleSuspendedBoxWithRope
@@ -340,6 +369,6 @@ WDPhysicsWorldExamples class >> exampleSuspendedBoxWithRope [
 	world buildInteractiveVisualizationScene openInWindow
 ]
 
-{ #category : #'see class side' }
+{ #category : 'see class side' }
 WDPhysicsWorldExamples >> seeClassSide [
 ]

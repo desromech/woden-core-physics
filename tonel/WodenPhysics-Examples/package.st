@@ -1,1 +1,1 @@
-Package { #name : #'WodenPhysics-Examples' }
+Package { #name : 'WodenPhysics-Examples' }
